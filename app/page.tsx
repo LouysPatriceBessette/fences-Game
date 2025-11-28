@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect } from "react";
 
+import Socket from "./socket";
+
 
 import { GameGrid } from "./components/game-grid";
 import {
@@ -76,6 +78,9 @@ export default function Home() {
       </GameGridContainer>
 
       {gameover && <GameOver>Game Over</GameOver>}
+
+      <Socket/>
+
     </PageContainer>
   );
 }
