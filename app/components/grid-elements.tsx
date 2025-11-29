@@ -42,16 +42,12 @@ export const Square = ({identifier}: {identifier: number}) => {
 
   const wasFencedBy = wasFencedByP1 ? 1 : wasFencedByP2 ? 2 : 0
   if(isFenced && !wasFencedByP1 && !wasFencedByP2) {
-    if(currentPlayer === 2) { // runs after render... So players are reversed
-      setTimeout(() => {
-        dispatch(setFencedByP1(identifier))
-        dispatch(toggleCurrentPlayer(1))
-      }, 50)
+    if(currentPlayer === 1) {
+      dispatch(setFencedByP1(identifier))
+      dispatch(toggleCurrentPlayer(2))
     } else {
-      setTimeout(() => {
-        dispatch(setFencedByP2(identifier))
-        dispatch(toggleCurrentPlayer(2))
-      }, 50)
+      dispatch(setFencedByP2(identifier))
+      dispatch(toggleCurrentPlayer(1))
     }
   }
 
@@ -90,7 +86,6 @@ export const Dot = ({identifier}:{identifier: number}) => {
   const resetTurn = (payload: string) => {
     dispatch(setOrigin(-1))
     dispatch(setCanConnectWith([]))
-    dispatch(toggleCurrentPlayer())
 
     const command1 = {
       action: 'move',
@@ -98,10 +93,10 @@ export const Dot = ({identifier}:{identifier: number}) => {
     }
     socket.emit('message', JSON.stringify(command1));
 
-    // const command2 = {
-    //   action: 'toggle-current-player',
-    // }
-    // socket.emit('message', JSON.stringify(command2));
+    const command2 = {
+      action: 'toggle-player',
+    }
+    socket.emit('message', JSON.stringify(command2));
   }
   const dotClickHandler = () => {
     if(canConnectWith.length === 0 && origin === -1) {

@@ -4,7 +4,7 @@ import { ACTION_TYPES } from './types';
 
 export const INITIAL_STATE = {
   game: {
-    size: 10,
+    size: 3,
     gameover: false,
   },
   player: {
