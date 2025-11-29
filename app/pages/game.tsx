@@ -52,10 +52,7 @@ export const Game = () => {
         </Player>
 
         <CurrentTurn>
-          Current Turn
-          <div>
-            { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
-          </div>
+          { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
         </CurrentTurn>
 
         <Player>
