@@ -71,8 +71,6 @@ export const playerReducer = (state = INITIAL_STATE.player, action) => {
 export const moveReducer = (state = INITIAL_STATE.moves, action) => {
   const { type, payload } = action;
 
-  console.log('moveReducer', type, payload)
-
   switch (type) {
     case ACTION_TYPES.SET_ORIGIN:
       return {
@@ -129,8 +127,6 @@ export const chatReducer = (state = INITIAL_STATE.chat, action) => {
 
 export const socketReducer = (state = INITIAL_STATE.socket, action) => {
   const { type, payload } = action;
-
-  console.log('socketReducer', type, payload)
 
   switch (type) {
     case ACTION_TYPES.SET_SOCKET_INSTANCE:
