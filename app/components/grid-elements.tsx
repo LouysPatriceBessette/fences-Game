@@ -1,5 +1,7 @@
 import { GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
 
+import io from 'socket.io-client';
+
 import { useDispatch } from 'react-redux';
 import {
   toggleCurrentPlayer,
@@ -18,6 +20,9 @@ import {
   useUsedFences,
   useSize,
 } from "../store/selectors";
+
+
+const socket = io();
 
 export const Grid = GridStyled
 
@@ -60,6 +65,8 @@ export const Square = ({identifier}: {identifier: number}) => {
 }
 
 export const Dot = ({identifier}:{identifier: number}) => {
+  
+
   const dispatch = useDispatch()
   const canConnectWith = useCanConnectWith()
   const origin = useOrigin()
@@ -84,10 +91,20 @@ export const Dot = ({identifier}:{identifier: number}) => {
 
   const friends = [up, right, down, left]
 
-  const resetTurn = () => {
+  const resetTurn = (payload: string) => {
     dispatch(setOrigin(-1))
     dispatch(setCanConnectWith([]))
     dispatch(toggleCurrentPlayer())
+
+    const command1 = {
+      type: 'move',
+      move: payload,
+    }
+    socket.emit('message', JSON.stringify(command1));
+    // const command2 = {
+    //   type: 'toggle-current-player',
+    // }
+    // socket.emit('message', JSON.stringify(command2));
   }
   const dotClickHandler = () => {
     if(canConnectWith.length === 0 && origin === -1) {
@@ -107,28 +124,28 @@ export const Dot = ({identifier}:{identifier: number}) => {
       // Left
       if(origin - 1 === identifier) {
         dispatch(setUsedFences(`H-${identifier}`))
-        resetTurn()
+        resetTurn(`H-${identifier}`)
         return
       }
 
       // Right
       if(origin + 1 === identifier) {
         dispatch(setUsedFences(`H-${origin}`))
-        resetTurn()
+        resetTurn(`H-${origin}`)
         return
       }
 
       // Up
       if(origin - size === identifier) {
         dispatch(setUsedFences(`V-${identifier}`))
-        resetTurn()
+        resetTurn(`V-${identifier}`)
         return
       }
 
       // Down
       if(origin + size === identifier) {
         dispatch(setUsedFences(`V-${origin}`))
-        resetTurn()
+        resetTurn(`V-${origin}`)
         return
       }
     }

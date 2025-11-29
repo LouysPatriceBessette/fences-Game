@@ -10,3 +10,5 @@ export const useCanConnectWith = () => useSelector((state) => state.moves.canCon
 export const useUsedFences = () => useSelector((state) => state.moves.usedFences);
 export const useFencedByP1 = () => useSelector((state) => state.moves.fencedByP1);
 export const useFencedByP2 = () => useSelector((state) => state.moves.fencedByP2);
+
+export const useChatMessages = () => useSelector((state) => state.chat.messages);

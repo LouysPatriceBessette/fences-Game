@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import { ACTION_TYPES } from './types';
 
+
 export const INITIAL_STATE = {
   game: {
     size: 10,
@@ -15,6 +16,9 @@ export const INITIAL_STATE = {
     usedFences: [],
     fencedByP1: [],
     fencedByP2: [],
+  },
+  chat: {
+    messages: [],
   },
 };
 
@@ -102,8 +106,24 @@ export const moveReducer = (state = INITIAL_STATE.moves, action) => {
   }
 };
 
+export const chatReducer = (state = INITIAL_STATE.chat, action) => {
+  const { type, payload } = action;
+
+  console.log(type, payload)
+  switch (type) {
+    case ACTION_TYPES.SET_CHAT_MESSAGE:
+      return {
+        ...state,
+        messages: [...state.messages, payload],
+      };
+    default:
+      return state;
+  }
+};
+
 export const rootReducer = combineReducers({
   game: gameReducer,
   player: playerReducer,
   moves: moveReducer,
+  chat: chatReducer,
 });

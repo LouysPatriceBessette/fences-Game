@@ -27,3 +27,6 @@ export const setFencedByP2 = (fencedByP2) =>
 
 export const resetMoves = () =>
   createAction(ACTION_TYPES.RESET_MOVES);
+
+export const setChatMessage = (message) =>
+  createAction(ACTION_TYPES.SET_CHAT_MESSAGE, message);

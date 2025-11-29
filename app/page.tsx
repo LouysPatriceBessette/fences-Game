@@ -9,6 +9,7 @@ export default function Home() {
   return (
     <Provider store={store}>
       <Game />
+      <Socket/>
     </Provider>
   );
 }
