@@ -1,67 +1,30 @@
-import { useState, useEffect } from "react";
 import { Grid, Square, Dot, Vline, Hline } from "./grid-elements";
+import {
+  useSize,
+} from "../store/selectors";
 
-export const GameGrid = ({
-  size,
-  currentPlayer,
-  setCurrentPlayer,
-  fencedByP1,
-  fencedByP2,
-  setFencedByP1,
-  setFencedByP2,
-}: {
-  size: number,
-  currentPlayer: number,
-  setCurrentPlayer: React.Dispatch<React.SetStateAction<number>>,
-  fencedByP1: number[],
-  fencedByP2: number[],
-  setFencedByP1: React.Dispatch<React.SetStateAction<number[]>>,
-  setFencedByP2: React.Dispatch<React.SetStateAction<number[]>>,
-}) => {
-
+export const GameGrid = () => {
+  const size = useSize()
   const gridSize = (size * 2)
-
-  const [canConnectWith, setCanConnectWith] = useState<number[]>([])
-  const [origin, setOrigin] = useState<number>(-1)
   
-  const [usedFences, setUsedFences] = useState<string[]>([])
-
   const dot = (key: number, id: number) => <Dot
     key={key}
     identifier={id}
-    origin={origin}
-    setOrigin={setOrigin}
-    setCanConnectWith={setCanConnectWith}
-    rowSize={size}
-    canConnectWith={canConnectWith}
-    setUsedFences={setUsedFences}
-    usedFences={usedFences}
-    currentPlayer={currentPlayer}
-    setCurrentPlayer={setCurrentPlayer}
   />
 
   const hline = (key: number, id: number) => <Hline
     key={key}
     identifier={id}
-    usedFences={usedFences}
   />
 
   const vline = (key: number, id: number) => <Vline
     key={key}
     identifier={id}
-    usedFences={usedFences}
   />
 
   const square = (key: number, id: number) => <Square
     key={key}
     identifier={id}
-    usedFences={usedFences}
-    rowSize={size}
-    currentPlayer={currentPlayer}
-    fencedByP1={fencedByP1}
-    fencedByP2={fencedByP2}
-    setFencedByP1={setFencedByP1}
-    setFencedByP2={setFencedByP2}
   />
 
 
