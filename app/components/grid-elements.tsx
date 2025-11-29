@@ -1,33 +1,39 @@
-import React from "react";
 import { GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
+
+import { useDispatch } from 'react-redux';
+import {
+  toggleCurrentPlayer,
+  setFencedByP1,
+  setFencedByP2,
+  setCanConnectWith,
+  setOrigin,
+  setUsedFences,
+} from "../store/actions";
+import {
+  useCurrentPlayer,
+  useFencedByP1,
+  useFencedByP2,
+  useCanConnectWith,
+  useOrigin,
+  useUsedFences,
+  useSize,
+} from "../store/selectors";
 
 export const Grid = GridStyled
 
-export const Square = ({
-  identifier,
-  usedFences,
-  rowSize,
-  currentPlayer,
-  fencedByP1,
-  fencedByP2,
-  setFencedByP1,
-  setFencedByP2,
-}: {
-  identifier: number,
-  usedFences: string[],
-  rowSize: number,
-  currentPlayer: number,
-  fencedByP1: number[],
-  fencedByP2: number[],
-  setFencedByP1: React.Dispatch<React.SetStateAction<number[]>>,
-  setFencedByP2: React.Dispatch<React.SetStateAction<number[]>>,
-}) => {
+export const Square = ({identifier}: {identifier: number}) => {
+  const dispatch = useDispatch()
+  const currentPlayer = useCurrentPlayer()
+  const fencedByP1 = useFencedByP1()
+  const fencedByP2 = useFencedByP2()
+  const usedFences = useUsedFences()
+  const size = useSize()
 
   const isFenced = (
     usedFences.includes(`H-${identifier}`) &&
     usedFences.includes(`V-${identifier}`) &&
     usedFences.includes(`V-${identifier + 1}`) &&
-    usedFences.includes(`H-${identifier + rowSize}`)
+    usedFences.includes(`H-${identifier + size}`)
   )
   
   const wasFencedByP1 = fencedByP1.includes(identifier)
@@ -36,17 +42,9 @@ export const Square = ({
   const wasFencedBy = wasFencedByP1 ? 1 : wasFencedByP2 ? 2 : 0
   if(isFenced && !wasFencedByP1 && !wasFencedByP2) {
     if(currentPlayer === 2) { // runs after render... So players are reversed
-      setFencedByP1(prev => {
-        const state = [...prev, identifier]
-
-        return Array.from(new Set(state))
-      })
+      setTimeout(() => dispatch(setFencedByP1(identifier)), 50)
     } else {
-      setFencedByP2(prev => {
-        const state = [...prev, identifier]
-
-        return Array.from(new Set(state))
-      })
+      setTimeout(() => dispatch(setFencedByP2(identifier)), 50)
     }
   }
 
@@ -55,40 +53,22 @@ export const Square = ({
   );
 }
 
-export const Dot = ({
-  identifier,
-  origin,
-  setOrigin,
-  setCanConnectWith,
-  rowSize,
-  canConnectWith,
-  setUsedFences,
-  usedFences,
-  currentPlayer,
-  setCurrentPlayer,
-}:
-  {
-    identifier: number,
-    origin: number,
-    setOrigin: React.Dispatch<React.SetStateAction<number>>,
-    setCanConnectWith: React.Dispatch<React.SetStateAction<number[]>>,
-    rowSize: number
-    canConnectWith: number[]
-    setUsedFences: React.Dispatch<React.SetStateAction<string[]>>
-    usedFences: string[],
-    currentPlayer: number,
-    setCurrentPlayer: React.Dispatch<React.SetStateAction<number>>,
-  }) => {
+export const Dot = ({identifier}:{identifier: number}) => {
+  const dispatch = useDispatch()
+  const canConnectWith = useCanConnectWith()
+  const origin = useOrigin()
+  const usedFences = useUsedFences()
+  const size = useSize()
 
-  const upId = identifier - rowSize
+  const upId = identifier - size
   const rightId = identifier + 1
-  const downId = identifier + rowSize
+  const downId = identifier + size
   const leftId = identifier - 1
 
   let up = upId > 0 ? upId : null
-  let right = rightId <= Math.pow(rowSize, 2) && rightId % rowSize !== 1 ? rightId : null
-  let down = downId <= Math.pow(rowSize, 2) ? downId : null
-  let left = leftId > 0 && leftId % rowSize !== 0 ? leftId : null
+  let right = rightId <= Math.pow(size, 2) && rightId % size !== 1 ? rightId : null
+  let down = downId <= Math.pow(size, 2) ? downId : null
+  let left = leftId > 0 && leftId % size !== 0 ? leftId : null
   
   // Check the usedFences
   if(up && usedFences.includes(`V-${up}`)) up = null
@@ -99,20 +79,20 @@ export const Dot = ({
   const friends = [up, right, down, left]
 
   const resetTurn = () => {
-    setOrigin(-1)
-    setCanConnectWith([])
-    setCurrentPlayer(currentPlayer === 1 ? 2 : 1)
+    dispatch(setOrigin(-1))
+    dispatch(setCanConnectWith([]))
+    dispatch(toggleCurrentPlayer())
   }
   const dotClickHandler = () => {
     if(canConnectWith.length === 0 && origin === -1) {
-      setOrigin(identifier)
-      setCanConnectWith(friends.filter((friend) => friend !== null))
+      dispatch(setOrigin(identifier))
+      dispatch(setCanConnectWith(friends.filter((friend) => friend !== null)))
       return
     }
 
     if(origin === identifier) {
-      setOrigin(-1)
-      setCanConnectWith([])
+      dispatch(setOrigin(-1))
+      dispatch(setCanConnectWith([]))
       return
     }
 
@@ -120,33 +100,31 @@ export const Dot = ({
 
       // Left
       if(origin - 1 === identifier) {
-        setUsedFences(prev => [...prev, `H-${identifier}`])
+        dispatch(setUsedFences(`H-${identifier}`))
         resetTurn()
         return
       }
 
       // Right
       if(origin + 1 === identifier) {
-        setUsedFences(prev => [...prev, `H-${origin}`])
+        dispatch(setUsedFences(`H-${origin}`))
         resetTurn()
         return
       }
 
       // Up
-      if(origin - rowSize === identifier) {
-        setUsedFences(prev => [...prev, `V-${identifier}`])
+      if(origin - size === identifier) {
+        dispatch(setUsedFences(`V-${identifier}`))
         resetTurn()
         return
       }
 
       // Down
-      if(origin + rowSize === identifier) {
-        setUsedFences(prev => [...prev, `V-${origin}`])
+      if(origin + size === identifier) {
+        dispatch(setUsedFences(`V-${origin}`))
         resetTurn()
         return
       }
-
-      
     }
   }
 
@@ -160,7 +138,8 @@ export const Dot = ({
   );
 }
 
-export const Vline = ({identifier, usedFences}: {identifier: number, usedFences: string[]}) => {
+export const Vline = ({identifier}: {identifier: number}) => {
+  const usedFences = useUsedFences()
   const isUsed = usedFences.includes(`V-${identifier}`)
   
   return (
@@ -168,7 +147,8 @@ export const Vline = ({identifier, usedFences}: {identifier: number, usedFences:
   );
 }
 
-export const Hline = ({identifier, usedFences}: {identifier: number, usedFences: string[]}) => {
+export const Hline = ({identifier}: {identifier: number,}) => {
+  const usedFences = useUsedFences()
   const isUsed = usedFences.includes(`H-${identifier}`)
   
   return (
