@@ -28,5 +28,14 @@ export const setFencedByP2 = (fencedByP2) =>
 export const resetMoves = () =>
   createAction(ACTION_TYPES.RESET_MOVES);
 
+export const setSocketInstance = (socketInstance) =>
+  createAction(ACTION_TYPES.SET_SOCKET_INSTANCE, socketInstance);
+
+export const setSocketLocalId = (socketId) =>
+  createAction(ACTION_TYPES.SET_SOCKET_LOCAL_ID, socketId);
+
+export const setSocketRemoteId = (socketId) =>
+  createAction(ACTION_TYPES.SET_SOCKET_REMOTE_ID, socketId);
+
 export const setChatMessage = (message) =>
   createAction(ACTION_TYPES.SET_CHAT_MESSAGE, message);

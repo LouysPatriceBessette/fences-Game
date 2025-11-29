@@ -3,13 +3,15 @@
 import { Provider } from 'react-redux';
 import { store } from "./store/store";
 import { Game } from "./pages/game";
-import Socket from "./socket";
+import { SocketListen } from "./socket/socket";
+import { Chat } from "./socket/chat";
 
 export default function Home() {
   return (
     <Provider store={store}>
       <Game />
-      <Socket/>
+      <SocketListen/>
+      <Chat/>
     </Provider>
   );
 }

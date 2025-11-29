@@ -20,6 +20,11 @@ export const INITIAL_STATE = {
   chat: {
     messages: [],
   },
+  socket: {
+    instance: null,
+    localId: '',
+    remoteId: '',
+  },
 };
 
 
@@ -66,6 +71,8 @@ export const playerReducer = (state = INITIAL_STATE.player, action) => {
 export const moveReducer = (state = INITIAL_STATE.moves, action) => {
   const { type, payload } = action;
 
+  console.log('moveReducer', type, payload)
+
   switch (type) {
     case ACTION_TYPES.SET_ORIGIN:
       return {
@@ -109,7 +116,6 @@ export const moveReducer = (state = INITIAL_STATE.moves, action) => {
 export const chatReducer = (state = INITIAL_STATE.chat, action) => {
   const { type, payload } = action;
 
-  console.log(type, payload)
   switch (type) {
     case ACTION_TYPES.SET_CHAT_MESSAGE:
       return {
@@ -121,9 +127,36 @@ export const chatReducer = (state = INITIAL_STATE.chat, action) => {
   }
 };
 
+export const socketReducer = (state = INITIAL_STATE.socket, action) => {
+  const { type, payload } = action;
+
+  console.log('socketReducer', type, payload)
+
+  switch (type) {
+    case ACTION_TYPES.SET_SOCKET_INSTANCE:
+      return {
+        ...state,
+        instance: payload,
+      };
+    case ACTION_TYPES.SET_SOCKET_LOCAL_ID:
+      return {
+        ...state,
+        localId: payload,
+      }
+    case ACTION_TYPES.SET_SOCKET_REMOTE_ID:
+      return {
+        ...state,
+        remoteId: payload,
+      }
+    default:
+      return state;
+  }
+};
+
 export const rootReducer = combineReducers({
   game: gameReducer,
   player: playerReducer,
   moves: moveReducer,
   chat: chatReducer,
+  socket: socketReducer,
 });

@@ -1,7 +1,5 @@
 import { GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
 
-import io from 'socket.io-client';
-
 import { useDispatch } from 'react-redux';
 import {
   toggleCurrentPlayer,
@@ -19,10 +17,8 @@ import {
   useOrigin,
   useUsedFences,
   useSize,
+  useSocketInstance,
 } from "../store/selectors";
-
-
-const socket = io();
 
 export const Grid = GridStyled
 
@@ -65,9 +61,9 @@ export const Square = ({identifier}: {identifier: number}) => {
 }
 
 export const Dot = ({identifier}:{identifier: number}) => {
-  
-
   const dispatch = useDispatch()
+  const socket = useSocketInstance()
+
   const canConnectWith = useCanConnectWith()
   const origin = useOrigin()
   const usedFences = useUsedFences()
@@ -101,6 +97,7 @@ export const Dot = ({identifier}:{identifier: number}) => {
       move: payload,
     }
     socket.emit('message', JSON.stringify(command1));
+
     // const command2 = {
     //   type: 'toggle-current-player',
     // }
