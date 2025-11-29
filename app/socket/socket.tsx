@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import io from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import {
@@ -7,9 +8,6 @@ import {
   toggleCurrentPlayer,
   setUsedFences
 } from '../store/actions';
-import {
-  useSocketInstance,
-} from "../store/selectors";
 import { Socket } from 'socket.io-client';
 import React from 'react';
 
@@ -27,52 +25,51 @@ export const sendMessage = (socket: Socket, messageInput: string, setMessageInpu
 
 export const SocketListen = () => {
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const socket = io();
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+      dispatch(setSocketInstance(socket))
+      dispatch(setSocketLocalId(socket.id))
+    });
   
-  const socketInstance = useSocketInstance()
-  if(socketInstance){
-    return <div></div>
-  }
-
-  const socket = io();
-  socket.on('connect', () => {
-    console.log('Connected to WebSocket server');
-    dispatch(setSocketInstance(socket))
-    dispatch(setSocketLocalId(socket.id))
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Disconnected from WebSocket server');
-  });
-
-  socket.on('message', (msg) => {
-    console.log('Message received:', msg);
-
-    let command
-    try{
-      command = JSON.parse(msg)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch(error){
-      // Nothing to do...
-    }
-
-    if(command){
-      console.log(command)
-      switch(command.action){
-
-        // {"action":"toggle-player"}
-        case 'toggle-player':
-          dispatch(toggleCurrentPlayer())
-          break;
-          
-        // {"action":"move", "move":"V-2"}
-        case 'move':
-          dispatch(setUsedFences(command.move))
-          break;
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
+    });
+  
+    socket.on('message', (msg) => {
+      console.log('Message received:', msg);
+  
+      let command
+      try{
+        command = JSON.parse(msg)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch(error){
+        // Nothing to do...
       }
-    }else{
-      dispatch(setChatMessage(msg));
-    }
-  });
+  
+      if(command){
+        console.log(command)
+        switch(command.action){
+  
+          // {"action":"toggle-player"}
+          case 'toggle-player':
+            dispatch(toggleCurrentPlayer())
+            break;
+            
+          // {"action":"move", "move":"V-2"}
+          case 'move':
+            console.log('Dispatching move', command.move)
+            dispatch(setUsedFences(command.move))
+            break;
+        }
+      }else{
+        dispatch(setChatMessage(msg));
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   
   return <div></div>
 }

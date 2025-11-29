@@ -1,6 +1,9 @@
 // pages/index.js
 import { useState } from 'react';
-import { useSocketInstance,useChatMessages } from '../store/selectors';
+import {
+  useSocketInstance,
+  useChatMessages
+} from '../store/selectors';
 import { sendMessage } from './socket';
 import { ChatHeader, ChatMessagesContainer, ChatInputsContainer, ChatInput, ChatButton } from './chat.styled';
 

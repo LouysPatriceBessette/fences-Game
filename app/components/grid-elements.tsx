@@ -93,13 +93,13 @@ export const Dot = ({identifier}:{identifier: number}) => {
     dispatch(toggleCurrentPlayer())
 
     const command1 = {
-      type: 'move',
+      action: 'move',
       move: payload,
     }
     socket.emit('message', JSON.stringify(command1));
 
     // const command2 = {
-    //   type: 'toggle-current-player',
+    //   action: 'toggle-current-player',
     // }
     // socket.emit('message', JSON.stringify(command2));
   }
