@@ -1,11 +1,15 @@
-import { Grid, Square, Dot, Vline, Hline } from "./grid-elements";
+import { GridContainer, GridOverlay, Grid, Square, Dot, Vline, Hline } from "./grid-elements";
 import {
   useSize,
+  useCurrentPlayer,
+  useIamPlayer,
 } from "../store/selectors";
 
 export const GameGrid = () => {
   const size = useSize()
   const gridSize = (size * 2)
+  const currentPlayer = useCurrentPlayer()
+  const iamPlayer = useIamPlayer()
   
   const dot = (key: number, id: number) => <Dot
     key={key}
@@ -86,9 +90,13 @@ export const GameGrid = () => {
     return cells
   }
 
+  const waitingForOpponent = currentPlayer !== iamPlayer
   return (
-    <Grid $size={gridSize - 1}>
+    <GridContainer $waitingForOpponent={waitingForOpponent}>
+      <GridOverlay $waitingForOpponent={waitingForOpponent}>Awaiting opponent&apos;s move</GridOverlay>
+    <Grid $size={gridSize - 1} $waitingForOpponent={waitingForOpponent}>
       {fillGrid(gridSize)}
     </Grid>
+    </GridContainer>
   );
 }

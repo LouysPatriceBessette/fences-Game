@@ -20,6 +20,7 @@ export const INITIAL_STATE = {
     canConnectWith: [],
   },
   socket: {
+    iamPlayer: 1,
     instance: null,
     localId: '',
     remoteId: '',
@@ -125,6 +126,11 @@ export const socketReducer = (state = INITIAL_STATE.socket, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case ACTION_TYPES.SET_IAM_PLAYER:
+      return {
+        ...state,
+        iamPlayer: payload,
+    }
     case ACTION_TYPES.SET_SOCKET_INSTANCE:
       return {
         ...state,

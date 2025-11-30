@@ -38,7 +38,7 @@ export const CurrentTurn = styled.div`
   font-weight: bold;
   font-size: 5em;
   & span{
-    color: red;
+    color: #fe7474ff;
   }
 `
 
@@ -49,7 +49,7 @@ export const GameGridContainer = styled.div`
 `
 
 export const GameOver = styled.div`
-  color: red;
+  color: #fe7474ff;
   font-size: 4em;
   font-weight: 600;
   display: flex;

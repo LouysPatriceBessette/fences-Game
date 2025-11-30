@@ -2,9 +2,27 @@
 
 import styled from "styled-components";
 
-export const GridStyled = styled.div<{$size: number}>`
+export const GridContainerStyled = styled.div<{$waitingForOpponent: boolean}>`
+  position: relative;
+  ${(props) => props.$waitingForOpponent ? "cursor: not-allowed;" : "cursor: pointer;"}
+`
+
+export const GridOverlayStyled = styled.div<{$waitingForOpponent: boolean}>`
+  ${(props) => props.$waitingForOpponent ? "display: block;" : "display: none;"}
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  color: #fe7474ff;
+  text-shadow: 0px 0 1px black;
+  text-align: center;
+  font-weight: bold;
+`
+
+export const GridStyled = styled.div<{$size: number, $waitingForOpponent: boolean}>`
   display: grid;
   grid-template-columns: repeat(${(props) => props.$size}, auto);
+  ${(props) => props.$waitingForOpponent ? "pointer-events: none;" : ""}
 `;
 
 export const SquareStyled = styled.div<{$wasFencedBy: number}>`

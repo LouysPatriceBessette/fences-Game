@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import {
   setGameId,
+  setIamPlayer,
   setSocketInstance,
   setSocketLocalId,
   setSocketRemoteId,
@@ -84,6 +85,7 @@ export const SocketListen = () => {
             case 'connected-to-a-game':
               dispatch(setGameId(command.gameId))
               dispatch(setSocketRemoteId(command.otherPlayer))
+              dispatch(setIamPlayer(2))                         // TODO: This is not persistent on page reload...
               localStorage.setItem('gameId', command.gameId)
               break;
             

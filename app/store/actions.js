@@ -31,6 +31,9 @@ export const setFencedByP1 = (fencedByP1) =>
 export const setFencedByP2 = (fencedByP2) =>
   createAction(ACTION_TYPES.SET_FENCED_BY_P2, fencedByP2);
 
+export const setIamPlayer = (player) =>
+  createAction(ACTION_TYPES.SET_IAM_PLAYER, player);
+
 export const setSocketInstance = (socketInstance) =>
   createAction(ACTION_TYPES.SET_SOCKET_INSTANCE, socketInstance);
 

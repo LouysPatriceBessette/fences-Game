@@ -15,6 +15,7 @@ export const useFencedByP2 = () => useSelector((state) => state.game.fencedByP2)
 export const useOrigin = () => useSelector((state) => state.mouse.origin);
 export const useCanConnectWith = () => useSelector((state) => state.mouse.canConnectWith);
 
+export const useIamPlayer = () => useSelector((state) => state.socket.iamPlayer);
 export const useSocketInstance = () => useSelector((state) => state.socket.instance);
 export const useSocketLocalId = () => useSelector((state) => state.socket.localId);
 export const useSocketRemoteId = () => useSelector((state) => state.socket.remoteId);

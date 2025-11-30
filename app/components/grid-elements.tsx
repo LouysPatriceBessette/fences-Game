@@ -1,4 +1,4 @@
-import { GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
+import { GridContainerStyled, GridOverlayStyled, GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
 
 import { useDispatch } from 'react-redux';
 import {
@@ -25,6 +25,8 @@ import {
 } from "../store/selectors";
 
 export const Grid = GridStyled
+export const GridContainer = GridContainerStyled
+export const GridOverlay = GridOverlayStyled
 
 export const Square = ({identifier}: {identifier: number}) => {
   const dispatch = useDispatch()
