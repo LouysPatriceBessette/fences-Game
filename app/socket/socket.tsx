@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import io from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import {
+  setGameId,
   setSocketInstance,
   setSocketLocalId,
-  // setSocketRemoteId,
+  setSocketRemoteId,
   setChatMessage,
-  toggleCurrentPlayer,
-  setUsedFences
+  refreshReduxStore,
 } from '../store/actions';
 import { Socket } from 'socket.io-client';
 
@@ -16,7 +16,6 @@ export const socketKill = (socket: Socket) => {
 }
 
 export const sendMessage = (socket: Socket, messageInput: string, setMessageInput: React.Dispatch<React.SetStateAction<string>>) => {
-  console.log('sendMessage', socket && messageInput)
   if (socket && messageInput) {
     socket.emit('message', messageInput);
     setMessageInput('');
@@ -56,11 +55,13 @@ export const SocketListen = () => {
           switch(command.action){
 
             case 'hello':
-              const savedSocketId = localStorage.getItem('socketId')
+              const savedSocketId = localStorage.getItem('socketId') ?? ''
+              const gameId = localStorage.getItem('gameId') ?? ''
 
               const reply = {
                 to: 'server',
                 action: 'refresh-id',
+                gameId: gameId,
                 oldSocketId: savedSocketId,
                 newSocketId: command.socketId,
               }
@@ -70,24 +71,34 @@ export const SocketListen = () => {
               break;
 
             case 'created-game':
+              dispatch(setGameId(command.gameId))
+              localStorage.setItem('gameId', command.gameId)
+              break;
 
-              // gameId TODO store gameId in localhost / redux
+            // Player 1
+            case 'player-joined-my-game':
+              dispatch(setSocketRemoteId(command.otherPlayer))
+              break;
+              
+            // Player 2
+            case 'connected-to-a-game':
+              dispatch(setGameId(command.gameId))
+              dispatch(setSocketRemoteId(command.otherPlayer))
+              localStorage.setItem('gameId', command.gameId)
+              break;
+            
+            // refresh redux (like on page reload)
+            case 'socket-id-refreshed':
+              dispatch(refreshReduxStore(command.redux))
               break;
           }
         }
 
         if(command.from !== 'player'){
           switch(command.action){
-    
-            // {from: "player", "action":"toggle-player"}
-            case 'toggle-player':
-              dispatch(toggleCurrentPlayer())
-              break;
-              
-            // {from: "player", "action":"move", "move":"V-2"}
-            case 'move':
-              console.log('Dispatching move', command.move)
-              dispatch(setUsedFences(command.move))
+
+            case 'update-other-player-redux':
+              dispatch(refreshReduxStore(command.redux))
               break;
           }
         }

@@ -10,6 +10,8 @@ import {
   setUsedFences,
 } from "../store/actions";
 import {
+  useChat,
+  useGame,
   useCurrentPlayer,
   useFencedByP1,
   useFencedByP2,
@@ -18,6 +20,8 @@ import {
   useUsedFences,
   useSize,
   useSocketInstance,
+  useSocketLocalId,
+  useSocketRemoteId,
 } from "../store/selectors";
 
 export const Grid = GridStyled
@@ -43,10 +47,10 @@ export const Square = ({identifier}: {identifier: number}) => {
   const wasFencedBy = wasFencedByP1 ? 1 : wasFencedByP2 ? 2 : 0
   if(isFenced && !wasFencedByP1 && !wasFencedByP2) {
     if(currentPlayer === 1) {
-      dispatch(setFencedByP1(identifier))
+      dispatch(setFencedByP2(identifier))
       dispatch(toggleCurrentPlayer(2))
     } else {
-      dispatch(setFencedByP2(identifier))
+      dispatch(setFencedByP1(identifier))
       dispatch(toggleCurrentPlayer(1))
     }
   }
@@ -59,6 +63,17 @@ export const Square = ({identifier}: {identifier: number}) => {
 export const Dot = ({identifier}:{identifier: number}) => {
   const dispatch = useDispatch()
   const socket = useSocketInstance()
+  const currentPlayer = useCurrentPlayer()
+
+  const chat = useChat()
+  const game = useGame()
+  const storeForBackend = {
+    chat: {...chat},
+    game: {...game},
+  }
+
+  const localPlayerId = useSocketLocalId()
+  const remotePlayerId = useSocketRemoteId()
 
   const canConnectWith = useCanConnectWith()
   const origin = useOrigin()
@@ -84,19 +99,31 @@ export const Dot = ({identifier}:{identifier: number}) => {
   const friends = [up, right, down, left]
 
   const resetTurn = (payload: string) => {
+    const nextPlayer = currentPlayer === 1 ? 2 : 1
+
     dispatch(setOrigin(-1))
     dispatch(setCanConnectWith([]))
+    dispatch(toggleCurrentPlayer(nextPlayer))
 
-    const command1 = {
-      action: 'move',
-      move: payload,
+    const storeToSend = {
+      ...storeForBackend,
+      game: {
+        ...storeForBackend.game,
+        currentPlayer: nextPlayer,
+        usedFences: [...storeForBackend.game.usedFences, payload],
+      }
     }
-    socket.emit('message', JSON.stringify(command1));
 
-    const command2 = {
-      action: 'toggle-player',
+    // Send a redux copy to to other player (and a copy will stay on the server)
+    const command = {
+      to: 'player',
+      gameId: storeToSend.game.gameId,
+      localPlayerId: localPlayerId,
+      remotePlayerId: remotePlayerId,
+      action: 'update-other-player-redux',
+      redux: storeToSend,
     }
-    socket.emit('message', JSON.stringify(command2));
+    socket.emit('message', JSON.stringify(command));
   }
   const dotClickHandler = () => {
     if(canConnectWith.length === 0 && origin === -1) {

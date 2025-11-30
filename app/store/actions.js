@@ -1,8 +1,14 @@
 import { ACTION_TYPES } from './types';
 import { createAction } from './utils';
 
+export const refreshReduxStore = (data) =>
+  createAction(ACTION_TYPES.REFRESH_REDUX_STORE, data);
+
 export const setGameSize = (size) =>
   createAction(ACTION_TYPES.SET_SIZE, size);
+
+export const setGameId = (gameId) =>
+  createAction(ACTION_TYPES.SET_GAME_ID, gameId);
 
 export const setGameover = (gameover) =>
   createAction(ACTION_TYPES.SET_GAMEOVER, gameover);
@@ -24,9 +30,6 @@ export const setFencedByP1 = (fencedByP1) =>
 
 export const setFencedByP2 = (fencedByP2) =>
   createAction(ACTION_TYPES.SET_FENCED_BY_P2, fencedByP2);
-
-export const resetMoves = () =>
-  createAction(ACTION_TYPES.RESET_MOVES);
 
 export const setSocketInstance = (socketInstance) =>
   createAction(ACTION_TYPES.SET_SOCKET_INSTANCE, socketInstance);

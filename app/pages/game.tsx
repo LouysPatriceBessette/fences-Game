@@ -1,7 +1,8 @@
-'use client'
+import { useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import {
   // setGameSize,
+  setGameId,
   setGameover,
 } from "../store/actions";
 import {
@@ -29,6 +30,14 @@ export const Game = () => {
   const dispatch = useDispatch()
 
   const currentPlayer = useCurrentPlayer()
+
+  useEffect(() => {
+    const storedGameId = localStorage.getItem('gameId')
+    if(storedGameId) {
+      dispatch(setGameId(storedGameId))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // This will com from a user selection
   const size = useSize()

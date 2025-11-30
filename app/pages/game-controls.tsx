@@ -1,16 +1,21 @@
 import { Button } from "./game-controls.styled";
 import {
-  // setSocketInstance,
+  setGameId,
 } from '../store/actions';
 import {
   useSocketInstance,
-  useSocketLocalId
+  useSocketLocalId,
+  useGameId,
 } from "../store/selectors";
+import { useDispatch } from "react-redux";
 
 
 export const GameControls = () => {
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
+  const gameId = useGameId()
+
+  const dispatch = useDispatch()
 
   const createGame = () => {
     const request = {
@@ -22,39 +27,43 @@ export const GameControls = () => {
   }
 
   const joinGame = () => {
+    const promptAnswer = prompt('Enter game id')
+    const newGameId = promptAnswer && parseInt(promptAnswer)
 
-    const gameId = prompt('Enter game id')
-    if(gameId && !isNaN(parseInt(gameId))) {
-
+    if(newGameId && !isNaN(newGameId) && newGameId > 0) {
       const request = {
         to: 'server',
         action: 'join-game',
         socketId: socketId,
-        gameId: gameId
+        gameId: newGameId
       }
+      dispatch(setGameId(newGameId))
       socket.emit('message', JSON.stringify(request))
-    } else {
+    } else if(promptAnswer !== null) {
       alert('Invalid game id')
     }
   }
 
   return (<>
     <div>
-      <Button onClick={() => localStorage.clear()}>
+      <Button onClick={() => {
+        localStorage.clear()
+        window.location.reload()
+      }}>
         Clear localStorage
       </Button>
 
-      <Button
+      {gameId === -1 ?<Button
         onClick={createGame}
       >
         Create Game
-      </Button>
+      </Button> : <span>End Game? </span>}
 
-      <Button
+      {gameId === -1 ? <Button
         onClick={joinGame}
       >
         Join Game
-      </Button>
+      </Button> : <span>Game ID: {gameId}</span>}
     </div>
   </>
   )

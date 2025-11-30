@@ -1,4 +1,3 @@
-// pages/index.js
 import { useState } from 'react';
 import {
   useSocketInstance,
@@ -28,7 +27,6 @@ export const Chat = () => {
           type="text"
           value={messageInput}
           onKeyUp={(event) => {
-            console.log(event.key)
             if(event.key === 'Enter') {
               sendMessageHandler();
             }
