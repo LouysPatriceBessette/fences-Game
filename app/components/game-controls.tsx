@@ -46,6 +46,8 @@ export const GameControls = () => {
     }
   }
 
+  const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
+  
   return (<>
     <div>
       <Button onClick={() => {
@@ -65,7 +67,7 @@ export const GameControls = () => {
         onClick={joinGame}
       >
         Join Game
-      </Button> : <span>Game ID: {gameId}</span>}
+      </Button> : <span>Game ID: {gameIdString}</span>}
     </div>
   </>
   )
