@@ -94,6 +94,10 @@ export const SocketListen = () => {
               dispatch(refreshReduxStore(command.redux))
               dispatch(setIamPlayer(command.youArePlayer))
               break;
+
+            case 'remote-player-id-updated':
+              dispatch(setSocketRemoteId(command.newRemoteSocketId))
+              break;
           }
         }
 

@@ -67,18 +67,32 @@ app.prepare().then(() => {
       if(parsed && parsed.to === 'server') {
         console.log('Message to server', msg)
 
-        // TODO: SHOULD update the other player too! Take it from the game.
-        //
-
         // REFRESH SOCKET ID
         if(games.length && parsed.action === 'refresh-id' && parsed.oldSocketId && parsed.newSocketId){
           
           // The use is to resync with a game
           const userGames = games.filter((game) => game.players.includes(parsed.oldSocketId))
 
+          const otherPlayersToNotify = {}
           if(userGames) {
             userGames.forEach((game) => {
-              game.players[game.players.indexOf(parsed.oldSocketId)] = parsed.newSocketId
+              const indexToReplace = game.players.indexOf(parsed.oldSocketId)
+              const otherPlayerId = game.players[indexToReplace === 0 ? 1 : 0]
+
+              // Replace the ID
+              game.players[indexToReplace] = parsed.newSocketId
+
+              // Get the other player(s)
+              otherPlayersToNotify[otherPlayerId] = true
+            })
+
+            // Notify the other player(s)
+            Object.keys(otherPlayersToNotify).forEach((otherPlayerId) => {
+              io.to(otherPlayerId).emit('message', JSON.stringify({
+                from: 'server',
+                action: 'remote-player-id-updated',
+                newRemoteSocketId: parsed.newSocketId
+              }))
             })
           }
 
