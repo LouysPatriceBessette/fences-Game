@@ -28,6 +28,7 @@ export const ChatInput = styled.input`
   border-radius: 4px;
   border: 1px solid #ccc;
   margin-right: 1em;
+  ${(props) => props.disabled ? 'cursor: not-allowed;' : ''}
 `;
 
 export const ChatButton = styled.button`
@@ -37,5 +38,6 @@ export const ChatButton = styled.button`
   border-radius: 4px;
   corner-shape: squircle;
   cursor: pointer;
+  ${(props) => props.disabled ? 'cursor: not-allowed;' : ''}
 `;
 

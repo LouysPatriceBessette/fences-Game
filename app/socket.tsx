@@ -18,9 +18,9 @@ export const socketKill = (socket: Socket) => {
   socket.disconnect();
 }
 
-export const sendMessage = (socket: Socket, message: string, setMessageInput: React.Dispatch<React.SetStateAction<string>>) => {
-  if (socket && message) {
-    socket.emit('message', JSON.stringify({from: 'chat', to: 'chat', message}));
+export const sendMessage = (socket: Socket, gameId: number, message: string, setMessageInput: React.Dispatch<React.SetStateAction<string>>) => {
+  if (socket && gameId !== -1 && message) {
+    socket.emit('message', JSON.stringify({from: 'chat', to: 'chat', gameId, message}));
     setMessageInput('');
   }
 };

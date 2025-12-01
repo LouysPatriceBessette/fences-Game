@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import {
   useSocketInstance,
-  useChatMessages
+  useChatMessages,
+  useIamPlayer,
+  useGameId,
 } from '../store/selectors';
 import { sendMessage } from '../socket';
 import { ChatHeader, ChatMessagesContainer, ChatInputsContainer, ChatInput, ChatButton } from './chat.styled';
@@ -10,8 +12,10 @@ export const Chat = () => {
   const [messageInput, setMessageInput] = useState('');
   const messages = useChatMessages();
   const socket = useSocketInstance();
+  const iamPlayer = useIamPlayer();
+  const gameId = useGameId();
 
-  const sendMessageHandler = () => sendMessage(socket, messageInput, setMessageInput);
+  const sendMessageHandler = () => sendMessage(socket, gameId, `Player${iamPlayer}: ${messageInput}`, setMessageInput);
 
   return (
     <>
@@ -25,6 +29,7 @@ export const Chat = () => {
       <ChatInputsContainer>
         <ChatInput
           type="text"
+          disabled={gameId === -1}
           value={messageInput}
           onKeyUp={(event) => {
             if(event.key === 'Enter') {
@@ -35,7 +40,7 @@ export const Chat = () => {
             setMessageInput(event.target.value)
           }}
         />
-        <ChatButton onClick={sendMessageHandler}>Send</ChatButton>
+        <ChatButton onClick={sendMessageHandler} disabled={gameId === -1}>Send</ChatButton>
       </ChatInputsContainer>
     </>
   );

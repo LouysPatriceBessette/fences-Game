@@ -61,9 +61,18 @@ app.prepare().then(() => {
       //
       // =========================================================== CHAT MESSAGES
       //
-      else if(parsed.to === 'chat') {
-        console.log(headerWrap(`> Message to chat`, msg))
-        io.emit('message', msg);
+      else if(parsed.to === 'chat' && parsed.gameId) {
+        const game = games.find((game) => game.id === parseInt(parsed.gameId))
+        if(!game){
+          console.log(headerWrap('Game not found for chat message', msg))
+          return
+        } else {
+          console.log(headerWrap(`> Message to chat`, msg))
+          const players = game.players;
+          players.forEach((playerId) => {
+            io.to(playerId).emit('message', msg);
+          });
+        }
       }
 
       //
