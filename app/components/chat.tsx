@@ -3,7 +3,7 @@ import {
   useSocketInstance,
   useChatMessages
 } from '../store/selectors';
-import { sendMessage } from './socket';
+import { sendMessage } from '../socket';
 import { ChatHeader, ChatMessagesContainer, ChatInputsContainer, ChatInput, ChatButton } from './chat.styled';
 
 export const Chat = () => {

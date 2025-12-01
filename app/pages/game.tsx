@@ -13,7 +13,7 @@ import {
   useFencedByP2,
 } from "../store/selectors";
 
-import { GameControls } from "./game-controls";
+import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
 import {
   PageContainer,

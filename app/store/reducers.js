@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { ACTION_TYPES } from './types';
+import { ACTION_TYPES } from '../basics/constants';
 
 
 export const INITIAL_STATE = {

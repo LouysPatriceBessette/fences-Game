@@ -23,7 +23,7 @@ import {
   useSocketLocalId,
   useSocketRemoteId,
 } from "../store/selectors";
-import { SOCKET_ACTIONS } from "@/constants/constants";
+import { SOCKET_ACTIONS } from "../basics/constants";
 
 export const Grid = GridStyled
 export const GridContainer = GridContainerStyled

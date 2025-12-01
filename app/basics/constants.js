@@ -32,25 +32,24 @@ export const headerWrap = (text, ...rest) => {
   return `\n\n${LOG_COLORS.WHITE}=====\n${LOG_COLORS.ORANGE}${text}\n${LOG_COLORS.GREY}${rest}\n${LOG_COLORS.WHITE}=====${LOG_COLORS.RESET}\n\n`;
 }
 
-export const tryParseJson = (string) => {
-  let json
-  try{
-    json = JSON.parse(string)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch(error){
-    json = null
-  }
+export const ACTION_TYPES = {
 
-  return json
-}
+  REFRESH_REDUX_STORE: 'REFRESH_REDUX_STORE',
 
-export const randomGameId = (games) => {
-  const number = Math.floor(Math.random() * 1000000)
+  SET_SIZE: 'SET_SIZE',
+  SET_GAME_ID: 'SET_GAME_ID',
+  SET_GAMEOVER: 'SET_GAMEOVER',
+  TOGGLE_CURRENT_PLAYER: 'TOGGLE_CURRENT_PLAYER',
+  SET_ORIGIN: 'SET_ORIGIN',
+  SET_CAN_CONNECT_WITH: 'SET_CAN_CONNECT_WITH',
+  SET_USED_FENCES: 'SET_USED_FENCES',
+  SET_FENCED_BY_P1: 'SET_FENCED_BY_P1',
+  SET_FENCED_BY_P2: 'SET_FENCED_BY_P2',
 
-  // Check if already exist
-  if(games && games.find(game => game.id === number)) {
-    return randomGameId()
-  } else {
-    return number
-  }
+  SET_IAM_PLAYER: 'SET_IAM_PLAYER',
+  SET_SOCKET_INSTANCE: 'SET_SOCKET_INSTANCE',
+  SET_SOCKET_LOCAL_ID: 'SET_SOCKET_LOCAL_ID',
+  SET_SOCKET_REMOTE_ID: 'SET_SOCKET_REMOTE_ID',
+  
+  SET_CHAT_MESSAGE: 'SET_CHAT_MESSAGE',
 }

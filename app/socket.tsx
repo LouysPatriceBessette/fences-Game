@@ -9,9 +9,10 @@ import {
   setSocketRemoteId,
   setChatMessage,
   refreshReduxStore,
-} from '../store/actions';
+} from './store/actions';
 import { Socket } from 'socket.io-client';
-import { SOCKET_ACTIONS, tryParseJson } from '../../constants/constants';
+import { SOCKET_ACTIONS } from './basics/constants';
+import { tryParseJson } from './basics/utils';
 
 export const socketKill = (socket: Socket) => {
   socket.disconnect();

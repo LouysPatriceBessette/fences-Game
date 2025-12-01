@@ -4,10 +4,12 @@ import next from 'next';
 import {
   LOG_COLORS,
   headerWrap,
+  SOCKET_ACTIONS,
+} from './app/basics/constants.js';
+import {
   tryParseJson,
   randomGameId,
-  SOCKET_ACTIONS,
-} from './constants/constants.js';
+} from './app/basics/utils.js';
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });

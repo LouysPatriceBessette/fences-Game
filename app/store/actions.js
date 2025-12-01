@@ -1,5 +1,5 @@
-import { ACTION_TYPES } from './types';
-import { createAction } from './utils';
+import { ACTION_TYPES } from '../basics/constants';
+import { createAction } from '../basics/utils';
 
 export const refreshReduxStore = (data) =>
   createAction(ACTION_TYPES.REFRESH_REDUX_STORE, data);
