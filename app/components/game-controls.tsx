@@ -22,7 +22,7 @@ export const GameControls = () => {
 
   const createGame = () => {
     let promptAnswer
-    if(!player1Name) {
+    if(!(player1Name === 'Player 1' ? '' : player1Name)) {
       promptAnswer = prompt('Enter your name')
     }
 
