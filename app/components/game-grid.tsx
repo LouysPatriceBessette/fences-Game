@@ -4,8 +4,8 @@ import {
   useGameId,
   useCurrentPlayer,
   useIamPlayer,
-  useSocketRemoteId,
   useGameover,
+  useSocketRemoteIsOnline,
 } from "../store/selectors";
 
 export const GameGrid = () => {
@@ -14,7 +14,7 @@ export const GameGrid = () => {
   const gameId = useGameId()
   const currentPlayer = useCurrentPlayer()
   const iamPlayer = useIamPlayer()
-  const remotePlayerId = useSocketRemoteId()
+  const remoteIsOnline = useSocketRemoteIsOnline()
   const gameover = useGameover()
   
   const dot = (key: number, id: number) => <Dot
@@ -97,7 +97,7 @@ export const GameGrid = () => {
   }
 
   const waitingForOpponentMove = currentPlayer !== iamPlayer
-  const waitingForOpponentJoin = remotePlayerId === '' && gameId !== -1
+  const waitingForOpponentJoin = remoteIsOnline === '' && gameId !== -1
   const waitingForOpponent = waitingForOpponentMove || waitingForOpponentJoin || gameId === -1 || gameover
   const waitingForOpponentMsg = waitingForOpponentJoin ? 'Awaiting opponent to join' : waitingForOpponentMove ? `Awaiting opponent's move` : gameover ? '' :'Create/join game first'
   return (

@@ -17,8 +17,49 @@ const handle = app.getRequestHandler();
 
 // While we do not have a DB yet...
 const games = []
+const pings = []
 
+const checkPings = (io, fromPlayerId) => {
+  const pingIndex = pings.findIndex((ping) => ping.from === fromPlayerId)
+  if(pingIndex !== -1){
+    const ping = pings[pingIndex]
+    console.log(headerWrap(`> Checking ping from ${fromPlayerId}`, `Ping found: ${JSON.stringify(ping)}`))
 
+    // Notify that the player is offline
+    const newMsg = {
+      from: 'server',
+      to: 'player',
+      action: SOCKET_ACTIONS.PONG,
+      isOnline: false,
+    }
+
+    // Send the message
+    io.to(ping.to).emit('message', JSON.stringify(newMsg))
+
+    // Remove the ping from the list
+    pings.splice(pingIndex, 1)
+  } else {
+    console.log(headerWrap(`> Checking ping from ${fromPlayerId}`, `No ping found.`))
+  }
+}
+
+const clearPingTimeout = (io, fromPlayerId) => {
+  const pingIndex = pings.findIndex((ping) => ping.from === fromPlayerId)
+  if(pingIndex !== -1){
+    clearTimeout(pings[pingIndex].timeoutRef)
+    pings.splice(pingIndex, 1)
+  }
+}
+
+const getOtherPlayerId = (gameId, playerId) => {
+  const game = games.find((game) => game.id === parseInt(gameId))
+  if(game && game.players.length === 2){
+    const indexOfPlayer = game.players.indexOf(playerId)
+    return game.players[indexOfPlayer === 0 ? 1 : 0]
+  }
+
+  return null
+}
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
@@ -89,7 +130,6 @@ app.prepare().then(() => {
 
           switch(parsed.action){
             case SOCKET_ACTIONS.REFRESH_ID:
-
               if(games.length && parsed.oldSocketId && parsed.newSocketId){
                 // The use is to resync with a game
                 const userGames = games.filter((game) => game.players.includes(parsed.oldSocketId))
@@ -104,7 +144,9 @@ app.prepare().then(() => {
                     game.players[indexToReplace] = parsed.newSocketId
 
                     // Get the other player(s)
-                    otherPlayersToNotify[otherPlayerId] = true
+                    if(otherPlayerId){
+                      otherPlayersToNotify[otherPlayerId] = true
+                    }
                   })
 
                   // Notify the other player(s)
@@ -126,9 +168,10 @@ app.prepare().then(() => {
                   io.to(parsed.newSocketId).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
-                    action: SOCKET_ACTIONS.LOCAL_SOCKET_ID_REFRESHED,
-                    ...currentGame && {redux: currentGame.redux},
-                    ...currentGame && {youArePlayer: currentGame.players.indexOf(parsed.newSocketId) + 1},
+                    action: SOCKET_ACTIONS.SOCKET_ID_REFRESHED,
+                    redux: currentGame.redux,
+                    youArePlayer: currentGame.players.indexOf(parsed.newSocketId) + 1,
+                    playerNames: [currentGame.player1Name, currentGame.player2Name],
                   }))
                 } else {
                   io.to(parsed.newSocketId).emit('message', JSON.stringify({
@@ -146,10 +189,63 @@ app.prepare().then(() => {
                 }
               break;
 
+            case SOCKET_ACTIONS.PING:
+              console.log('Ping/Pong between players', msg)
+
+              const pingOtherPlayerId = getOtherPlayerId(parsed.gameId, parsed.iamPlayerId)
+
+              if(pingOtherPlayerId){
+                const forwardedPing = JSON.stringify({
+                  from: 'server',
+                  to: 'player',
+                  action: SOCKET_ACTIONS.PING,
+                  gameId: parsed.gameId,
+                })
+
+                pings.push({
+                  from: parsed.iamPlayerId,
+                  to: pingOtherPlayerId,
+                  timeoutRef: setTimeout(() => checkPings(io, parsed.iamPlayerId), 1000),
+                })
+
+                io.to(pingOtherPlayerId).emit('message', forwardedPing)
+
+                // Return pong now
+              } else {
+                const immediateResponse = JSON.stringify({
+                  from: 'server',
+                  to: 'player',
+                  action: SOCKET_ACTIONS.PONG,
+                  isOnline: false,
+                })
+
+                io.to(parsed.iamPlayerId).emit('message', immediateResponse)
+              }
+              
+              break;
+
+            case SOCKET_ACTIONS.PONG:
+              console.log('Ping/Pong between players', msg)
+
+              const pongOtherPlayerId = getOtherPlayerId(parsed.gameId, parsed.iamPlayerId)
+
+              clearPingTimeout(io, pongOtherPlayerId)
+
+              const forwardedPong = JSON.stringify({
+                from: 'server',
+                to: 'player',
+                action: SOCKET_ACTIONS.PONG,
+                isOnline: true,
+              })
+
+              io.to(pongOtherPlayerId).emit('message', forwardedPong)
+              break;
+
             case SOCKET_ACTIONS.CREATE_GAME:
               const game = {
                 id: randomGameId(games),
                 players: [parsed.socketId],
+                player1Name: parsed.player1Name,
               }
               games.push(game)
               console.log(`${LOG_COLORS.INFO}> player1 created game ${game.id}${LOG_COLORS.WHITE}`, game)
@@ -168,27 +264,31 @@ app.prepare().then(() => {
 
                 if(game){
 
-                  const player1 = game.players[0]
-                  const player2 = parsed.socketId
+                  const player1Id = game.players[0]
+                  const player2Id = parsed.socketId
 
-                  game.players.push(player2)
+                  game.players.push(player2Id)
+                  game.player2Name = parsed.player2Name
                   console.log(`${LOG_COLORS.INFO}> Player2 joined game ${game.id}${LOG_COLORS.WHITE}`, game)
 
                   // Confirm join to player2
-                  io.to(player2).emit('message', JSON.stringify({
+                  io.to(player2Id).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
                     action: SOCKET_ACTIONS.CONNECTED_TO_A_GAME,
                     gameId: game.id,
-                    otherPlayer: player1,
+                    player1Name: game.player1Name,
+                    player1Id: player1Id,
                   }))
 
                   // Notify player1
-                  io.to(player1).emit('message', JSON.stringify({
+                  io.to(player1Id).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
                     action: SOCKET_ACTIONS.PLAYER_JOINED_MY_GAME,
-                    otherPlayer: player2,
+                    otherPlayer: player2Id,
+                    player2Name: game.player2Name,
+                    player2Id: player2Id,
                   }))
                 } else {
 
@@ -210,15 +310,15 @@ app.prepare().then(() => {
         }
 
         if(parsed.to === 'player') {
-          console.log(`${LOG_COLORS.INFO}> Message to a specific player${LOG_COLORS.WHITE}`, msg)
 
           switch(parsed.action){
             case SOCKET_ACTIONS.UPDATE_OTHER_PLAYER_REDUX:
-              if(parsed.gameId){
-                const game = games.find((game) =>
-                  game.players.includes(parsed.localPlayerId) &&
-                  game.players.includes(parsed.localPlayerId) &&
-                  game.id === parsed.gameId)
+              console.log(headerWrap(`> Update other player's redux`, msg))
+
+              const updateReduxOtherPlayerId = getOtherPlayerId(parsed.gameId, parsed.iamPlayerId)
+
+              if(updateReduxOtherPlayerId){
+                const game = games.find((game) => game.id === parsed.gameId)
 
                 if(game){
                   game.redux = parsed.redux
@@ -228,7 +328,7 @@ app.prepare().then(() => {
                   games[gameIndex] = game
 
                   // Send to the other player
-                  io.to(parsed.remotePlayerId).emit('message', msg)
+                  io.to(updateReduxOtherPlayerId).emit('message', msg)
                 }
               }
               break;
@@ -241,7 +341,8 @@ app.prepare().then(() => {
 
         if(parsed.to === 'chat') {
           console.log(headerWrap(`> Message to chat`, msg))
-          io.emit('message', msg);}
+          io.emit('message', msg);
+        }
       }
     });
 
@@ -252,6 +353,13 @@ app.prepare().then(() => {
     socket.on('disconnect', () => {
       console.log(`${LOG_COLORS.INFO}> User disconnected ${socket.id}${LOG_COLORS.WHITE}`);
 
+      const otherPlayerId = getOtherPlayerId(parsed.gameId, socket.id)
+
+      const msg = {
+        to: 'player',
+        action: SOCKET_ACTIONS.OTHER_PLAYER_DISCONNECTED,
+      }
+      io.to(otherPlayerId).emit('message', msg)
       // TODO: Notify the other player... Online status!!
     });
   });

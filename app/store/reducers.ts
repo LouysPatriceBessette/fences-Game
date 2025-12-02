@@ -10,8 +10,9 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
   game: {
     gameId: -1,
     size: 3,
-    player1Name: 'Player 1',
-    player2Name: 'Player 2',
+    localPlayerName: 'Player 1',
+    remotePlayerName: 'Player 2',
+    iamPlayer: 1,
     currentPlayer: 1,
     gameover: false,
     usedFences: [],
@@ -23,10 +24,9 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     canConnectWith: [],
   },
   socket: {
-    iamPlayer: 1,
     instance: null,
     localId: '',
-    remoteId: '',
+    remoteIsOnline: false,
   },
 };
 
@@ -57,15 +57,20 @@ export const gameReducer = (state = INITIAL_STATE.game, action: {type: string, p
         ...state,
         size: payload,
       };
-    case ACTION_TYPES.SET_PLAYER_1_NAME:
+    case ACTION_TYPES.SET_IAM_PLAYER:
       return {
         ...state,
-        player1Name: payload,
+        iamPlayer: payload,
+    }
+    case ACTION_TYPES.SET_LOCAL_PLAYER_NAME:
+      return {
+        ...state,
+        localPlayerName: payload,
       };
-    case ACTION_TYPES.SET_PLAYER_2_NAME:
+    case ACTION_TYPES.SET_REMOTE_PLAYER_NAME:
       return {
         ...state,
-        player2Name: payload,
+        remotePlayerName: payload,
       };
     case ACTION_TYPES.SET_GAME_ID:
       return {
@@ -140,11 +145,6 @@ export const socketReducer = (state = INITIAL_STATE.socket, action: {type: strin
   const { type, payload } = action
 
   switch (type) {
-    case ACTION_TYPES.SET_IAM_PLAYER:
-      return {
-        ...state,
-        iamPlayer: payload,
-    }
     case ACTION_TYPES.SET_SOCKET_INSTANCE:
       return {
         ...state,
@@ -155,10 +155,10 @@ export const socketReducer = (state = INITIAL_STATE.socket, action: {type: strin
         ...state,
         localId: payload,
       }
-    case ACTION_TYPES.SET_SOCKET_REMOTE_ID:
+    case ACTION_TYPES.SET_REMOTE_IS_ONLINE:
       return {
         ...state,
-        remoteId: payload,
+        remoteIsOnline: payload,
       }
     default:
       return state;

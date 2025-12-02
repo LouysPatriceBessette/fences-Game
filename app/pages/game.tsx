@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import {
   // setGameSize,
-  setPlayer1Name,
+  setLocalPlayerName,
   setGameId,
   setGameover,
 } from "../store/actions";
@@ -16,6 +16,8 @@ import {
   useIamPlayer,
   useFencedByP1,
   useFencedByP2,
+  useSocketRemoteIsOnline,
+  useSocketInstance,
 } from "../store/selectors";
 
 import { GameControls } from "../components/game-controls";
@@ -31,19 +33,45 @@ import {
   GameGridContainer,
   GameOver,
 } from "../components/page-elements.styled";
+import { SOCKET_ACTIONS } from "../basics/constants";
 
 export const Game = () => {
 
+  const socket = useSocketInstance()
   const dispatch = useDispatch()
 
   const currentPlayer = useCurrentPlayer()
+  const remoteIsOnline = useSocketRemoteIsOnline()
+  const iamPlayer = useIamPlayer()
+  const gameId = useGameId()
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if(gameId && socket){
+      interval = setInterval(() => {
+        socket.emit('message', JSON.stringify({
+          from: 'player',
+          to: 'server',
+          action: SOCKET_ACTIONS.PING,
+          gameId: gameId,
+          iamPlayerId: socket.id,
+        }))
+      }, 10000)
+    } else {
+      // @ts-expect-error No error here!
+      clearInterval(interval)
+    }
+
+    return () => clearInterval(interval)
+   
+  }, [gameId, socket])
 
   useEffect(() => {
     const storedGameId = localStorage.getItem('gameId')
     const player1Name = localStorage.getItem('player1Name')
 
     if(player1Name) {
-      dispatch(setPlayer1Name(player1Name))
+      dispatch(setLocalPlayerName(player1Name))
     }
     if(storedGameId) {
       dispatch(setGameId(storedGameId))
@@ -51,12 +79,10 @@ export const Game = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // This will com from a user selection
+  // This will come from a user selection
   const size = useSize()
-  const iamPlayer = useIamPlayer()
   const player1Name = usePlayer1Name()
   const player2Name = usePlayer2Name()
-  const gameId = useGameId()
   const finalCount = Math.pow(size -1, 2)
 
   const fencedByP1 = useFencedByP1()
@@ -73,20 +99,20 @@ export const Game = () => {
       <PlayersHeader>
         <Player>
           <PlayerNameContainer>
-            <PlayerOnlineIndicator $online={iamPlayer === 1} /> {player1Name}
+            <PlayerOnlineIndicator $online={iamPlayer === 1 || remoteIsOnline} /> {player1Name}
             </PlayerNameContainer>
           <PlayerScore color='green'>
             {fencedByP1.length}
           </PlayerScore>
         </Player>
 
-        <CurrentTurn $visible={!gameover || gameId === -1}>
+        <CurrentTurn $hidden={gameId === -1 || remoteIsOnline === '' || gameover}>
           { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
         </CurrentTurn>
 
         <Player>
           <PlayerNameContainer>
-            <PlayerOnlineIndicator $online={iamPlayer === 2} /> {player2Name}
+            <PlayerOnlineIndicator $online={iamPlayer === 2 || remoteIsOnline} /> {player2Name}
             </PlayerNameContainer>
           <PlayerScore color='blue'>
             {fencedByP2.length}

@@ -7,11 +7,14 @@ export const refreshReduxStore = (data) =>
 export const setGameSize = (size) =>
   createAction(ACTION_TYPES.SET_SIZE, size);
 
-export const setPlayer1Name = (name) =>
-  createAction(ACTION_TYPES.SET_PLAYER_1_NAME, name);
+// export const setIAmGameCreator = () =>
+//   createAction(ACTION_TYPES.SET_I_AM_GAME_CREATOR);
 
-export const setPlayer2Name = (name) =>
-  createAction(ACTION_TYPES.SET_PLAYER_2_NAME, name);
+export const setLocalPlayerName = (name) =>
+  createAction(ACTION_TYPES.SET_LOCAL_PLAYER_NAME, name);
+
+export const setRemotePlayerName = (name) =>
+  createAction(ACTION_TYPES.SET_REMOTE_PLAYER_NAME, name);
 
 export const setGameId = (gameId) =>
   createAction(ACTION_TYPES.SET_GAME_ID, gameId);
@@ -46,8 +49,8 @@ export const setSocketInstance = (socketInstance) =>
 export const setSocketLocalId = (socketId) =>
   createAction(ACTION_TYPES.SET_SOCKET_LOCAL_ID, socketId);
 
-export const setSocketRemoteId = (socketId) =>
-  createAction(ACTION_TYPES.SET_SOCKET_REMOTE_ID, socketId);
+export const setRemoteIsOnline = (isOnline) =>
+  createAction(ACTION_TYPES.SET_REMOTE_IS_ONLINE, isOnline);
 
 export const setChatMessage = (message) =>
   createAction(ACTION_TYPES.SET_CHAT_MESSAGE, message);

@@ -6,10 +6,13 @@ import {
   setIamPlayer,
   setSocketInstance,
   setSocketLocalId,
-  setSocketRemoteId,
+  setLocalPlayerName,
   setChatMessage,
   refreshReduxStore,
+  setRemoteIsOnline,
+  setRemotePlayerName,
 } from './store/actions';
+
 import { Socket } from 'socket.io-client';
 import { SOCKET_ACTIONS } from './basics/constants';
 import { tryParseJson } from './basics/utils';
@@ -48,8 +51,6 @@ export const SocketListen = () => {
     });
 
     socket.on('message', (msg) => {
-      console.log('Message received:', msg);
-
       const command = tryParseJson(msg)
 
       if(command){
@@ -65,7 +66,7 @@ export const SocketListen = () => {
               const reply = {
                 from: 'player',
                 to: 'server',
-                action: 'refresh-id',
+                action: SOCKET_ACTIONS.REFRESH_ID,
                 gameId: gameId,
                 oldSocketId: savedSocketId,
                 newSocketId: command.socketId,
@@ -82,14 +83,16 @@ export const SocketListen = () => {
 
             // Player 1
             case SOCKET_ACTIONS.PLAYER_JOINED_MY_GAME:
-              dispatch(setSocketRemoteId(command.otherPlayer))
+              dispatch(setRemoteIsOnline(true))
+              dispatch(setRemotePlayerName(command.player2Name))
               break;
               
             // Player 2
             case SOCKET_ACTIONS.CONNECTED_TO_A_GAME:
+              dispatch(setRemoteIsOnline(true))
               dispatch(setGameId(command.gameId))
-              dispatch(setSocketRemoteId(command.otherPlayer))
-              dispatch(setIamPlayer(2))                         // TODO: This is not persistent on page reload...
+              dispatch(setIamPlayer(2))
+              dispatch(setRemotePlayerName(command.player1Name))
               localStorage.setItem('gameId', command.gameId)
               break;
             
@@ -105,24 +108,47 @@ export const SocketListen = () => {
               // alert('The game you were in has been deleted from the server.')
               break;
 
-            // Refresh redux (like on page reload) - Ifs are in case the game does not exist on server
-            case SOCKET_ACTIONS.LOCAL_SOCKET_ID_REFRESHED:
-              if(command.redux) dispatch(refreshReduxStore(command.redux))
-              if(command.youArePlayer) dispatch(setIamPlayer(command.youArePlayer))
+            case SOCKET_ACTIONS.PING:
+              socket.emit('message', JSON.stringify({
+                from: 'player',
+                to: 'server',
+                action: SOCKET_ACTIONS.PONG,
+                gameId: command.gameId,
+                iamPlayerId: socket.id,
+              }))
               break;
 
-            case SOCKET_ACTIONS.REMOTE_SOCKET_ID_REFRESHED:
-              dispatch(setSocketRemoteId(command.newRemoteSocketId))
+            case SOCKET_ACTIONS.PONG:
+              dispatch(setRemoteIsOnline(command.isOnline))
+              break;
+
+            // Refresh redux (like on page reload) - Ifs are in case the game does not exist on server
+            case SOCKET_ACTIONS.SOCKET_ID_REFRESHED:
+              if(command.redux) dispatch(refreshReduxStore(command.redux))
+              dispatch(setIamPlayer(command.youArePlayer))
+              if(command.youArePlayer === 1){
+                dispatch(setLocalPlayerName(command.playerNames[0]))
+                dispatch(setRemotePlayerName(command.playerNames[1]))
+              } else {
+                dispatch(setLocalPlayerName(command.playerNames[1]))
+                dispatch(setRemotePlayerName(command.playerNames[0]))
+              }
+              break;
+
+            case SOCKET_ACTIONS.OTHER_PLAYER_DISCONNECTED: 
+              dispatch(setRemoteIsOnline(false))
               break;
           }
         }
 
-        if(command.from === 'player'){
+        if(command.from === 'player' && command.to === 'player'){
           switch(command.action){
 
             case SOCKET_ACTIONS.UPDATE_OTHER_PLAYER_REDUX:
               dispatch(refreshReduxStore(command.redux))
               break;
+
+            
           }
         }
 

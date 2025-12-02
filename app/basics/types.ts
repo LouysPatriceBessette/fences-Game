@@ -7,8 +7,9 @@ export type INITIAL_STATE_TYPE = {
   game: {
     gameId: number,
     size: number,
-    player1Name: string,
-    player2Name: string,
+    localPlayerName: string,
+    remotePlayerName: string,
+    iamPlayer: number,
     currentPlayer: number,
     gameover: false,
     usedFences: string[],
@@ -20,9 +21,8 @@ export type INITIAL_STATE_TYPE = {
     canConnectWith: string[],
   },
   socket: {
-    iamPlayer: number,
     instance: Socket | null,
     localId: string,
-    remoteId: string,
+    remoteIsOnline: boolean,
   },
 };

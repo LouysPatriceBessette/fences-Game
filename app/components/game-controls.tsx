@@ -1,61 +1,75 @@
 import { Button } from "./game-controls.styled";
 import {
   setGameId,
-  setPlayer1Name,
+  setLocalPlayerName,
 } from '../store/actions';
 import {
   useSocketInstance,
   useSocketLocalId,
   usePlayer1Name,
+  usePlayer2Name,
   useGameId,
 } from "../store/selectors";
 import { useDispatch } from "react-redux";
+import { SOCKET_ACTIONS } from "../basics/constants";
 
 
 export const GameControls = () => {
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
   const player1Name = usePlayer1Name()
+  const player2Name = usePlayer2Name()
   const gameId = useGameId()
 
   const dispatch = useDispatch()
 
   const createGame = () => {
     let promptAnswer
-    if(!(player1Name === 'Player 1' ? '' : player1Name)) {
+    if(player1Name === 'Player 1') {
       promptAnswer = prompt('Enter your name')
+      if(!promptAnswer) {
+        alert('Name is required to create a game')
+        return
+      }
+      dispatch(setLocalPlayerName(promptAnswer))
+      localStorage.setItem('player1Name', promptAnswer)
     }
-
-    if(!promptAnswer) {
-      alert('Name is required to create a game')
-      return
-    }
-    dispatch(setPlayer1Name(promptAnswer))
-    localStorage.setItem('player1Name', promptAnswer)
     const request = {
       from: 'player',
       to: 'server',
-      action: 'create-game',
+      action: SOCKET_ACTIONS.CREATE_GAME,
       socketId: socketId,
+      player1Name: promptAnswer,
     }
     socket.emit('message', JSON.stringify(request))
   }
 
   const joinGame = () => {
-    const promptAnswer = prompt('Enter game id')
-    const newGameId = promptAnswer && parseInt(promptAnswer)
+    let promptAnswerName
+    if(player2Name === 'Player 2') {
+      promptAnswerName = prompt('Enter your name')
+      if(!promptAnswerName) {
+        alert('Name is required to join a game')
+        return
+      }
+      dispatch(setLocalPlayerName(promptAnswerName))
+      localStorage.setItem('player2Name', promptAnswerName)
+    }
+    const promptAnswerGameId = prompt('Enter game id')
+    const newGameId = promptAnswerGameId && parseInt(promptAnswerGameId)
 
     if(newGameId && !isNaN(newGameId) && newGameId > 0) {
       const request = {
         from: 'player',
         to: 'server',
-        action: 'join-game',
+        action: SOCKET_ACTIONS.JOIN_GAME,
         socketId: socketId,
-        gameId: newGameId
+        gameId: newGameId,
+        player2Name: promptAnswerName,
       }
       dispatch(setGameId(newGameId))
       socket.emit('message', JSON.stringify(request))
-    } else if(promptAnswer !== null) {
+    } else if(promptAnswerGameId !== null) {
       alert('Invalid game id')
     }
   }

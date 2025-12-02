@@ -21,7 +21,6 @@ export const PlayerNameContainer = styled.div`
 export const Player = styled.div`
   display: flex;
   flex-direction: column;
-  // align-items: center;
 `
 
 export const PlayerScore = styled.div<{color: string}>`
@@ -45,14 +44,14 @@ export const PlayerOnlineIndicator = styled.div<{$online: boolean}>`
   background-color: ${(props) => props.$online ? 'green' : 'red'};
 `
 
-export const CurrentTurn = styled.div<{$visible: boolean}>`
+export const CurrentTurn = styled.div<{$hidden: boolean}>`
+  ${(props) => props.$hidden ? 'display: none;' : 'block'}
   text-align: center;
   font-weight: bold;
   font-size: 5em;
   & span{
     color: #fe7474ff;
   }
-    ${(props) => props.$visible ? 'display: none;' : ''}
 `
 
 export const GameGridContainer = styled.div`

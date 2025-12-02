@@ -21,7 +21,6 @@ import {
   useSize,
   useSocketInstance,
   useSocketLocalId,
-  useSocketRemoteId,
 } from "../store/selectors";
 import { SOCKET_ACTIONS } from "../basics/constants";
 
@@ -78,7 +77,6 @@ export const Dot = ({identifier}:{identifier: number}) => {
   }
 
   const localPlayerId = useSocketLocalId()
-  const remotePlayerId = useSocketRemoteId()
 
   const canConnectWith = useCanConnectWith()
   const origin = useOrigin()
@@ -124,8 +122,7 @@ export const Dot = ({identifier}:{identifier: number}) => {
       from: 'player',
       to: 'player',
       gameId: storeToSend.game.gameId,
-      localPlayerId: localPlayerId,
-      remotePlayerId: remotePlayerId,
+      iamPlayerId: localPlayerId,
       action: SOCKET_ACTIONS.UPDATE_OTHER_PLAYER_REDUX,
       redux: storeToSend,
     }
