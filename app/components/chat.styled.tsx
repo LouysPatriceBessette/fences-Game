@@ -41,3 +41,6 @@ export const ChatButton = styled.button`
   ${(props) => props.disabled ? 'cursor: not-allowed;' : ''}
 `;
 
+export const PlayerNameChatColor = styled.span<{playerNumber: number}>`
+  color: ${(props) => props.playerNumber === 1 ? 'green' : 'blue'};
+`;

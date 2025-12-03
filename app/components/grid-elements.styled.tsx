@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 export const GridContainerStyled = styled.div<{$waitingForOpponent: boolean}>`
   position: relative;
-  ${(props) => props.$waitingForOpponent ? "cursor: not-allowed;" : "cursor: pointer;"}
+  ${(props) => props.$waitingForOpponent ? "cursor: not-allowed;" : "cursor: auto;"}
 `
 
 export const GridOverlayStyled = styled.div<{$waitingForOpponent: boolean}>`
