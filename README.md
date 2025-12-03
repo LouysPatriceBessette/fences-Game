@@ -1,6 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dots and Boxes
+This is a rainy days camping game. I started coding it on **2025-11-27**.
 
-## Getting Started
+I used to call it *"jeux des p'tites lignes"* in French, which would translate to "little lines game"" in English.
+
+## How to play?
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hQdQWxQk8_A?si=2OSdoyprUf6NruJz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## More about this game
+Obviouly, I am not the inventor. In fact this is a **19th century** game.
+
+Have a look at this [Wikipedia](https://en.wikipedia.org/wiki/Dots_and_boxes) article.
+
+
+## My "work in progress" implementation
+I am focussing on playing **with a human** in real time. This is a **Socket challenge** more than coding a bot.
+
+My objective is to complete all the users management logic, since the game rules are simple and where implemented in less than 2 days.
+
+
+### TODO list, as of 2025-12-02:
+
+- [x] `n` x `n` grid layout
+- [x] Socket connections between players of a specific game id.
+- [x] Turns alternance, respecting the "additional turn" on drawing the 4^th^ line a square.
+- [x] Socket id refresh (and players registration to a game id update).
+- [x] Score count
+- [x] Players real time chat.
+- [x] Player names
+- [x] *Ping/Pong* web socket connections check to display acurate players online state.
+- [ ] Player selection for the grid size (on game creation) with a `x` x `y` grid instead od `n` x `n`.
+- [ ] Controls: Leave, drop, destroy or start a new game.
+- [ ] Share the game id (link or QR).
+- [ ] Play with an unknown player (if you have no friends available... or to resume a game dropped by your opponent).
+- [ ] A sympatic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
+
+
+### Instructions to run
 
 First, run the development server:
 
@@ -14,23 +50,4 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
