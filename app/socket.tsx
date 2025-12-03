@@ -138,6 +138,10 @@ export const SocketListen = () => {
             case SOCKET_ACTIONS.OTHER_PLAYER_DISCONNECTED: 
               dispatch(setRemoteIsOnline(false))
               break;
+
+            default:
+              console.log('Unknown server action:', command.action);
+              break;
           }
         }
 
@@ -148,7 +152,9 @@ export const SocketListen = () => {
               dispatch(refreshReduxStore(command.redux))
               break;
 
-            
+            default:
+              console.log('Unknown player-to-player action:', command.action);
+              break;
           }
         }
 
