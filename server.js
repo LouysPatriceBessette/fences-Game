@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import next from 'next';
@@ -11,6 +15,8 @@ import {
   randomGameId,
 } from './app/basics/utils.js';
 
+
+console.log('process.env.NODE_ENV ', process.env.NODE_ENV )
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
