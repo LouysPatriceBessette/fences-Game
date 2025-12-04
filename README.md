@@ -29,9 +29,11 @@ My objective is to complete all the users management logic, since the game rules
 - [x] Players real time chat.
 - [x] Player names
 - [x] *Ping/Pong* web socket connections check to display acurate players online state.
-- [ ] Player selection for the grid size (on game creation) with a `x` x `y` grid instead od `n` x `n`.
-- [x] Controls: Leave, destroy or start a new game.
+- [ ] Controls: Grid size (on game creation) with a `x` x `y` grid instead od `n` x `n`.
+- [x] Controls: Leave, re-join and destroy.
+- [ ] Controls: start a new game on game over.
 - [ ] Share the game id (link or QR).
+- [ ] Controls: Allow strangers to join new or unfinished game (since re-join works)
 - [ ] Play with an unknown player (if you have no friends available... or to resume a game dropped by your opponent).
 - [ ] A sympatic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
 
