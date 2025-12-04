@@ -132,6 +132,7 @@ export const SocketListen = () => {
               break;
             
             case SOCKET_ACTIONS.GAME_DESTROYED:
+              dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
               dispatch(setNameOfPlayer2('Player 2'))
               dispatch(setIamPlayer(1))
               dispatch(setGameId(-1))

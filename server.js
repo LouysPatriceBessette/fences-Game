@@ -454,9 +454,8 @@ app.prepare().then(() => {
                 return
               }
 
-              const gameToDestroyPlayersCount = gameToDestroy.players.length
-              if(gameToDestroyPlayersCount === 2){
-                console.log(`${LOG_COLORS.WARNING}> Game ${gameToDestroy.id} has ${gameToDestroyPlayersCount} players, cannot destroy${LOG_COLORS.WHITE}`, gameToDestroy)
+              if(gameToDestroy.players.indexOf('LEFT_GAME') === -1){
+                console.log(`${LOG_COLORS.WARNING}> Cannot destroy game ${gameToDestroy.id}${LOG_COLORS.WHITE}`, gameToDestroy)
                 return
               }
 
