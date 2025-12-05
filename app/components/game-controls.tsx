@@ -25,9 +25,6 @@ export const GameControls = () => {
   const player2Name = usePlayer2Name()
   const gameId = useGameId()
   const remoteIsOnline = useSocketRemoteIsOnline()
-
-  const mySocketId = useSocketLocalId()
-
   const dispatch = useDispatch()
 
   const createGame = () => {
@@ -112,7 +109,7 @@ export const GameControls = () => {
         action: SOCKET_ACTIONS.JOIN_GAME,
         socketId: socketId,
         gameId: newGameId,
-        player2Name: nameToUse,
+        newPlayerName: nameToUse,
       }
       dispatch(setGameId(newGameId))
       socket.emit('message', JSON.stringify(request))
@@ -142,8 +139,6 @@ export const GameControls = () => {
       }
       socket.emit('message', JSON.stringify(request))
   }
-
-  const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
 
   return (<>
     <div>
@@ -182,12 +177,6 @@ export const GameControls = () => {
         onClick={joinGame}
         text='Join Game'
       /> : <></>}
-    </div>
-    <div>
-      My Socket Id: {mySocketId}
-    </div>
-    <div>
-      Game ID: {gameIdString}
     </div>
   </>
   )

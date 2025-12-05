@@ -81,8 +81,43 @@ const clearPingTimeout = (io, fromPlayerId) => {
   }
 }
 
+const getGameById = (gameId) => {
+  if(!gameId){
+    console.log(headerWrap('getGameById', 'No gameId provided.'))
+    return
+  }
+  if(isNaN(gameId)){
+    console.log(headerWrap('getGameById', `GameId '${gameId}' is not a number.`))
+    return
+  }
+  
+  return games.find((game) => game.id === gameId)
+}
+
+const getGameByPlayerId = (playerId) => {
+  if(!playerId){
+    console.log(headerWrap('getGameByPlayerId', 'No PlayerId provided.'))
+    return
+  }
+  
+  return games.find((game) => game.players.includes(playerId))
+}
+
+const getGameIndex = (gameId) => {
+  if(!gameId){
+    console.log(headerWrap('getGameIndex', 'No gameId provided.'))
+    return
+  }
+  if(isNaN(gameId)){
+    console.log(headerWrap('getGameIndex', `GameId '${gameId}' is not a number.`))
+    return
+  }
+  
+  return games.findIndex((g) => g.id === gameId)
+}
+
 const getOtherPlayerId = (gameId, playerId) => {
-  const game = games.find((game) => game.id === parseInt(gameId))
+  const game = getGameById(parseInt(gameId))
   if(game && game.players.length === 2){
     const indexOfPlayer = game.players.indexOf(playerId)
     return game.players[indexOfPlayer === 0 ? 1 : 0]
@@ -133,12 +168,22 @@ app.prepare().then(() => {
       // =========================================================== CHAT MESSAGES
       //
       else if(parsed.to === 'chat' && parsed.gameId) {
-        const game = games.find((game) => game.id === parseInt(parsed.gameId))
+        const game = getGameById(parseInt(parsed.gameId))
         if(!game){
           console.log(headerWrap('Game not found for chat message', msg))
           return
         } else {
           console.log(headerWrap(`> Message to chat`, msg))
+
+
+          // Keep game messages
+          const game = getGameById(parsed.gameId)
+          const gameIndex = getGameIndex(game.id)
+
+          game.redux.chat.messages.push(parsed.message)
+          games[gameIndex] = game
+
+          // Send the message to both players
           const players = game.players;
           players.forEach((playerId) => {
             io.to(playerId).emit('message', msg);
@@ -185,7 +230,7 @@ app.prepare().then(() => {
                     }
 
                     // Update games
-                    const gameIndexToUpdate = games.findIndex((g) => g.id === game.id)
+                    const gameIndexToUpdate = getGameIndex(game.id)
                     games[gameIndexToUpdate] = game
                   })
 
@@ -202,7 +247,7 @@ app.prepare().then(() => {
 
                 let currentGame
                 if(parsed.gameId){
-                  currentGame = games.find((game) => game.id === parseInt(parsed.gameId))
+                  currentGame = getGameById(parseInt(parsed.gameId))
                 }
                 if(currentGame){
                   io.to(parsed.newSocketId).emit('message', JSON.stringify({
@@ -287,7 +332,7 @@ app.prepare().then(() => {
               const game = {
                 ...INITIAL_GAME_STATE,
                 id: randomGameId(games),
-                players: [parsed.socketId],
+                players: [parsed.socketId, 'FREE'],
                 player1Name: parsed.player1Name,
                 redux: {
                   ...INITIAL_GAME_STATE.redux,
@@ -310,79 +355,77 @@ app.prepare().then(() => {
 
             case SOCKET_ACTIONS.JOIN_GAME:
               if(parsed.gameId && parsed.socketId){
-                const game = games.find((game) => game.id === parseInt(parsed.gameId))
+                const game = getGameById(parseInt(parsed.gameId))
 
                 if(game){
 
                   // Check if one of the players left
-                  let freeSeat = ''
-                  if(game.players.includes('LEFT_GAME')) {
-                    freeSeat = '' + (game.players.indexOf('LEFT_GAME') +1)  // '1' or '2'
+                  let freeSeat
+                  if(game.players.includes('FREE')) {
+                    freeSeat = ['A', 'B'][game.players.indexOf('FREE')]  // A or B
                   }
 
-                  let playerAId = game.players[0]
-                  let playerBId = parsed.socketId
+                  if(!freeSeat){
+                    io.to(parsed.socketId).emit('message', JSON.stringify({
+                      from: 'server',
+                      to: 'player',
+                      action: SOCKET_ACTIONS.GAME_FULL,
+                    }))
+                    return
+                  }
 
-                  if(Boolean(freeSeat)){
-                    if(freeSeat === '1'){
-                      playerAId = parsed.socketId
-                      playerBId = game.players[1]
+                  // Normal join
+                  let ownerId = game.players[0]
+                  let joinerId = parsed.socketId
+                  
+                  // IsPlayer (1 or 2)
+                  let ownerSeat = 'A'
+                  let joinerSeat = 'B'
 
-                      game.player1Name = parsed.player2Name
-                    } else {
-                      playerAId = game.players[0]
-                      playerBId = parsed.socketId
+                  // If the joiner join a started game AND replaces the original player1
+                  if(freeSeat === 'A'){
+                    ownerId = game.players[1]
 
-                      game.player2Name = parsed.player2Name
-                    }
-                    game.players[Number(freeSeat) - 1] = parsed.socketId
+                    joinerSeat = 'A'
+                    ownerSeat = 'B'
 
+                    game.player1Name = parsed.newPlayerName
+                    game.player2Name = game.player1Name
                   } else {
-                    game.players.push(parsed.socketId)
-                    game.player2Name = parsed.player2Name
+                    // game.players.push(parsed.socketId)
+                    game.player2Name = parsed.newPlayerName
                   }
+
+                  game.players[freeSeat === 'A' ? 0 : 1] = parsed.socketId
 
                   // Update games
-                  const gameToUpdate = games.findIndex((game) => game.id === parseInt(parsed.gameId))
+                  const gameToUpdate = getGameIndex(parseInt(parsed.gameId))
                   games[gameToUpdate] = game
 
                   console.log(`${LOG_COLORS.INFO}> Player joined game ${game.id}${LOG_COLORS.WHITE}`, game)
 
-                  let joinerSeat
-                  let ownerSeat
-                  if(!Boolean(freeSeat)){
-                    joinerSeat = 2
-                    ownerSeat = 1
-                  } else {
-                    if(freeSeat === '1'){
-                      joinerSeat = 1
-                      ownerSeat = 2
-                    } else {
-                      joinerSeat = 2
-                      ownerSeat = 1                      
-                    }
-                  }
-
                   // Confirm join
-                  io.to(playerBId).emit('message', JSON.stringify({
+                  io.to(joinerId).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
                     action: SOCKET_ACTIONS.JOINED_A_GAME,
                     gameId: game.id,
                     player1Name: game.player1Name,
                     player2Name: game.player2Name,
-                    youArePlayer: joinerSeat,
+                    youArePlayer: joinerSeat === 'A' ? 1 : 2,
+                    currentPlayer: game.currentPlayer,
                     redux: game.redux,
                   }))
 
                   // Notify owner
-                  io.to(playerAId).emit('message', JSON.stringify({
+                  io.to(ownerId).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
                     action: SOCKET_ACTIONS.PLAYER_JOINED_MY_GAME,
                     player1Name: game.player1Name,
                     player2Name: game.player2Name,
-                    youArePlayer: ownerSeat,
+                    youArePlayer: ownerSeat === 'A' ? 1 : 2,
+                    currentPlayer: game.currentPlayer,
                     redux: game.redux,
                   }))
                 } else {
@@ -397,7 +440,7 @@ app.prepare().then(() => {
               break;
 
             case SOCKET_ACTIONS.LEAVE_GAME:
-              const gameToLeave = games.find((game) => game.id === parseInt(parsed.gameId))
+              const gameToLeave = getGameById(parseInt(parsed.gameId))
               if(!gameToLeave){
                 console.log(`${LOG_COLORS.WARNING}> Game ${gameToLeave.id} not found${LOG_COLORS.WHITE}`, gameToLeave)
                 return
@@ -415,7 +458,7 @@ app.prepare().then(() => {
                 return
               }
 
-              const gameHasAlreadyOnePlayerLeft = gameToLeave.players.indexOf('LEFT_GAME') !== -1
+              const gameHasAlreadyOnePlayerLeft = gameToLeave.players.indexOf('FREE') !== -1
               if(gameHasAlreadyOnePlayerLeft){
                 console.log(`${LOG_COLORS.WARNING}> Game ${gameToLeave.id} should be destroyed instead${LOG_COLORS.WHITE}`, gameToLeave)
                 return
@@ -428,10 +471,10 @@ app.prepare().then(() => {
               // const otherPlayerIs = leavingPlayerIs === 0 ? 1 : 0
  
               // Replace the leaving player id with a placeholder in the game players array
-              gameToLeave.players[leavingPlayerIs] = 'LEFT_GAME'
+              gameToLeave.players[leavingPlayerIs] = 'FREE'
 
               // Update the games
-              const gameIndex = games.findIndex((g) => g.id === gameToLeave.id)
+              const gameIndex = getGameIndex(gameToLeave.id)
               games[gameIndex] = gameToLeave
 
               console.log('games after update', games)
@@ -460,7 +503,7 @@ app.prepare().then(() => {
               break;
 
             case SOCKET_ACTIONS.DESTROY_GAME:
-              const gameToDestroy = games.find((game) => game.id === parseInt(parsed.gameId))
+              const gameToDestroy = getGameById(parseInt(parsed.gameId))
 
               const requestToDestroyComesFromPlayer = gameToDestroy.players.indexOf(parsed.socketId) !== -1
               if(!requestToDestroyComesFromPlayer){
@@ -468,13 +511,13 @@ app.prepare().then(() => {
                 return
               }
 
-              if(gameToDestroy.players.indexOf('LEFT_GAME') === -1){
+              if(gameToDestroy.players.indexOf('FREE') === -1){
                 console.log(`${LOG_COLORS.WARNING}> Cannot destroy game ${gameToDestroy.id}${LOG_COLORS.WHITE}`, gameToDestroy)
                 return
               }
 
               if(gameToDestroy){
-                const gameIndex = games.findIndex((g) => g.id === gameToDestroy.id)
+                const gameIndex = getGameIndex(gameToDestroy.id)
                 games.splice(gameIndex, 1)
 
                 io.to(parsed.socketId).emit('message', JSON.stringify({
@@ -500,13 +543,13 @@ app.prepare().then(() => {
               const updateReduxOtherPlayerId = getOtherPlayerId(parsed.gameId, parsed.iamPlayerId)
 
               if(updateReduxOtherPlayerId){
-                const game = games.find((game) => game.id === parsed.gameId)
+                const game = getGameById(parsed.gameId)
 
                 if(game){
                   game.redux = parsed.redux
 
                   // Update games
-                  const gameIndex = games.findIndex((g) => g.id === game.id)
+                  const gameIndex = getGameIndex(game.id)
                   games[gameIndex] = game
 
                   // Send to the other player
@@ -520,11 +563,6 @@ app.prepare().then(() => {
               break;
           }
         }
-
-        if(parsed.to === 'chat') {
-          console.log(headerWrap(`> Message to chat`, msg))
-          io.emit('message', msg);
-        }
       }
     });
 
@@ -535,7 +573,7 @@ app.prepare().then(() => {
     socket.on('disconnect', () => {
       console.log(`${LOG_COLORS.INFO}> User disconnected ${socket.id}${LOG_COLORS.WHITE}`);
       
-      const game = games.find((game) => game.players.includes(socket.id))
+      const game = getGameByPlayerId(socket.id)
       const gameId = game ? game.id : null;
 
       if(!gameId) return

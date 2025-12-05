@@ -12,6 +12,7 @@ import {
   refreshReduxStore,
   setRemoteIsOnline,
   setNameOfPlayer2,
+  toggleCurrentPlayer,
 } from './store/actions';
 
 import { Socket } from 'socket.io-client';
@@ -87,6 +88,8 @@ export const SocketListen = () => {
               dispatch(setRemoteIsOnline(true))
               
               dispatch(setIamPlayer(command.youArePlayer))
+              dispatch(toggleCurrentPlayer(command.currentPlayer))
+
               dispatch(setNameOfPlayer1(command.player1Name))
               dispatch(setNameOfPlayer2(command.player2Name))
               
@@ -100,6 +103,8 @@ export const SocketListen = () => {
               localStorage.setItem('gameId', command.gameId)
 
               dispatch(setIamPlayer(command.youArePlayer))
+              dispatch(toggleCurrentPlayer(command.currentPlayer))
+              
               dispatch(setNameOfPlayer1(command.player1Name))
               dispatch(setNameOfPlayer2(command.player2Name))
 

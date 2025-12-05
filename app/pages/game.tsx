@@ -19,6 +19,7 @@ import {
   useSocketRemoteIsOnline,
   useSocketInstance,
   useChatMessages,
+  useSocketLocalId,
 } from "../store/selectors";
 
 import { GameControls } from "../components/game-controls";
@@ -115,6 +116,9 @@ export const Game = () => {
     setTimeout(() => dispatch(setGameover(true)), 100)
   }
 
+  const mySocketId = useSocketLocalId()
+  const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
+
   return (
     <PageContainer>
       <DrawerContainer>
@@ -126,6 +130,15 @@ export const Game = () => {
         >
           <GameControls/>
         </Chakra.Drawer>
+
+        <div>
+          <div>
+            My Socket Id: {mySocketId}
+          </div>
+          <div>
+            Game ID: {gameIdString}
+          </div>
+        </div>
 
         {/* Chat drawer */}
         {gameId !== -1 &&<Chakra.Drawer
