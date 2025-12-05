@@ -8,14 +8,6 @@ import {
   useSocketRemoteIsOnline,
 } from "../store/selectors";
 
-export const GameGrid = () => {
-  const size = useSize()
-  const gameId = useGameId()
-  const currentPlayer = useCurrentPlayer()
-  const iamPlayer = useIamPlayer()
-  const remoteIsOnline = useSocketRemoteIsOnline()
-  const gameover = useGameover()
-  
   const dot = (key: number, id: number) => <Dot
     key={key}
     identifier={id}
@@ -36,7 +28,7 @@ export const GameGrid = () => {
     identifier={id}
   />
 
-  const fillGrid = (size: { x: number; y: number; }) => {
+  export const fillGrid = (size: { x: number; y: number; }) => {
 
     const rowSize = size.x * 2
     const colSize = size.y * 2
@@ -97,6 +89,13 @@ export const GameGrid = () => {
 
     return cells
   }
+export const GameGrid = () => {
+  const size = useSize()
+  const gameId = useGameId()
+  const currentPlayer = useCurrentPlayer()
+  const iamPlayer = useIamPlayer()
+  const remoteIsOnline = useSocketRemoteIsOnline()
+  const gameover = useGameover()
 
   const waitingForOpponentMove = currentPlayer !== iamPlayer
   const waitingForOpponentJoin = !remoteIsOnline && gameId !== -1

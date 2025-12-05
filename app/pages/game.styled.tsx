@@ -1,5 +1,20 @@
 import styled from "styled-components";
 
+export const GameNumberStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & div:nth-child(1){
+    color: grey;
+  }
+    & div:nth-child(2){
+    color: orange;
+    font-weight: bold;
+    font-size: 1.4em;
+  }
+`
+
 export const PageContainer = styled.div`
   width: 100%;
   padding: 40px 20px;

@@ -1,5 +1,4 @@
-import Chackra from "./Chakra";
-
+import { useState } from "react";
 import {
   setGameSize,
   setGameId,
@@ -16,7 +15,10 @@ import {
 } from "../store/selectors";
 import { useDispatch } from "react-redux";
 import { SOCKET_ACTIONS } from "../basics/constants";
-
+import Chakra from "./Chakra";
+import { GridContainer, Grid } from './grid-elements'
+import { fillGrid } from "./game-grid";  //dot, hLine, vLine, square,
+import { DialogGridStyled as DialogGrid, DimentionDisplayStyled } from "./game-controls.styled";
 
 export const GameControls = () => {
   const socket = useSocketInstance()
@@ -27,53 +29,9 @@ export const GameControls = () => {
   const remoteIsOnline = useSocketRemoteIsOnline()
   const dispatch = useDispatch()
 
-  const createGame = () => {
-    const myName = localStorage.getItem('myName')
-    let nameToUse
-    if(!myName) {
-      let promptAnswer1
-      if(player1Name === 'Player 1') {
-        promptAnswer1 = prompt('Enter your name')
-        if(!promptAnswer1) {
-          alert('Name is required to create a game')
-          return
-        }
-        nameToUse = promptAnswer1
-        dispatch(setNameOfPlayer1(promptAnswer1))
-        dispatch(setNameOfPlayer2('Player 2'))
-
-        localStorage.setItem('myName', nameToUse)
-        localStorage.setItem('player1Name', nameToUse)
-        localStorage.removeItem('player2Name')
-      }
-    } else {
-      nameToUse = myName
-      dispatch(setNameOfPlayer1(myName))
-    }
-
-    const promptGridSizeX: string = prompt('Enter X') ?? ''
-    const promptGridSizeY: string = prompt('Enter Y') ?? ''
-    let gridSize = {x: 3, y: 3}
-
-    if(!promptGridSizeX || isNaN(+promptGridSizeX) ||
-      !promptGridSizeY || isNaN(+promptGridSizeY)) {
-      alert('X and Y numbers are required to create a game')
-      return
-    } else {
-      gridSize = {x: Number(promptGridSizeX), y: Number(promptGridSizeY)}
-    }
-    dispatch(setGameSize(gridSize))
-
-    const request = {
-      from: 'player',
-      to: 'server',
-      action: SOCKET_ACTIONS.CREATE_GAME,
-      socketId: socketId,
-      player1Name: nameToUse,
-      size: gridSize,
-    }
-    socket.emit('message', JSON.stringify(request))
-  }
+  const [playerName, setPlayerName] = useState(player1Name)
+  const [x, setX] = useState(3)
+  const [y, setY] = useState(3)
 
   const joinGame = () => {
     const myName = localStorage.getItem('myName')
@@ -140,9 +98,109 @@ export const GameControls = () => {
       socket.emit('message', JSON.stringify(request))
   }
 
+  const horizontalSliderMarks = [
+    {value: 2, label: '2'},
+    {value: 3, label: '3'},
+    {value: 4, label: '4'},
+    {value: 5, label: '5'},
+    {value: 6, label: '6'},
+    {value: 7, label: '7'},
+  ]
+
+  const verticalSliderMarks = [
+    {value: 2, label: '2'},
+    {value: 3, label: '3'},
+    {value: 4, label: '4'},
+    {value: 5, label: '5'},
+    {value: 6, label: '6'},
+    {value: 7, label: '7'},
+    {value: 8, label: '8'},
+    {value: 9, label: '9'},
+    {value: 10, label: '10'},
+    {value: 11, label: '11'},
+    {value: 12, label: '12'},
+  ]
+
+  const CreateForm = <>
+
+    <Chakra.Input
+      label='Your name'
+      placeholder='Your name'
+      value={playerName}
+      setValue={setPlayerName}
+    />
+
+    <DimentionDisplayStyled>Dimentions: {x} x {y}</DimentionDisplayStyled>
+
+    <DialogGrid>
+      <div>
+        <Chakra.Slider
+          size='sm'
+          orientation='horizontal'
+          min={2}
+          max={7}
+          sliderValue={[x]}
+          onValueChangeEnd={(sliderResult: {value: number[]}) => setX(sliderResult.value[0])}
+          showSliderValue={false}
+          marks={horizontalSliderMarks}
+        />
+      </div>
+
+      <div>
+        <Chakra.Slider
+          size='sm'
+          orientation='vertical'
+          height='300px'
+          min={2}
+          max={12}
+          sliderValue={[y]}
+          onValueChangeEnd={(sliderResult: {value: number[]}) => setY(sliderResult.value[0])}
+          showSliderValue={false}
+          marks={verticalSliderMarks}
+        />
+      </div>
+
+      <div>
+        <GridContainer $waitingForOpponent={true}>
+          <Grid $size={((x + 1) * 2) - 1} $waitingForOpponent={true}>
+            {fillGrid({x: (x + 1), y: (y + 1)})}
+          </Grid>
+        </GridContainer>
+      </div>
+    </DialogGrid>
+  </>
+
+  const createGameCallback = () => {
+
+    const gridSize = {x, y}
+
+    dispatch(setNameOfPlayer1(playerName))
+    dispatch(setNameOfPlayer2('Player 2'))
+    dispatch(setGameSize(gridSize))
+
+    localStorage.setItem('myName', playerName)
+    localStorage.setItem('player1Name', playerName)
+    localStorage.removeItem('player2Name')
+
+    const request = {
+      from: 'player',
+      to: 'server',
+      action: SOCKET_ACTIONS.CREATE_GAME,
+      socketId: socketId,
+      player1Name: 'test!!!',
+      size: gridSize,
+    }
+    socket.emit('message', JSON.stringify(request))
+  }
+
+
+  // const JoinForm = <>
+  //   Join a game NOW!
+  // </>
+
   return (<>
     <div>
-      <Chackra.Button
+      <Chakra.Button
         onClick={() => {
           localStorage.clear()
           localStorage.removeItem('gameId')
@@ -156,24 +214,31 @@ export const GameControls = () => {
     
     <div>
       {gameId === -1  &&
-      <Chackra.Button
-        onClick={createGame}
-        text='Create Game'
-      />}
+        <Chakra.Dialog
+          size='md'
+          title='Create a game'
+          openButtonText='Create game'
+          openButtonColor='green'
+          cancelButtonText='Cancel'
+          saveButtonText='Save'
+          saveCallback={createGameCallback}
+          body={CreateForm}
+        />
+      }
 
       {gameId !== -1 && remoteIsOnline &&
-      <Chackra.Button
+      <Chakra.Button
         onClick={leaveGame}
         text='Leave Game'
       />}
 
       {gameId !== -1 && !remoteIsOnline &&
-      <Chackra.Button
+      <Chakra.Button
         onClick={destroyGame}
         text='Destroy Game'
       />}
 
-      {gameId === -1 ? <Chackra.Button
+      {gameId === -1 ? <Chakra.Button
         onClick={joinGame}
         text='Join Game'
       /> : <></>}

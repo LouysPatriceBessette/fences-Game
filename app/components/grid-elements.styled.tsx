@@ -26,6 +26,7 @@ export const GridOverlayStyled = styled.div<{$waitingForOpponent: boolean}>`
 `
 
 export const GridStyled = styled.div<{$size: number, $waitingForOpponent: boolean}>`
+  width: fit-content;
   display: grid;
   grid-template-columns: repeat(${(props) => props.$size}, auto);
   ${(props) => props.$waitingForOpponent ? "pointer-events: none;" : ""}

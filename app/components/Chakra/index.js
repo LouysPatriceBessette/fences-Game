@@ -14,6 +14,7 @@ import { ChakraPinInput as PinInput } from './PinInput'
 import { ChakraPagination as Pagination } from './Pagination'
 import { ChakraDrawer as Drawer } from './Drawer'
 import { ChakraDialog as Dialog } from './Dialog'
+import { ChakraSlider as Slider } from './Slider'
 
 export { Input as ChackraIput }
 export { Code as ChakraCode }
@@ -31,6 +32,7 @@ export { PinInput as ChakraPinInput }
 export { Pagination as ChakraPagination }
 export { Drawer as ChakraDrawer }
 export { Dialog as ChakraDialog }
+export { Slider as ChakraSlider }
 
 const exports = {
   Input,
@@ -49,5 +51,6 @@ const exports = {
   Pagination,
   Drawer,
   Dialog,
+  Slider,
 }
 export default exports

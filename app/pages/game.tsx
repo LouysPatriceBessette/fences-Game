@@ -19,13 +19,14 @@ import {
   useSocketRemoteIsOnline,
   useSocketInstance,
   useChatMessages,
-  useSocketLocalId,
+  // useSocketLocalId,
 } from "../store/selectors";
 
 import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
 import {
   PageContainer,
+  GameNumberStyled,
   DrawerContainer,
   PlayersNameHeader,
   PlayersScoreHeader,
@@ -116,7 +117,7 @@ export const Game = () => {
     setTimeout(() => dispatch(setGameover(true)), 100)
   }
 
-  const mySocketId = useSocketLocalId()
+  // const mySocketId = useSocketLocalId()
   const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
 
   return (
@@ -131,14 +132,15 @@ export const Game = () => {
           <GameControls/>
         </Chakra.Drawer>
 
-        <div>
+        {gameId !== -1 && <GameNumberStyled>
           <div>
-            My Socket Id: {mySocketId}
+            {/* My Socket Id: {mySocketId} */}
+            Number to share
           </div>
           <div>
-            Game ID: {gameIdString}
+            {gameIdString}
           </div>
-        </div>
+        </GameNumberStyled>}
 
         {/* Chat drawer */}
         {gameId !== -1 &&<Chakra.Drawer

@@ -6,7 +6,6 @@ export const useGame = () => useSelector((state) => state.game);
 export const useSize = () => useSelector((state) => state.game.size);
 export const usePlayer1Name = () => useSelector((state) => state.game.nameOfPlayer1);
 export const usePlayer2Name = () => useSelector((state) => state.game.nameOfPlayer2);
-export const useIAmGameCreator = () => useSelector((state) => state.game.iAmGameCreator);
 export const useGameId = () => useSelector((state) => state.game.gameId);
 export const useGameover = () => useSelector((state) => state.game.gameover);
 
