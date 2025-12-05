@@ -10,8 +10,9 @@ export const GameNumberStyled = styled.div`
   }
     & div:nth-child(2){
     color: orange;
+    text-shadow: 0px 0 1px black;
     font-weight: bold;
-    font-size: 1.4em;
+    font-size: 1.6em;
   }
 `
 

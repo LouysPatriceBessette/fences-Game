@@ -9,7 +9,6 @@ import {
   useSocketInstance,
   useSocketLocalId,
   usePlayer1Name,
-  usePlayer2Name,
   useGameId,
   useSocketRemoteIsOnline,
 } from "../store/selectors";
@@ -17,14 +16,13 @@ import { useDispatch } from "react-redux";
 import { SOCKET_ACTIONS } from "../basics/constants";
 import Chakra from "./Chakra";
 import { GridContainer, Grid } from './grid-elements'
-import { fillGrid } from "./game-grid";  //dot, hLine, vLine, square,
+import { fillGrid } from "./game-grid";
 import { DialogGridStyled as DialogGrid, DimentionDisplayStyled } from "./game-controls.styled";
 
 export const GameControls = () => {
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
   const player1Name = usePlayer1Name()
-  const player2Name = usePlayer2Name()
   const gameId = useGameId()
   const remoteIsOnline = useSocketRemoteIsOnline()
   const dispatch = useDispatch()
@@ -33,48 +31,7 @@ export const GameControls = () => {
   const [x, setX] = useState(3)
   const [y, setY] = useState(3)
 
-  const joinGame = () => {
-    const myName = localStorage.getItem('myName')
-    let nameToUse
-    if(!myName) {
-      let promptAnswer1
-      if(player2Name === 'Player 2') {
-        promptAnswer1 = prompt('Enter your name')
-        if(!promptAnswer1) {
-          alert('Name is required to join a game')
-          return
-        }
-        nameToUse = promptAnswer1
-        dispatch(setNameOfPlayer1('Player 1'))
-        dispatch(setNameOfPlayer2(promptAnswer1))
-
-        localStorage.setItem('myName', nameToUse)
-        localStorage.removeItem('player1Name')
-        localStorage.setItem('player2Name', nameToUse)
-      }
-    } else {
-      nameToUse = myName
-      dispatch(setNameOfPlayer2(myName))
-    }
-
-    const promptAnswer2 = prompt('Enter game id')
-    const newGameId = promptAnswer2 && parseInt(promptAnswer2)
-
-    if(newGameId && !isNaN(newGameId) && newGameId > 0) {
-      const request = {
-        from: 'player',
-        to: 'server',
-        action: SOCKET_ACTIONS.JOIN_GAME,
-        socketId: socketId,
-        gameId: newGameId,
-        newPlayerName: nameToUse,
-      }
-      dispatch(setGameId(newGameId))
-      socket.emit('message', JSON.stringify(request))
-    } else if(promptAnswer2 !== null) {
-      alert('Invalid game id')
-    }
-  }
+  const [gameNumberToJoin, setGameNumerToJoin] = useState('')
 
   const leaveGame = () => {
     const request = {
@@ -170,8 +127,8 @@ export const GameControls = () => {
     </DialogGrid>
   </>
 
+  // const myName = localStorage.getItem('myName')
   const createGameCallback = () => {
-
     const gridSize = {x, y}
 
     dispatch(setNameOfPlayer1(playerName))
@@ -187,16 +144,59 @@ export const GameControls = () => {
       to: 'server',
       action: SOCKET_ACTIONS.CREATE_GAME,
       socketId: socketId,
-      player1Name: 'test!!!',
+      player1Name: playerName,
       size: gridSize,
     }
     socket.emit('message', JSON.stringify(request))
   }
 
 
-  // const JoinForm = <>
-  //   Join a game NOW!
-  // </>
+  const JoinForm = <>
+    <Chakra.Input
+      label='Your name'
+      placeholder='Your name'
+      value={playerName}
+      setValue={setPlayerName}
+    />
+
+    <DimentionDisplayStyled/>
+
+    <Chakra.Input
+      label='Game number'
+      placeholder='Game number'
+      value={gameNumberToJoin}
+      setValue={setGameNumerToJoin}
+    />
+  </>
+
+  // const myName = localStorage.getItem('myName')
+  const joinGameCallback = () => {
+    let gameNumber
+    if(gameNumberToJoin && !isNaN(Number(gameNumberToJoin))) {
+      gameNumber = Number(gameNumberToJoin)
+    } else {
+      alert('Invalid game id')    // Something else PLEASE!
+      return
+    }
+
+    dispatch(setNameOfPlayer1('Player 1'))
+    dispatch(setNameOfPlayer2(playerName))
+    dispatch(setGameId(gameNumber))
+
+    localStorage.setItem('myName', playerName)
+    localStorage.removeItem('player1Name')
+    localStorage.setItem('player2Name', playerName)
+
+    const request = {
+      from: 'player',
+      to: 'server',
+      action: SOCKET_ACTIONS.JOIN_GAME,
+      socketId: socketId,
+      gameId: gameNumber,
+      newPlayerName: playerName,
+    }
+    socket.emit('message', JSON.stringify(request))
+  }
 
   return (<>
     <div>
@@ -210,7 +210,6 @@ export const GameControls = () => {
         text='Clear localStorage'
       />
     </div>
-
     
     <div>
       {gameId === -1  &&
@@ -226,6 +225,17 @@ export const GameControls = () => {
         />
       }
 
+      {gameId === -1 && <Chakra.Dialog
+          size='md'
+          title='Join a game'
+          openButtonText='Join game'
+          openButtonColor='orange'
+          cancelButtonText='Cancel'
+          saveButtonText='Save'
+          saveCallback={joinGameCallback}
+          body={JoinForm}
+        />}
+
       {gameId !== -1 && remoteIsOnline &&
       <Chakra.Button
         onClick={leaveGame}
@@ -237,11 +247,6 @@ export const GameControls = () => {
         onClick={destroyGame}
         text='Destroy Game'
       />}
-
-      {gameId === -1 ? <Chakra.Button
-        onClick={joinGame}
-        text='Join Game'
-      /> : <></>}
     </div>
   </>
   )
