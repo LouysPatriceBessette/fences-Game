@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import {
   // setGameSize,
@@ -18,6 +18,7 @@ import {
   useFencedByP2,
   useSocketRemoteIsOnline,
   useSocketInstance,
+  useChatMessages,
 } from "../store/selectors";
 
 import { GameControls } from "../components/game-controls";
@@ -35,6 +36,8 @@ import {
   GameOver,
 } from "./game.styled";
 import { SOCKET_ACTIONS } from "../basics/constants";
+import Chakra from "../components/Chakra";
+import { Chat } from "../components/chat";
 
 export const Game = () => {
 
@@ -92,6 +95,19 @@ export const Game = () => {
   const fencedByP2 = useFencedByP2()
   const gameover = useGameover()
 
+  const messages = useChatMessages()
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false)
+  const messagesDrawer = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if(messagesDrawer.current){
+      if(!drawerIsOpen) {
+        setDrawerIsOpen(true)
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, messagesDrawer])
+
   if(fencedByP1.length + fencedByP2.length === finalCount) {
     setTimeout(() => dispatch(setGameover(true)), 100)
   }
@@ -130,6 +146,16 @@ export const Game = () => {
       <GameGridContainer >
         <GameGrid />
       </GameGridContainer>
+
+      <Chakra.Drawer
+        ref={messagesDrawer}
+        drawerIsOpen={drawerIsOpen}
+        setDrawerIsOpen={setDrawerIsOpen}
+        placement="bottom"
+        title='Chat with the other player'
+      >
+        <Chat/>
+      </Chakra.Drawer>
 
       {gameover && <GameOver>Game Over</GameOver>}
     </PageContainer>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   useSocketInstance,
   useChatMessages,
@@ -8,7 +8,8 @@ import {
   usePlayer2Name,
 } from '../store/selectors';
 import { sendMessage } from '../socket';
-import { ChatHeader, ChatMessagesContainer, ChatInputsContainer, ChatInput, ChatButton, PlayerNameChatColor, } from './chat.styled';
+import Chakra from "./Chakra";
+import { ChatMessagesContainer, ChatInputsContainer, PlayerNameChatColor, } from './chat.styled';
 
 export const Chat = () => {
   const [messageInput, setMessageInput] = useState('');
@@ -20,12 +21,26 @@ export const Chat = () => {
   const player2Name = usePlayer2Name();
   const myName = iamPlayer === 1 ? player1Name : player2Name;
 
-  const sendMessageHandler = () => sendMessage(socket, gameId, `<span>${myName}</span>: ${messageInput}`, setMessageInput);
+  const handleSendMessage = () => sendMessage(socket, gameId, `<span>${myName}</span>: ${messageInput}`, setMessageInput);
+
+  const handleInputKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if(event.key === 'Enter') {
+      handleSendMessage()
+    }
+  }
+
+  const messagesScrollBox = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if(messagesScrollBox.current){
+      messagesScrollBox.current.scrollTop = messagesScrollBox.current.scrollHeight
+    }
+
+  }, [messages, messagesScrollBox])
 
   return (
     <>
-      <ChatHeader>Real-time Chat</ChatHeader>
-      <ChatMessagesContainer>
+      <ChatMessagesContainer ref={messagesScrollBox}>
         {messages.map((msg: string, index: number) => 
           {
             const msgParts = msg.split('</span>')
@@ -41,20 +56,20 @@ export const Chat = () => {
       </ChatMessagesContainer>
 
       <ChatInputsContainer>
-        <ChatInput
-          type="text"
+        <Chakra.Input
           disabled={gameId === -1}
+          placeholder="Message"
           value={messageInput}
-          onKeyUp={(event) => {
-            if(event.key === 'Enter') {
-              sendMessageHandler();
-            }
-          }}
-          onChange={(event) => {
-            setMessageInput(event.target.value)
-          }}
+          setValue={setMessageInput}
+          onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) => handleInputKeyUp(event)}
         />
-        <ChatButton onClick={sendMessageHandler} disabled={gameId === -1}>Send</ChatButton>
+
+        <Chakra.Button
+          type='button'
+          text='Send'
+          onClick={handleSendMessage}
+          disabled={gameId === -1}
+        />
       </ChatInputsContainer>
     </>
   );

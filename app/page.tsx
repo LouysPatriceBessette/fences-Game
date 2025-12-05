@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { store } from "./store/store";
 import { Game } from "./pages/game";
 import { SocketListen } from "./socket";
-import { Chat } from "./components/chat";
 import { CharkraProvider } from "./components/Chakra/ChakraProvider/ChakraProvider";
 
 export default function Home() {
@@ -13,8 +12,7 @@ export default function Home() {
     <Provider store={store}>
       <CharkraProvider>
         <Game />
-        <SocketListen/>
-        <Chat/>
+        <SocketListen/>        
       </CharkraProvider>
     </Provider>
   );

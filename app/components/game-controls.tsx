@@ -1,4 +1,5 @@
-import { Button } from "./game-controls.styled";
+import Chackra from "./Chakra";
+
 import {
   setGameSize,
   setGameId,
@@ -146,44 +147,41 @@ export const GameControls = () => {
 
   return (<>
     <div>
-      <Button onClick={() => {
-        localStorage.clear()
-        localStorage.removeItem('gameId')
-        localStorage.removeItem('socketId')
-        window.location.reload()
-      }}>
-        Clear localStorage
-      </Button>
+      <Chackra.Button
+        onClick={() => {
+          localStorage.clear()
+          localStorage.removeItem('gameId')
+          localStorage.removeItem('socketId')
+          window.location.reload()
+        }}
+        text='Clear localStorage'
+      />
     </div>
 
     
     <div>
       {gameId === -1  &&
-      <Button
+      <Chackra.Button
         onClick={createGame}
-      >
-        Create Game
-      </Button>}
+        text='Create Game'
+      />}
 
       {gameId !== -1 && remoteIsOnline &&
-      <Button
+      <Chackra.Button
         onClick={leaveGame}
-      >
-        Leave Game
-      </Button>}
+        text='Leave Game'
+      />}
 
       {gameId !== -1 && !remoteIsOnline &&
-      <Button
+      <Chackra.Button
         onClick={destroyGame}
-      >
-        Destroy Game
-      </Button>}
+        text='Destroy Game'
+      />}
 
-      {gameId === -1 ? <Button
+      {gameId === -1 ? <Chackra.Button
         onClick={joinGame}
-      >
-        Join Game
-      </Button> : <></>}
+        text='Join Game'
+      /> : <></>}
     </div>
     <div>
       My Socket Id: {mySocketId}
