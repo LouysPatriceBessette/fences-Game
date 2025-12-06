@@ -17,7 +17,7 @@ import { SOCKET_ACTIONS } from "../basics/constants";
 import Chakra from "./Chakra";
 import { GridContainer, Grid } from './grid-elements'
 import { fillGrid } from "./game-grid";
-import { DialogGridStyled as DialogGrid, DimentionDisplayStyled } from "./game-controls.styled";
+import { DialogGridStyled as DialogGrid, DialogLabelStyled } from "./game-controls.styled";
 
 export const GameControls = () => {
   const socket = useSocketInstance()
@@ -31,7 +31,8 @@ export const GameControls = () => {
   const [x, setX] = useState(3)
   const [y, setY] = useState(3)
 
-  const [gameNumberToJoin, setGameNumerToJoin] = useState('')
+  const pinLength = 6
+  const [pinString, setPinString] = useState('')
 
   const leaveGame = () => {
     const request = {
@@ -87,7 +88,7 @@ export const GameControls = () => {
       setValue={setPlayerName}
     />
 
-    <DimentionDisplayStyled>Dimentions: {x} x {y}</DimentionDisplayStyled>
+    <DialogLabelStyled>Dimentions: {x} x {y}</DialogLabelStyled>
 
     <DialogGrid>
       <div>
@@ -150,7 +151,6 @@ export const GameControls = () => {
     socket.emit('message', JSON.stringify(request))
   }
 
-
   const JoinForm = <>
     <Chakra.Input
       label='Your name'
@@ -159,25 +159,18 @@ export const GameControls = () => {
       setValue={setPlayerName}
     />
 
-    <DimentionDisplayStyled/>
+    <DialogLabelStyled>Game number</DialogLabelStyled>
 
-    <Chakra.Input
-      label='Game number'
-      placeholder='Game number'
-      value={gameNumberToJoin}
-      setValue={setGameNumerToJoin}
+    <Chakra.PinInput
+      pinLength={pinLength}
+      getPin={setPinString}
+      lastPin={localStorage.getItem('LastGameNumberUsed') ?? ''}
     />
   </>
 
   // const myName = localStorage.getItem('myName')
   const joinGameCallback = () => {
-    let gameNumber
-    if(gameNumberToJoin && !isNaN(Number(gameNumberToJoin))) {
-      gameNumber = Number(gameNumberToJoin)
-    } else {
-      alert('Invalid game id')    // Something else PLEASE!
-      return
-    }
+    const gameNumber = Number(pinString)
 
     dispatch(setNameOfPlayer1('Player 1'))
     dispatch(setNameOfPlayer2(playerName))
@@ -186,6 +179,7 @@ export const GameControls = () => {
     localStorage.setItem('myName', playerName)
     localStorage.removeItem('player1Name')
     localStorage.setItem('player2Name', playerName)
+    localStorage.setItem('LastGameNumberUsed', gameNumber.toString())
 
     const request = {
       from: 'player',

@@ -112,7 +112,7 @@ export const SocketListen = () => {
               break;
             
             case SOCKET_ACTIONS.JOIN_FAILED:
-              alert('Game does not exist')
+              alert('Game does not exist.')
               dispatch(setGameId(-1))
               localStorage.removeItem('gameId')
               break;
@@ -120,7 +120,7 @@ export const SocketListen = () => {
             case SOCKET_ACTIONS.PREVIOUS_GAME_DELETED:
               dispatch(setGameId(-1))
               localStorage.removeItem('gameId')
-              // alert('The game you were in has been deleted from the server.')
+              alert('This game has been deleted.')
               break;
 
             case SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME:

@@ -2,10 +2,19 @@ import {useState, useEffect} from 'react'
 import { PinInput, For } from '@chakra-ui/react'
 import { deepCopy, randomReactKey } from '../../basics/utils'
 
-export const ChakraPinInput = (props) => {
+export const ChakraPinInput = ({
+  pinLength=6,
+  getPin=(pin)=>{console.log(`The pin is ${pin} digits long.`)},
+  lastPin='',
+}) => {
 
-  const {pinLength=6, getPin=(pin)=>{console.log(`The pin is ${pin}`)}} = props
   const [values, setValues] = useState(Array(pinLength).fill(''))
+
+  useEffect(() => {
+    if(lastPin){
+      setValues(lastPin.split(''))
+    }
+  }, [lastPin])
 
   useEffect(() => {
     if(values.filter((v) => v).length === pinLength){

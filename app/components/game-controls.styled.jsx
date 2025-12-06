@@ -26,7 +26,7 @@ export const DialogGridStyled = styled.div`
   }
 `
 
-export const DimentionDisplayStyled = styled.div`
+export const DialogLabelStyled = styled.div`
   display: flex;
   align-items: center;
   margin-top: 1.5em;
