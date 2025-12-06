@@ -390,11 +390,12 @@ app.prepare().then(() => {
                   if(freeSeat === 'A'){
                     ownerId = game.players[1]
 
-                    joinerSeat = 'A'
                     ownerSeat = 'B'
+                    joinerSeat = 'A'
 
+                    // game.player2Name = game.player1Name
                     game.player1Name = parsed.newPlayerName
-                    game.player2Name = game.player1Name
+                    
                   } else {
                     // game.players.push(parsed.socketId)
                     game.player2Name = parsed.newPlayerName
@@ -498,6 +499,7 @@ app.prepare().then(() => {
                 to: 'player',
                 action: SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME,
                 leavingPlayer: leavingPlayerIs + 1,
+                leavingPlayerName: leavingPlayerIs === 0 ? gameToLeave.player1Name : gameToLeave.player2Name
               }
               console.log('messageToOtherPlayer', messageToOtherPlayer)
               io.to(otherPlayerId).emit('message', JSON.stringify(messageToOtherPlayer))

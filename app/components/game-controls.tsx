@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   setGameSize,
   setGameId,
@@ -8,7 +8,9 @@ import {
 import {
   useSocketInstance,
   useSocketLocalId,
+  useIamPlayer,
   usePlayer1Name,
+  usePlayer2Name,
   useGameId,
   useSocketRemoteIsOnline,
 } from "../store/selectors";
@@ -24,17 +26,24 @@ export const GameControls = () => {
 
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
+  const iamPlayer = useIamPlayer()
   const player1Name = usePlayer1Name()
+  const player2Name = usePlayer2Name()
   const gameId = useGameId()
   const remoteIsOnline = useSocketRemoteIsOnline()
   const dispatch = useDispatch()
 
-  const [playerName, setPlayerName] = useState(player1Name)
+  const [playerName, setPlayerName] = useState('')
   const [x, setX] = useState(3)
   const [y, setY] = useState(3)
 
   const pinLength = 6
   const [pinString, setPinString] = useState('')
+
+  useEffect(() => {
+    (() => setPlayerName(iamPlayer === 1 ? player1Name : player2Name))()
+
+  }, [iamPlayer, player1Name, player2Name])
 
   const leaveGame = () => {
     localStorage.removeItem('gameId')
@@ -163,7 +172,7 @@ export const GameControls = () => {
     <Chakra.Input
       label='Your name'
       placeholder='Your name'
-      value={playerName}
+      value={playerName}  //// NO!
       setValue={setPlayerName}
     />
 
@@ -180,8 +189,8 @@ export const GameControls = () => {
   const joinGameCallback = () => {
     const gameNumber = Number(pinString)
 
-    dispatch(setNameOfPlayer1('Player 1'))
-    dispatch(setNameOfPlayer2(playerName))
+    // dispatch(setNameOfPlayer1('Player 1'))
+    // dispatch(setNameOfPlayer2(playerName))
     dispatch(setGameId(gameNumber))
 
     localStorage.setItem('myName', playerName)

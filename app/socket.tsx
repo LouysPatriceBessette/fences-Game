@@ -127,22 +127,21 @@ export const SocketListen = () => {
             case SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME:
               dispatch(setRemoteIsOnline(false))
               if(command.leavingPlayer === 1) {
-                dispatch(setNameOfPlayer1('Player left...'))
+                dispatch(setNameOfPlayer1(`${command.leavingPlayerName} left...`))
               }else{
-                dispatch(setNameOfPlayer2('Player left...'))
+                dispatch(setNameOfPlayer2(`${command.leavingPlayerName} left...`))
               }
               break;
 
             case SOCKET_ACTIONS.I_LEFT_THE_GAME:
               dispatch(resetReduxInitialState())
-              if(command.leavingPlayer === 1) {
-                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
-                dispatch(setNameOfPlayer2('Player 2'))
-              } else {
-                dispatch(setNameOfPlayer2(localStorage.getItem('myName') ?? 'Player 2'))
-                dispatch(setNameOfPlayer1('Player 1'))
-              }
               localStorage.removeItem('gameId')
+
+              setTimeout(()=> {
+                dispatch(toggleCurrentPlayer(1))
+                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 12'))
+                dispatch(setNameOfPlayer2('Player 2'))
+              },1)
               break;
             
             case SOCKET_ACTIONS.GAME_DESTROYED:
