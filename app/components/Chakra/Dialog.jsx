@@ -14,13 +14,19 @@ export const ChakraDialog = ({
   cancelButtonText,
   saveButtonText,
   saveCallback=() => {},
-  body=<p>Add the body property (JSX) to the body attribute.</p>
+  body=<p>Add the body property (JSX) to the body attribute.</p>,
+  disabled=false
 }) => {
 
   return (
     <Dialog.Root size={size}>
       <Dialog.Trigger asChild>
-        <Button customVariant={openButtonColor} size={size} text={openButtonText}/>
+        <Button
+          customVariant={openButtonColor}
+          size={size}
+          text={openButtonText}
+          disabled={disabled}
+        />
       </Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />

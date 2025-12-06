@@ -7,9 +7,10 @@ import {
 import { ChakraButton } from './Button'
 
 export const ChakraDrawer = ({
-  title,
+  title='',
   placement,
   buttonText,
+  displayCloseButton=false,
   footer=undefined,
   triggerOpen: triggerOpen=false,
   children
@@ -46,9 +47,9 @@ export const ChakraDrawer = ({
             roundedTop={placement === "bottom" ? "l3" : undefined}
             roundedBottom={placement === "top" ? "l3" : undefined}
           >
-            <Drawer.Header>
+            {title && <Drawer.Header>
               <Drawer.Title>{title}</Drawer.Title>
-            </Drawer.Header>
+            </Drawer.Header>}
             <Drawer.Body>
               {children}
             </Drawer.Body>
@@ -56,7 +57,7 @@ export const ChakraDrawer = ({
               {footer}
             </Drawer.Footer>}
             <Drawer.CloseTrigger asChild>
-              <CloseButton size="sm" onClick={() => setIsopen(!isOpen)}/>
+              {displayCloseButton && <CloseButton size="sm" onClick={() => setIsopen(!isOpen)}/>}
             </Drawer.CloseTrigger>
           </Drawer.Content>
         </Drawer.Positioner>

@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+export const ControlButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`
+
 export const DialogGridStyled = styled.div`
   display: grid;
   width: 100%;

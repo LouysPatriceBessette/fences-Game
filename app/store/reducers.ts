@@ -196,6 +196,7 @@ export const rootReducer = (state: INITIAL_STATE_TYPE, action: {type: string, pa
       ...INITIAL_STATE,
       socket: {
         ...state.socket,
+        remoteIsOnline: false,
       }  
     }
   }

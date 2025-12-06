@@ -17,9 +17,11 @@ import { SOCKET_ACTIONS } from "../basics/constants";
 import Chakra from "./Chakra";
 import { GridContainer, Grid } from './grid-elements'
 import { fillGrid } from "./game-grid";
-import { DialogGridStyled as DialogGrid, DialogLabelStyled } from "./game-controls.styled";
+import { DialogGridStyled as DialogGrid, DialogLabelStyled, ControlButtonsContainer } from "./game-controls.styled";
 
 export const GameControls = () => {
+  const debugStorage = false
+
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
   const player1Name = usePlayer1Name()
@@ -35,6 +37,9 @@ export const GameControls = () => {
   const [pinString, setPinString] = useState('')
 
   const leaveGame = () => {
+    localStorage.removeItem('gameId')
+    dispatch(setGameId(-1))
+
     const request = {
         from: 'player',
         to: 'server',
@@ -46,6 +51,9 @@ export const GameControls = () => {
   }
 
   const destroyGame = () => {
+    localStorage.removeItem('gameId')
+    dispatch(setGameId(-1))
+    
     const request = {
         from: 'player',
         to: 'server',
@@ -193,7 +201,7 @@ export const GameControls = () => {
   }
 
   return (<>
-    <div>
+    {debugStorage && <div>
       <Chakra.Button
         onClick={() => {
           localStorage.clear()
@@ -203,45 +211,47 @@ export const GameControls = () => {
         }}
         text='Clear localStorage'
       />
-    </div>
+    </div>}
     
-    <div>
-      {gameId === -1  &&
-        <Chakra.Dialog
-          size='md'
-          title='Create a game'
-          openButtonText='Create game'
-          openButtonColor='green'
-          cancelButtonText='Cancel'
-          saveButtonText='Save'
-          saveCallback={createGameCallback}
-          body={CreateForm}
-        />
-      }
+    <ControlButtonsContainer>
+      <Chakra.Dialog
+        size='md'
+        title='Create a game'
+        openButtonText='Create'
+        openButtonColor='green'
+        cancelButtonText='Cancel'
+        saveButtonText='Save'
+        saveCallback={createGameCallback}
+        body={CreateForm}
+        disabled={gameId !== -1}
+      />
 
-      {gameId === -1 && <Chakra.Dialog
-          size='md'
-          title='Join a game'
-          openButtonText='Join game'
-          openButtonColor='orange'
-          cancelButtonText='Cancel'
-          saveButtonText='Save'
-          saveCallback={joinGameCallback}
-          body={JoinForm}
-        />}
+      <Chakra.Dialog
+        size='md'
+        title='Join a game'
+        openButtonText='Join'
+        openButtonColor='orange'
+        cancelButtonText='Cancel'
+        saveButtonText='Save'
+        saveCallback={joinGameCallback}
+        body={JoinForm}
+        disabled={gameId !== -1}
+      />
 
-      {gameId !== -1 && remoteIsOnline &&
       <Chakra.Button
         onClick={leaveGame}
-        text='Leave Game'
-      />}
+        text='Leave'
+        customVariant='red'
+        disabled={gameId === -1 || gameId === '' || !remoteIsOnline}
+      />
 
-      {gameId !== -1 && !remoteIsOnline &&
       <Chakra.Button
         onClick={destroyGame}
-        text='Destroy Game'
-      />}
-    </div>
+        text='Destroy'
+        customVariant='red'
+        disabled={gameId === -1 || gameId === '' || remoteIsOnline}
+      />
+    </ControlButtonsContainer>
   </>
   )
 }

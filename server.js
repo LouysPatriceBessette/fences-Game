@@ -259,19 +259,23 @@ app.prepare().then(() => {
                     playerNames: [currentGame.player1Name, currentGame.player2Name],
                   }))
                 } else {
-                  io.to(parsed.newSocketId).emit('message', JSON.stringify({
-                    from: 'server',
-                    to: 'player',
-                    action: SOCKET_ACTIONS.PREVIOUS_GAME_DELETED,
-                  }))
+                  if(parsed.gameId !== -1 && parsed.gameId !== ''){
+                    io.to(parsed.newSocketId).emit('message', JSON.stringify({
+                      from: 'server',
+                      to: 'player',
+                      action: SOCKET_ACTIONS.PREVIOUS_GAME_DELETED,
+                    }))
+                  }
                 }
               } else {
+                if(parsed.gameId !== -1 && parsed.gameId !== ''){
                   io.to(parsed.newSocketId).emit('message', JSON.stringify({
                     from: 'server',
                     to: 'player',
                     action: SOCKET_ACTIONS.PREVIOUS_GAME_DELETED,
                   }))
                 }
+              }
               break;
 
             case SOCKET_ACTIONS.PING:
@@ -441,8 +445,8 @@ app.prepare().then(() => {
 
             case SOCKET_ACTIONS.LEAVE_GAME:
               const gameToLeave = getGameById(parseInt(parsed.gameId))
-              if(!gameToLeave){
-                console.log(`${LOG_COLORS.WARNING}> Game ${gameToLeave.id} not found${LOG_COLORS.WHITE}`, gameToLeave)
+              if(!gameToLeave || parsed.gameId === -1 || parsed.gameId === ''){
+                console.log(`${LOG_COLORS.WARNING}> Game not found${LOG_COLORS.WHITE}`, gameToLeave)
                 return
               }
 
@@ -468,7 +472,6 @@ app.prepare().then(() => {
               const leavingPlayer = parsed.socketId
               const leavingPlayerIs = gameToLeave.players.indexOf(parsed.socketId)
               const otherPlayerId = getOtherPlayerId(gameToLeave.id, parsed.socketId)
-              // const otherPlayerIs = leavingPlayerIs === 0 ? 1 : 0
  
               // Replace the leaving player id with a placeholder in the game players array
               gameToLeave.players[leavingPlayerIs] = 'FREE'
@@ -484,7 +487,7 @@ app.prepare().then(() => {
                 from: 'server',
                 to: 'player',
                 action: SOCKET_ACTIONS.I_LEFT_THE_GAME,
-                // youArePlayer: leavingPlayerIs + 1,
+                leavingPlayer: leavingPlayerIs + 1
               }
               console.log('messageToLeavingPlayer', messageToLeavingPlayer)
               io.to(leavingPlayer).emit('message', JSON.stringify(messageToLeavingPlayer))
@@ -495,7 +498,6 @@ app.prepare().then(() => {
                 to: 'player',
                 action: SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME,
                 leavingPlayer: leavingPlayerIs + 1,
-                // youArePlayer: otherPlayerIs + 1
               }
               console.log('messageToOtherPlayer', messageToOtherPlayer)
               io.to(otherPlayerId).emit('message', JSON.stringify(messageToOtherPlayer))

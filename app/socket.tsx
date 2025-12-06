@@ -81,6 +81,7 @@ export const SocketListen = () => {
             case SOCKET_ACTIONS.CREATED_GAME:
               dispatch(setGameId(command.gameId))
               localStorage.setItem('gameId', command.gameId)
+              localStorage.setItem('LastGameNumberUsed', command.gameId)
               break;
 
             // Player 1
@@ -134,7 +135,13 @@ export const SocketListen = () => {
 
             case SOCKET_ACTIONS.I_LEFT_THE_GAME:
               dispatch(resetReduxInitialState())
-              dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
+              if(command.leavingPlayer === 1) {
+                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
+                dispatch(setNameOfPlayer2('Player 2'))
+              } else {
+                dispatch(setNameOfPlayer2(localStorage.getItem('myName') ?? 'Player 2'))
+                dispatch(setNameOfPlayer1('Player 1'))
+              }
               localStorage.removeItem('gameId')
               break;
             

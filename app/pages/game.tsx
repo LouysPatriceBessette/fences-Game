@@ -126,7 +126,6 @@ export const Game = () => {
         {/* Controls drawer */}
         <Chakra.Drawer
           placement="top"
-          title='Controls'
           buttonText='Controls'
         >
           <GameControls/>
