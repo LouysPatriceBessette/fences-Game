@@ -595,7 +595,7 @@ app.prepare().then(() => {
     });
   });
 
-  httpServer.listen(3000, () => {
-    console.log(`\n\n${LOG_COLORS.SUCCESS}> Ready on http://localhost:3000${LOG_COLORS.WHITE}\n\n`);
+  httpServer.listen(3001, () => {
+    console.log(`\n\n${LOG_COLORS.SUCCESS}> Ready on http://localhost:3001${LOG_COLORS.WHITE}\n\n`);
   });
 });
