@@ -14,6 +14,7 @@ import {
 import {
   useChat,
   useGame,
+  useIamPlayer,
   useCurrentPlayer,
   useFencedByP1,
   useFencedByP2,
@@ -21,7 +22,6 @@ import {
   useOrigin,
   useUsedFences,
   useUsedFencesP1,
-  // useUsedFencesP2,
   useSize,
   useSocketInstance,
   useSocketLocalId,
@@ -33,35 +33,13 @@ export const GridContainer = GridContainerStyled
 export const GridOverlay = GridOverlayStyled
 
 export const Square = ({identifier}: {identifier: number}) => {
-  const dispatch = useDispatch()
-  const currentPlayer = useCurrentPlayer()
   const fencedByP1 = useFencedByP1()
   const fencedByP2 = useFencedByP2()
-  const usedFences = useUsedFences()
-  const size = useSize()
-
-  const isFenced = (
-    usedFences.includes(`H-${identifier}`) &&
-    usedFences.includes(`V-${identifier}`) &&
-    usedFences.includes(`V-${identifier + 1}`) &&
-    usedFences.includes(`H-${identifier + size.x}`)
-  )
   
   const wasFencedByP1 = fencedByP1.includes(identifier)
   const wasFencedByP2 = fencedByP2.includes(identifier)
 
   const wasFencedBy = wasFencedByP1 ? 1 : wasFencedByP2 ? 2 : 0
-  if(isFenced && !wasFencedByP1 && !wasFencedByP2) {
-
-    // We need to delay the togglePlayer to let the squares render first and dispatch all fencedBy
-    if(currentPlayer === 1) {
-      dispatch(setFencedByP2(identifier))
-      setTimeout(() => dispatch(toggleCurrentPlayer(2)), 100)
-    } else {
-      dispatch(setFencedByP1(identifier))
-      setTimeout(() => dispatch(toggleCurrentPlayer(1)), 100)
-    }
-  }
 
   return (
     <SquareStyled $wasFencedBy={wasFencedBy}/>
@@ -71,6 +49,7 @@ export const Square = ({identifier}: {identifier: number}) => {
 export const Dot = ({identifier}:{identifier: number}) => {
   const dispatch = useDispatch()
   const socket = useSocketInstance()
+  const iamPlayer = useIamPlayer()
   const currentPlayer = useCurrentPlayer()
 
   const chat = useChat()
@@ -105,15 +84,52 @@ export const Dot = ({identifier}:{identifier: number}) => {
 
   const friends = [up, right, down, left]
 
-  const resetTurn = (payload: string) => {
-    const nextPlayer = currentPlayer === 1 ? 2 : 1
+  const resetTurn = (payload: string, possibleFencedSquares: number[]) => {
+    let nextPlayer = currentPlayer
+
+    const areFenced = possibleFencedSquares.map((squareId, index) => {
+
+      return [
+        usedFences.includes(`H-${possibleFencedSquares[index]}`),
+        usedFences.includes(`V-${possibleFencedSquares[index]}`),
+        usedFences.includes(`V-${possibleFencedSquares[index] + 1}`),
+        usedFences.includes(`H-${possibleFencedSquares[index] + size.x}`)
+      ].filter((bool) => bool).length === 3
+    })
+
+    let fencedByP1ToAdd: number[] = []
+    let fencedByP2ToAdd: number[] = []
+    if(iamPlayer === 1) {
+      if(areFenced[0]){
+        fencedByP1ToAdd = [...fencedByP1ToAdd, possibleFencedSquares[0]] 
+        dispatch(setFencedByP1(possibleFencedSquares[0]))
+      }
+      if(areFenced[1]){
+        fencedByP1ToAdd = [...fencedByP1ToAdd, possibleFencedSquares[1]] 
+        dispatch(setFencedByP1(possibleFencedSquares[1]))
+      }
+    }
+    if(iamPlayer === 2) {
+      if(areFenced[0]){
+        fencedByP2ToAdd = [...fencedByP2ToAdd, possibleFencedSquares[0]] 
+        dispatch(setFencedByP2(possibleFencedSquares[0]))
+      }
+      if(areFenced[1]){
+        fencedByP2ToAdd = [...fencedByP2ToAdd, possibleFencedSquares[1]] 
+        dispatch(setFencedByP2(possibleFencedSquares[1]))
+      }
+    }
 
     dispatch(setOrigin(-1))
     dispatch(setCanConnectWith([]))
     dispatch(setUsedFences(payload))
-    dispatch(setUsedFencesP1(currentPlayer === 1 ? payload : ''))
-    dispatch(setUsedFencesP2(currentPlayer === 2 ? payload : ''))
-    dispatch(toggleCurrentPlayer(nextPlayer))
+    dispatch(setUsedFencesP1(iamPlayer === 1 ? payload : ''))
+    dispatch(setUsedFencesP2(iamPlayer === 2 ? payload : ''))
+
+    if(areFenced.filter((bool) => bool).length === 0){
+      dispatch(toggleCurrentPlayer())
+      nextPlayer = currentPlayer === 1 ? 2 : 1
+    }
 
     const storeToSend = {
       ...storeForBackend,
@@ -122,8 +138,10 @@ export const Dot = ({identifier}:{identifier: number}) => {
         size: storeForBackend.game.size,
         currentPlayer: nextPlayer,
         usedFences: [...storeForBackend.game.usedFences, payload],
-        usedFencesP1: [...storeForBackend.game.usedFencesP1].concat(currentPlayer === 1 ? [payload] : []),
-        usedFencesP2: [...storeForBackend.game.usedFencesP2].concat(currentPlayer === 2 ? [payload] : []),
+        usedFencesP1: [...storeForBackend.game.usedFencesP1].concat(iamPlayer === 1 ? [payload] : []),
+        usedFencesP2: [...storeForBackend.game.usedFencesP2].concat(iamPlayer === 2 ? [payload] : []),
+        fencedByP1: [...storeForBackend.game.fencedByP1].concat(fencedByP1ToAdd),
+        fencedByP2: [...storeForBackend.game.fencedByP2].concat(fencedByP2ToAdd),
       }
     }
 
@@ -138,6 +156,7 @@ export const Dot = ({identifier}:{identifier: number}) => {
     }
     socket.emit('message', JSON.stringify(command));
   }
+
   const dotClickHandler = () => {
     if(canConnectWith.length === 0 && origin === -1) {
       dispatch(setOrigin(identifier))
@@ -152,28 +171,45 @@ export const Dot = ({identifier}:{identifier: number}) => {
     }
 
     if(canConnectWith.includes(identifier)) {
+      let possibleFencedSquares = []
 
       // Left
       if(origin - 1 === identifier) {
-        resetTurn(`H-${identifier}`)
+        possibleFencedSquares = [
+          identifier - size.x,
+          identifier,
+        ]
+        resetTurn(`H-${identifier}`, possibleFencedSquares)
         return
       }
 
       // Right
       if(origin + 1 === identifier) {
-        resetTurn(`H-${origin}`)
+        possibleFencedSquares = [
+          origin - size.x,
+          origin,
+        ]
+        resetTurn(`H-${origin}`, possibleFencedSquares)
         return
       }
 
       // Up
       if(origin - size.x === identifier) {
-        resetTurn(`V-${identifier}`)
+        possibleFencedSquares = [
+          identifier,
+          identifier - 1,
+        ]
+        resetTurn(`V-${identifier}`, possibleFencedSquares)
         return
       }
 
       // Down
       if(origin + size.x === identifier) {
-        resetTurn(`V-${origin}`)
+        possibleFencedSquares = [
+          origin,
+          origin - 1,
+        ]
+        resetTurn(`V-${origin}`, possibleFencedSquares)
         return
       }
     }
