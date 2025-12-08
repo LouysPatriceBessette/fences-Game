@@ -21,7 +21,7 @@ I am focussing on playing **with a human** in real time. This is a **Socket chal
 My objective is to complete all the users management logic, since the game rules are simple and where implemented in less than 2 days.
 
 
-### TODO list, as of 2025-12-06:
+### TODO list, as of 2025-12-07:
 
 - [x] `n` x `n` grid layout
 - [x] Socket connections between players of a specific game id.
@@ -40,6 +40,8 @@ My objective is to complete all the users management logic, since the game rules
 - [x] Title and favicon
 - [x] SSL cert on the sub-domain
 - [x] Deploy version 0.1.1 on VPS
+- [x] Improved "box has 4 sides" dispatch (better render, data retention on server)
+- [x] Deploy version 0.1.2 on VPS
 - [ ] Controls: on game over, start a new game with same opponent.
 - [ ] A sympatic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
 - [ ] Display "opened to anyone" games to join (without having a game number)
@@ -69,4 +71,4 @@ npm run build
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+Open [http://localhost:3001](http://localhost:3001) with your browser.

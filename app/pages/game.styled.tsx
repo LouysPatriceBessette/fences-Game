@@ -94,10 +94,23 @@ export const GameGridContainer = styled.div`
 `
 
 export const GameOver = styled.div`
-  color: #fe7474ff;
-  font-size: 4em;
-  font-weight: 600;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  width: 100%;
+  width: fit-content;
+  margin:0 auto;
+
+  & > div:nth-child(1){
+    color: #fe7474ff;
+    font-size: 4em;
+    font-weight: 600;
+  }
+  & > div:nth-child(2){
+    display: flex;
+    justify-content: center;
+    
+    & button{
+      display: none;
+    }
+  }
 `

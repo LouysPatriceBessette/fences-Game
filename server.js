@@ -28,17 +28,19 @@ const pings = []
 
 const INITIAL_GAME_STATE = {
   id: -1,
-  players: [],
-  player1Name: '',
-  player2Name: '',
+  players: [],              // Copy from last game
+  player1Name: '',          // Copy from last game
+  player2Name: '',          // Copy from last game
   redux: {
-    chat: { messages: [] },
+    chat: { messages: [] }, // Copy from last game
     game: {
-      size: {x: 3, y: 3},
-      currentPlayer: 1,
+      size: {x: 3, y: 3},   // ?
+      currentPlayer: 1,     // Reverse last player to move
       usedFences: [],
       usedFencesP1: [],
-      usedFencesP2: []
+      usedFencesP2: [],
+      fencedByP1: [],
+      fencedByP2: [],
     }
   }
 }

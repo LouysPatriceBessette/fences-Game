@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import {
   setNameOfPlayer1,
@@ -42,18 +42,26 @@ import Chakra from "../components/Chakra";
 import { Chat } from "../components/chat";
 
 export const Game = () => {
+  const GameOverDialogDisabled = true
 
   const socket = useSocketInstance()
   const dispatch = useDispatch()
 
+  const size = useSize()
+  const gameId = useGameId()
+  const finalCount = (size.x - 1) * (size.y - 1)
+  const gameover = useGameover()
+  const player1Name = usePlayer1Name()
+  const player2Name = usePlayer2Name()
+
   const currentPlayer = useCurrentPlayer()
   const remoteIsOnline = useSocketRemoteIsOnline()
   const iamPlayer = useIamPlayer()
-  const gameId = useGameId()
-
+  const otherPlayerName = iamPlayer === 1 ? player2Name : player1Name
+  
   useEffect(() => {
     let interval: NodeJS.Timeout
-    if(socket){
+    if(socket && gameId && gameId !== -1){
       interval = setInterval(() => {
         if(gameId !== -1) {
           socket.emit('message', JSON.stringify({
@@ -64,7 +72,7 @@ export const Game = () => {
             iamPlayerId: socket.id,
           }))
         }
-      }, 10000)
+      }, 500)
     } else {
       // @ts-expect-error No error here!
       clearInterval(interval)
@@ -87,22 +95,26 @@ export const Game = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // This will come from a user selection
-  const size = useSize()
-  const player1Name = usePlayer1Name()
-  const player2Name = usePlayer2Name()
-  const finalCount = (size.x - 1) * (size.y - 1)
-
   const fencedByP1 = useFencedByP1()
   const fencedByP2 = useFencedByP2()
-  const gameover = useGameover()
 
   const messages = useChatMessages()
   const [messagesLength, setMessagesLength] = useState(messages.length)
-  const [triggerOpen, setTriggerOpen] = useState(false)
+  const [triggerChatDrawerOpen, setTriggerOpen] = useState(false)
+
+  const gameOverDialogButton = useRef<HTMLButtonElement>(null)
+  const gameOverDialogBody = useRef(<></>)
+  
+  useEffect(() => {
+    gameOverDialogBody.current = <p>{`Invite ${otherPlayerName} to start another the game with you?`}</p>
+
+    if(gameover && gameOverDialogButton.current) {
+      gameOverDialogButton.current.click()
+    }
+
+  }, [gameover, otherPlayerName, gameOverDialogButton, gameOverDialogBody])
 
   useEffect(() => {
-
     // Reset on game left or destroyed
     if(messagesLength>0 && messages.length === 0) {
       setMessagesLength(0)
@@ -119,9 +131,9 @@ export const Game = () => {
     }
   }, [messages, messagesLength])
 
-  if(fencedByP1.length + fencedByP2.length === finalCount) {
-    setTimeout(() => dispatch(setGameover(true)), 100)
-  }
+  useEffect(() => {
+    dispatch(setGameover(fencedByP1.length + fencedByP2.length === finalCount))
+  }, [fencedByP1, fencedByP2, finalCount, dispatch])
 
   // const mySocketId = useSocketLocalId()
   const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
@@ -149,7 +161,7 @@ export const Game = () => {
 
         {/* Chat drawer */}
         {gameId !== -1 &&<Chakra.Drawer
-          triggerOpen={triggerOpen}
+          triggerOpen={triggerChatDrawerOpen}
           placement="bottom"
           title='Chat with the other player'
           buttonText='Chat'
@@ -190,11 +202,59 @@ export const Game = () => {
         <GameGrid />
       </GameGridContainer>
 
-      
+      <GameOver>
+        {gameover && <div>Game Over</div>}
+        {!GameOverDialogDisabled && <Chakra.Dialog
+          ref={gameOverDialogButton}
+          title='Game Over'
+          body={gameOverDialogBody.current}
 
-      
+          cancelButtonText={remoteIsOnline ? 'Leave' : 'Ok'}
+          cancelCallback={() => {
+            // LEAVE!
+            alert('LEAVE!')
+          }}
+          
+          saveButtonText='Create a new game'
+          saveButtonHidden={remoteIsOnline ? false : true}
+          saveCallback={() => {
+            alert('Sending a request...')
+            // Make a request to play???
 
-      {gameover && <GameOver>Game Over</GameOver>}
+              // emit #1 == request a new game with same player
+
+
+                // SIZE????
+
+
+
+
+                // Can be determined on server:
+                  // Players id, names, ==> copy
+
+                  // Winner ==> FencedByP1.length > fencedByP2.length
+                  // Draw ==> reverse last known currentPlayer
+
+
+
+
+
+
+
+              // Server will create a new game
+              // Respond with the new game redux to both players
+              // + a dialog trigger for the player who did not request
+              // !!! current turn should be the winner!
+
+            // On the other side,
+              // use the new game redux
+              // display dialog with an 'Ok' or a 'Leave'
+
+              // If Leave: emit leave game.
+
+          }}
+        />}
+        </GameOver>
     </PageContainer>
   );
 }

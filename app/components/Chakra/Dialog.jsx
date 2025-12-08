@@ -6,22 +6,28 @@ import {
 import { ChakraButton as Button } from './Button'
 
 export const ChakraDialog = ({
-  // key,
-  size,
+  ref,
+  size='md',
   title='Dialog Title',
-  openButtonText,
+  openButtonText='Open Dialog',
   openButtonColor='white',
+
   cancelButtonText,
+  cancelCallback=() => {},
+
   saveButtonText,
   saveCallback=() => {},
+  saveButtonHidden=false,
+
   body=<p>Add the body property (JSX) to the body attribute.</p>,
-  disabled=false
+  disabled=false,
 }) => {
 
   return (
     <Dialog.Root size={size}>
       <Dialog.Trigger asChild>
         <Button
+          ref={ref}
           customVariant={openButtonColor}
           size={size}
           text={openButtonText}
@@ -43,16 +49,16 @@ export const ChakraDialog = ({
                 <Button
                 customVariant='red'
                 text={cancelButtonText}
-                
+                onClick={() => cancelCallback()}
                 />
               </Dialog.ActionTrigger>
-              <Dialog.ActionTrigger asChild>
+              {!saveButtonHidden && <Dialog.ActionTrigger asChild>
                 <Button
                 customVariant='green'
                 text={saveButtonText}
                 onClick={() => saveCallback()}
                 />
-              </Dialog.ActionTrigger>
+              </Dialog.ActionTrigger>}
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
@@ -63,8 +69,3 @@ export const ChakraDialog = ({
     </Dialog.Root>
   )
 }
-
-
-/*
-
-*/

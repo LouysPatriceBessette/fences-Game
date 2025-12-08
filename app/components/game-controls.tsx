@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   setGameSize,
   setGameId,
@@ -23,6 +23,8 @@ import { DialogGridStyled as DialogGrid, DialogLabelStyled, ControlButtonsContai
 
 export const GameControls = () => {
   const debugStorage = false
+
+  const fakeRef = useRef(null)
 
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
@@ -172,7 +174,7 @@ export const GameControls = () => {
     <Chakra.Input
       label='Your name'
       placeholder='Your name'
-      value={playerName}  //// NO!
+      value={playerName}
       setValue={setPlayerName}
     />
 
@@ -224,6 +226,7 @@ export const GameControls = () => {
     
     <ControlButtonsContainer>
       <Chakra.Dialog
+        ref={fakeRef}
         size='md'
         title='Create a game'
         openButtonText='Create'
@@ -236,6 +239,7 @@ export const GameControls = () => {
       />
 
       <Chakra.Dialog
+        ref={fakeRef}
         size='md'
         title='Join a game'
         openButtonText='Join'
