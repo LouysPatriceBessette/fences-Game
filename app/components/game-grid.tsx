@@ -1,5 +1,6 @@
 import { GridContainer, GridOverlay, Grid, Square, Dot, Vline, Hline } from "./grid-elements";
 import {
+  useLanguage,
   useSize,
   useGameId,
   useCurrentPlayer,
@@ -7,6 +8,10 @@ import {
   useGameover,
   useSocketRemoteIsOnline,
 } from "../store/selectors";
+
+// Translations
+import t from "../translations";
+import { SupportedLanguagesType } from "../translations/supportedLanguages";
 
   const dot = (key: number, id: number) => <Dot
     key={key}
@@ -90,6 +95,7 @@ import {
     return cells
   }
 export const GameGrid = () => {
+  const language: SupportedLanguagesType = useLanguage()
   const size = useSize()
   const gameId = useGameId()
   const currentPlayer = useCurrentPlayer()
@@ -100,7 +106,7 @@ export const GameGrid = () => {
   const waitingForOpponentMove = currentPlayer !== iamPlayer
   const waitingForOpponentJoin = !remoteIsOnline && gameId !== -1
   const waitingForOpponent = waitingForOpponentMove || waitingForOpponentJoin || gameId === -1 || gameover
-  const waitingForOpponentMsg = waitingForOpponentJoin ? 'Awaiting opponent to join' : waitingForOpponentMove ? `Awaiting opponent's move` : gameover ? '' :'Create/join game first'
+  const waitingForOpponentMsg = waitingForOpponentJoin ? t[language]['Awaiting opponent to join'] : waitingForOpponentMove ? t[language]['Awaiting opponent\'s move'] : gameover ? '' : t[language]['Create/join game first']
   return (
     <GridContainer $waitingForOpponent={waitingForOpponent}>
       <GridOverlay $waitingForOpponent={waitingForOpponent}>{waitingForOpponentMsg}</GridOverlay>

@@ -6,6 +6,7 @@ import {
   setNameOfPlayer2,
 } from '../store/actions';
 import {
+  useLanguage,
   useSocketInstance,
   useSocketLocalId,
   useIamPlayer,
@@ -21,10 +22,16 @@ import { GridContainer, Grid } from './grid-elements'
 import { fillGrid } from "./game-grid";
 import { DialogGridStyled as DialogGrid, DialogLabelStyled, ControlButtonsContainer } from "./game-controls.styled";
 
+// Translations
+import t from "../translations";
+import { SupportedLanguagesType } from "../translations/supportedLanguages";
+
 export const GameControls = () => {
   const debugStorage = false
 
   const fakeRef = useRef(null)
+
+  const language: SupportedLanguagesType = useLanguage()
 
   const socket = useSocketInstance()
   const socketId = useSocketLocalId()
@@ -101,13 +108,13 @@ export const GameControls = () => {
   const CreateForm = <>
 
     <Chakra.Input
-      label='Your name'
-      placeholder='Your name'
+      label={t[language]['Your name']}
+      placeholder={t[language]['Your name']}
       value={playerName}
       setValue={setPlayerName}
     />
 
-    <DialogLabelStyled>Dimentions: {x} x {y}</DialogLabelStyled>
+    <DialogLabelStyled>{t[language]['Dimensions']}: {x} x {y}</DialogLabelStyled>
 
     <DialogGrid>
       <div>
@@ -172,13 +179,13 @@ export const GameControls = () => {
 
   const JoinForm = <>
     <Chakra.Input
-      label='Your name'
-      placeholder='Your name'
+      label={t[language]['Your name']}
+      placeholder={t[language]['Your name']}
       value={playerName}
       setValue={setPlayerName}
     />
 
-    <DialogLabelStyled>Game number</DialogLabelStyled>
+    <DialogLabelStyled>{t[language]['Game number']}</DialogLabelStyled>
 
     <Chakra.PinInput
       pinLength={pinLength}
@@ -190,9 +197,6 @@ export const GameControls = () => {
   // const myName = localStorage.getItem('myName')
   const joinGameCallback = () => {
     const gameNumber = Number(pinString)
-
-    // dispatch(setNameOfPlayer1('Player 1'))
-    // dispatch(setNameOfPlayer2(playerName))
     dispatch(setGameId(gameNumber))
 
     localStorage.setItem('myName', playerName)
@@ -228,11 +232,11 @@ export const GameControls = () => {
       <Chakra.Dialog
         ref={fakeRef}
         size='md'
-        title='Create a game'
-        openButtonText='Create'
+        title={t[language]['Create a game']}
+        openButtonText={t[language]['Create']}
         openButtonColor='green'
-        cancelButtonText='Cancel'
-        saveButtonText='Save'
+        cancelButtonText={t[language]['Cancel']}
+        saveButtonText={t[language]['Save']}
         saveCallback={createGameCallback}
         body={CreateForm}
         disabled={gameId !== -1}
@@ -241,11 +245,11 @@ export const GameControls = () => {
       <Chakra.Dialog
         ref={fakeRef}
         size='md'
-        title='Join a game'
-        openButtonText='Join'
+        title={t[language]['Join a game']}
+        openButtonText={t[language]['Join']}
         openButtonColor='orange'
-        cancelButtonText='Cancel'
-        saveButtonText='Save'
+        cancelButtonText={t[language]['Cancel']}
+        saveButtonText={t[language]['Save']}
         saveCallback={joinGameCallback}
         body={JoinForm}
         disabled={gameId !== -1}
@@ -253,14 +257,14 @@ export const GameControls = () => {
 
       <Chakra.Button
         onClick={leaveGame}
-        text='Leave'
+        text={t[language]['Leave']}
         customVariant='red'
         disabled={gameId === -1 || gameId === '' || !remoteIsOnline}
       />
 
       <Chakra.Button
         onClick={destroyGame}
-        text='Destroy'
+        text={t[language]['Delete']}
         customVariant='red'
         disabled={gameId === -1 || gameId === '' || remoteIsOnline}
       />

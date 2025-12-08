@@ -21,6 +21,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     fencedByP1: [],
     fencedByP2: [],
   },
+  language: { selected: 'FR' },
   mouse: {
     origin: -1,
     canConnectWith: [],
@@ -182,9 +183,24 @@ export const socketReducer = (state = INITIAL_STATE.socket, action: {type: strin
   }
 };
 
+export const languageReducer = (state = INITIAL_STATE.language, action: {type: string, payload: any}) => {
+  const { type, payload } = action
+
+  switch (type) {
+    case ACTION_TYPES.SET_LANGUAGE:
+      return {
+        ...state,
+        selected: payload,
+      };
+    default:
+      return state;
+  }
+}
+
 export const combinedReducer = combineReducers({
   chat: chatReducer,
   game: gameReducer,
+  language: languageReducer,
   mouse: mouseReducer,
   socket: socketReducer,
 });

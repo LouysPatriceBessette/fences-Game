@@ -15,9 +15,15 @@ import {
   toggleCurrentPlayer,
 } from './store/actions';
 
+import { useLanguage } from './store/selectors';
+
 import { Socket } from 'socket.io-client';
 import { SOCKET_ACTIONS } from './basics/constants';
 import { tryParseJson } from './basics/utils';
+
+// Translations
+import t from "./translations";
+import { SupportedLanguagesType } from "./translations/supportedLanguages";
 
 export const socketKill = (socket: Socket) => {
   socket.disconnect();
@@ -32,6 +38,7 @@ export const sendMessage = (socket: Socket, gameId: number, message: string, set
 
 export const SocketListen = () => {
   const dispatch = useDispatch()
+  const language: SupportedLanguagesType = useLanguage()
 
   useEffect(() => {
     let socket: Socket;
@@ -113,7 +120,7 @@ export const SocketListen = () => {
               break;
             
             case SOCKET_ACTIONS.JOIN_FAILED:
-              alert('Game does not exist.')
+              alert(t[language]['Game does not exist'])
               dispatch(setGameId(-1))
               localStorage.removeItem('gameId')
               break;
@@ -121,15 +128,15 @@ export const SocketListen = () => {
             case SOCKET_ACTIONS.PREVIOUS_GAME_DELETED:
               dispatch(setGameId(-1))
               localStorage.removeItem('gameId')
-              alert('This game has been deleted.')
+              alert(t[language]['This game was deleted'])
               break;
 
             case SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME:
               dispatch(setRemoteIsOnline(false))
               if(command.leavingPlayer === 1) {
-                dispatch(setNameOfPlayer1(`${command.leavingPlayerName} left...`))
+                dispatch(setNameOfPlayer1(`${command.leavingPlayerName} ${t[language]['left...']}`))
               }else{
-                dispatch(setNameOfPlayer2(`${command.leavingPlayerName} left...`))
+                dispatch(setNameOfPlayer2(`${command.leavingPlayerName} ${t[language]['left...']}`))
               }
               break;
 
@@ -139,8 +146,8 @@ export const SocketListen = () => {
 
               setTimeout(()=> {
                 dispatch(toggleCurrentPlayer(1))
-                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
-                dispatch(setNameOfPlayer2('Player 2'))
+                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? `${t[language]['Player']} 1`))
+                dispatch(setNameOfPlayer2(`${t[language]['Player']} 2`))
               },1)
               break;
             
@@ -149,7 +156,7 @@ export const SocketListen = () => {
               localStorage.removeItem('gameId')
 
               setTimeout(()=> {
-                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? 'Player 1'))
+                dispatch(setNameOfPlayer1(localStorage.getItem('myName') ?? `${t[language]['Player']} 1`))
               },1)
               break;
             

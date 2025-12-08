@@ -1,4 +1,5 @@
 import { Socket } from "socket.io-client";
+import { SupportedLanguagesType } from "../translations/supportedLanguages";
 
 export type INITIAL_STATE_TYPE = {
   chat: {
@@ -18,6 +19,7 @@ export type INITIAL_STATE_TYPE = {
     fencedByP1: string[],
     fencedByP2: string[],
   },
+  language: { selected: SupportedLanguagesType },
   mouse: {
     origin: number,
     canConnectWith: string[],

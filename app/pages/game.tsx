@@ -6,6 +6,7 @@ import {
   setGameover,
 } from "../store/actions";
 import {
+  useLanguage,
   useSize,
   usePlayer1Name,
   usePlayer2Name,
@@ -41,8 +42,14 @@ import { SOCKET_ACTIONS } from "../basics/constants";
 import Chakra from "../components/Chakra";
 import { Chat } from "../components/chat";
 
+// Translations
+import t from "../translations";
+import { SupportedLanguagesType } from "../translations/supportedLanguages";
+
 export const Game = () => {
   const GameOverDialogDisabled = true
+
+  const language: SupportedLanguagesType = useLanguage()
 
   const socket = useSocketInstance()
   const dispatch = useDispatch()
@@ -51,8 +58,14 @@ export const Game = () => {
   const gameId = useGameId()
   const finalCount = (size.x - 1) * (size.y - 1)
   const gameover = useGameover()
-  const player1Name = usePlayer1Name()
-  const player2Name = usePlayer2Name()
+  let player1Name = usePlayer1Name()
+  let player2Name = usePlayer2Name()
+
+  if(player1Name === 'Player 1'){
+    player1Name = `${t[language]['Player']} 1`}
+  if(player2Name === 'Player 2'){
+    player2Name = `${t[language]['Player']} 2`
+  }
 
   const currentPlayer = useCurrentPlayer()
   const remoteIsOnline = useSocketRemoteIsOnline()
@@ -106,13 +119,13 @@ export const Game = () => {
   const gameOverDialogBody = useRef(<></>)
   
   useEffect(() => {
-    gameOverDialogBody.current = <p>{`Invite ${otherPlayerName} to start another the game with you?`}</p>
+    gameOverDialogBody.current = <p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>
 
     if(gameover && gameOverDialogButton.current) {
       gameOverDialogButton.current.click()
     }
 
-  }, [gameover, otherPlayerName, gameOverDialogButton, gameOverDialogBody])
+  }, [language, gameover, otherPlayerName, gameOverDialogButton, gameOverDialogBody])
 
   useEffect(() => {
     // Reset on game left or destroyed
@@ -144,7 +157,7 @@ export const Game = () => {
         {/* Controls drawer */}
         <Chakra.Drawer
           placement="top"
-          buttonText='Controls'
+          buttonText={t[language]['Controls']}
         >
           <GameControls/>
         </Chakra.Drawer>
@@ -152,7 +165,7 @@ export const Game = () => {
         {gameId !== -1 && <GameNumberStyled>
           <div>
             {/* My Socket Id: {mySocketId} */}
-            Number to share
+            {t[language]['Number to share']}
           </div>
           <div>
             {gameIdString}
@@ -163,8 +176,8 @@ export const Game = () => {
         {gameId !== -1 &&<Chakra.Drawer
           triggerOpen={triggerChatDrawerOpen}
           placement="bottom"
-          title='Chat with the other player'
-          buttonText='Chat'
+          title={t[language]['Chat with the other player']}
+          buttonText={t[language]['Chat']}
         >
           <Chat/>
         </Chakra.Drawer>}
@@ -203,22 +216,22 @@ export const Game = () => {
       </GameGridContainer>
 
       <GameOver>
-        {gameover && <div>Game Over</div>}
+        {gameover && <div>{t[language]['Game Over']}</div>}
         {!GameOverDialogDisabled && <Chakra.Dialog
           ref={gameOverDialogButton}
-          title='Game Over'
+          title={t[language]['Game Over']}
           body={gameOverDialogBody.current}
 
-          cancelButtonText={remoteIsOnline ? 'Leave' : 'Ok'}
+          cancelButtonText={remoteIsOnline ? t[language]['Leave'] : t[language]['Ok']}
           cancelCallback={() => {
             // LEAVE!
-            alert('LEAVE!')
+            alert('DEBUG - LEAVE!')
           }}
           
-          saveButtonText='Create a new game'
+          saveButtonText={t[language]['Create a new game']}
           saveButtonHidden={remoteIsOnline ? false : true}
           saveCallback={() => {
-            alert('Sending a request...')
+            alert('DEBUG - Sending a request...')
             // Make a request to play???
 
               // emit #1 == request a new game with same player

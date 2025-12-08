@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
+  useLanguage,
   useSocketInstance,
   useChatMessages,
   useIamPlayer,
@@ -11,7 +12,12 @@ import { sendMessage } from '../socket';
 import Chakra from "./Chakra";
 import { ChatMessagesContainer, ChatInputsContainer, PlayerNameChatColor, } from './chat.styled';
 
+// Translations
+import t from "../translations";
+import { SupportedLanguagesType } from "../translations/supportedLanguages";
+
 export const Chat = () => {
+  const language: SupportedLanguagesType = useLanguage()
   const [messageInput, setMessageInput] = useState('');
   const messages = useChatMessages();
   const socket = useSocketInstance();
@@ -58,7 +64,7 @@ export const Chat = () => {
       <ChatInputsContainer>
         <Chakra.Input
           disabled={gameId === -1}
-          placeholder="Message"
+          placeholder={t[language]['Message']}
           value={messageInput}
           setValue={setMessageInput}
           onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) => handleInputKeyUp(event)}
@@ -66,7 +72,7 @@ export const Chat = () => {
 
         <Chakra.Button
           type='button'
-          text='Send'
+          text={t[language]['Send']}
           onClick={handleSendMessage}
           disabled={gameId === -1}
         />

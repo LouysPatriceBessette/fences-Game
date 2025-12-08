@@ -25,4 +25,5 @@ export const useSocketInstance = () => useSelector((state) => state.socket.insta
 export const useSocketLocalId = () => useSelector((state) => state.socket.localSocketId);
 export const useSocketRemoteIsOnline = () => useSelector((state) => state.socket.remoteIsOnline);
 
+export const useLanguage = () => useSelector((state) => state.language.selected);
 export const useChatMessages = () => useSelector((state) => state.chat.messages);
