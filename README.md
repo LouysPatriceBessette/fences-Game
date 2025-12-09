@@ -42,6 +42,7 @@ My objective is to complete all the users management logic, since the game rules
 - [x] Deploy version 0.1.1 on VPS
 - [x] Improved "box has 4 sides" dispatch (better render, data retention on server)
 - [x] Deploy version 0.1.2 on VPS
+- [x] Translations (11 languages)
 - [ ] Controls: on game over, start a new game with same opponent.
 - [ ] A sympatic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
 - [ ] Display "opened to anyone" games to join (without having a game number)

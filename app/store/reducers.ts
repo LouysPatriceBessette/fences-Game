@@ -21,7 +21,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     fencedByP1: [],
     fencedByP2: [],
   },
-  language: { selected: 'FR' },
+  language: { selected: 'EN' },
   mouse: {
     origin: -1,
     canConnectWith: [],

@@ -3,15 +3,14 @@ import { Menu, Portal } from '@chakra-ui/react'
 import { ChakraButton } from './Button'
 import { randomReactKey } from '../../basics/utils'
 
-export const ChakraMenu = (props) => {
+export const ChakraMenu = ({ buttonTitle, buttonCustomVariant='', items, onSelect }) => {
 
-  const { buttonTitle, items, onSelect } = props
   return (
     <Menu.Root onSelect={onSelect}>
       <Menu.Trigger asChild>
         <ChakraButton
           text={buttonTitle}
-          customVariant='nav'
+          customVariant={buttonCustomVariant}
         />
       </Menu.Trigger>
       <Portal>

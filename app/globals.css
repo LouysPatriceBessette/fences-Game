@@ -29,3 +29,8 @@ body {
 .chakra-drawer__body {
   padding: 0 !important;
 }
+
+/* Chakra Menu cheat */
+.chakra-menu__positioner{
+  z-index: 9999 !important;
+}

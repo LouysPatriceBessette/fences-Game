@@ -225,8 +225,8 @@ export const SocketListen = () => {
     socket.on('error', (err) => {
       console.error(`Socket.IO connection error: ${err.message}`);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+   
+  }, [language, dispatch]);
 
   return <div></div>
 }

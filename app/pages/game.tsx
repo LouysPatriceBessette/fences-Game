@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import {
+  setLanguage,
   setNameOfPlayer1,
   setGameId,
   setGameover,
@@ -98,6 +99,7 @@ export const Game = () => {
   useEffect(() => {
     const storedGameId = localStorage.getItem('gameId')
     const player1Name = localStorage.getItem('player1Name')
+    const storedLanguage =localStorage.getItem('language')
 
     if(player1Name) {
       dispatch(setNameOfPlayer1(player1Name))
@@ -105,8 +107,10 @@ export const Game = () => {
     if(storedGameId) {
       dispatch(setGameId(storedGameId))
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if(storedLanguage){
+      dispatch(setLanguage(storedLanguage))
+    }
+  }, [dispatch])
 
   const fencedByP1 = useFencedByP1()
   const fencedByP2 = useFencedByP2()

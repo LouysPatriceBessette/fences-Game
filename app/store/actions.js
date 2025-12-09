@@ -7,6 +7,9 @@ export const resetReduxInitialState = () =>
 export const refreshReduxStore = (data) =>
   createAction(ACTION_TYPES.REFRESH_REDUX_STORE, data);
 
+export const setLanguage = (language) =>
+  createAction(ACTION_TYPES.SET_LANGUAGE, language);
+
 export const setGameSize = (size) =>
   createAction(ACTION_TYPES.SET_SIZE, size);
 

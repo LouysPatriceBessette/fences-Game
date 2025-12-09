@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
+  setLanguage,
   setGameSize,
   setGameId,
   setNameOfPlayer1,
@@ -26,6 +27,7 @@ import { DialogGridStyled as DialogGrid, DialogLabelStyled, ControlButtonsContai
 // Translations
 import t from "../translations";
 import { SupportedLanguagesType } from "../translations/supportedLanguages";
+import { languages } from "../translations/supportedLanguages";
 
 export const GameControls = () => {
   const debugStorage = false
@@ -50,6 +52,17 @@ export const GameControls = () => {
 
   const pinLength = 6
   const [pinString, setPinString] = useState('')
+
+  const [more, setMore] = useState(false)
+
+  const languageItems = Object.entries(languages).map((item) =>
+    ({label: item[1], value: item[0], disabled: language === item[0]}))
+
+  const changeLanguage = (selectedLangItem: {label: string, value: string, disabled: boolean}) => {
+    localStorage.setItem('language', selectedLangItem.value)
+    dispatch(setLanguage(selectedLangItem.value))
+    setMore(false)
+  }
 
   useEffect(() => {
     (() => setPlayerName(iamPlayer === 1 ? player1Name : player2Name))()
@@ -233,35 +246,58 @@ export const GameControls = () => {
     </div>}
     
     <ControlButtonsContainer>
-      <Chakra.Dialog
-        ref={fakeRef}
-        title={t[language]['Create a game']}
-        openButtonText={t[language]['Create']}
-        openButtonColor='green'
-        cancelButtonText={t[language]['Cancel']}
-        saveButtonText={t[language]['Save']}
-        saveCallback={createGameCallback}
-        body={CreateForm}
-        disabled={gameId !== -1}
-      />
+      {!more && <>
+        <Chakra.Dialog
+          ref={fakeRef}
+          title={t[language]['Create a game']}
+          openButtonText={t[language]['Create']}
+          openButtonColor='green'
+          cancelButtonText={t[language]['Cancel']}
+          saveButtonText={t[language]['Save']}
+          saveCallback={createGameCallback}
+          body={CreateForm}
+          disabled={gameId !== -1}
+        />
 
-      <Chakra.Dialog
-        ref={fakeRef}
-        title={t[language]['Join a game']}
-        openButtonText={t[language]['Join']}
-        openButtonColor='orange'
-        cancelButtonText={t[language]['Cancel']}
-        saveButtonText={t[language]['Save']}
-        saveCallback={joinGameCallback}
-        body={JoinForm}
-        disabled={gameId !== -1}
-      />
+        <Chakra.Dialog
+          ref={fakeRef}
+          title={t[language]['Join a game']}
+          openButtonText={t[language]['Join']}
+          openButtonColor='orange'
+          cancelButtonText={t[language]['Cancel']}
+          saveButtonText={t[language]['Save']}
+          saveCallback={joinGameCallback}
+          body={JoinForm}
+          disabled={gameId !== -1}
+        />
+
+        <Chakra.Button
+          onClick={remoteHasLeft ? destroyGame : leaveGame}
+          text={remoteHasLeft ? t[language]['Delete'] : t[language]['Leave']}
+          customVariant='red'
+          disabled={gameId === -1 || gameId === ''}
+        />
+      </>}
+
+      {more && <>
+        <Chakra.Menu
+          buttonTitle={t[language]['Language']}
+          items={languageItems}
+          onSelect={(selectedLangItem: {label: string, value: string, disabled: boolean}) => changeLanguage(selectedLangItem)}
+          buttonCustomVariant='green'
+        />
+
+        <Chakra.Button
+          onClick={() => alert(t[language]['Soon'])}
+          text={t[language]['Instructions']}
+          customVariant='orange'
+        />
+      </>}
 
       <Chakra.Button
-        onClick={remoteHasLeft ? destroyGame : leaveGame}
-        text={remoteHasLeft ? t[language]['Delete'] : t[language]['Leave']}
-        customVariant='red'
-        disabled={gameId === -1 || gameId === ''}
+        onClick={() => setMore(!more)}
+        text={more ? t[language]['Back'] : t[language]['More']}
+        customVariant='grey'
       />
     </ControlButtonsContainer>
   </>
