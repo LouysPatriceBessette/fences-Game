@@ -21,6 +21,15 @@ export const PageContainer = styled.div`
   padding: 10px 20px 40px;
 `
 
+export const ConnectedPlayersContainer = styled.div`
+  text-align: center;
+
+  & span{
+    color: green;
+    font-weight: bold;
+  }
+`
+
 export const DrawerContainer = styled.div`
   display: flex;
   justify-content: space-between;

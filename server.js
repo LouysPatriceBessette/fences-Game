@@ -31,8 +31,8 @@ const games = []
 // SERVER PINGS
 const CURRENT_ACTIVE_SOCKETS = []
 const CURRENT_TIMEOUTS = {}
-const PING_INTERVAL = 10000
-const PING_TIMEOUT = 5000
+const PING_INTERVAL = 1600
+const PING_TIMEOUT = 800
 const PING_MESSAGE = {
   from: 'server',
   to: 'player',
@@ -141,6 +141,7 @@ app.prepare().then(() => {
       if(DEBUG_PING_PONG){
         console.log(`${LOG_COLORS.INFO}> ${new Date().toISOString()} PING to : ${activeSocketId}${LOG_COLORS.WHITE}`);
       }
+      PING_MESSAGE.clientsCount = CURRENT_ACTIVE_SOCKETS.length
       io.to(activeSocketId).emit('message', JSON.stringify(PING_MESSAGE))
     }
     

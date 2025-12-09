@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import {
   resetReduxInitialState,
+  setClientsCount,
   setGameId,
   setIamPlayer,
   setSocketInstance,
@@ -169,6 +170,8 @@ export const SocketListen = () => {
               break;
             
             case SOCKET_ACTIONS.PING:
+              dispatch(setClientsCount(command.clientsCount))
+
               if(DEBUG_PING_PONG){
                 console.log("Received PING", command)
               }

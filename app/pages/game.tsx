@@ -7,6 +7,7 @@ import {
   setGameover,
 } from "../store/actions";
 import {
+  useClientsCount,
   useLanguage,
   useSize,
   usePlayer1Name,
@@ -26,6 +27,7 @@ import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
 import {
   PageContainer,
+  ConnectedPlayersContainer,
   GameNumberStyled,
   DrawerContainer,
   PlayersNameHeader,
@@ -51,6 +53,7 @@ export const Game = () => {
 
   const dispatch = useDispatch()
 
+  const clientsCount = useClientsCount()
   const language: SupportedLanguagesType = useLanguage()
   const size = useSize()
   const gameId = useGameId()
@@ -127,6 +130,10 @@ export const Game = () => {
 
   return (
     <PageContainer>
+      <ConnectedPlayersContainer>
+        <span>{clientsCount}</span> {`${clientsCount >  1 ? t[language]['players'] : t[language]['player']} ${t[language]['online']}`}
+      </ConnectedPlayersContainer>
+
       <DrawerContainer>
         {/* Controls drawer */}
         <Chakra.Drawer

@@ -7,6 +7,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
   chat: {
     messages: [],
   },
+  clients: {count: 1},
   game: {
     gameId: -1,
     size: {x: 3, y: 3},
@@ -160,6 +161,20 @@ export const chatReducer = (state = INITIAL_STATE.chat, action: {type: string, p
   }
 };
 
+export const clientsReducer = (state = INITIAL_STATE.clients, action: {type: string, payload: any}) => {
+  const { type, payload } = action
+
+  switch (type) {
+    case ACTION_TYPES.SET_CLIENTS_COUNT:
+      return {
+        ...state,
+        count: payload,
+      };
+    default:
+      return state;
+  }
+}
+
 export const socketReducer = (state = INITIAL_STATE.socket, action: {type: string, payload: any}) => {
   const { type, payload } = action
 
@@ -205,6 +220,7 @@ export const languageReducer = (state = INITIAL_STATE.language, action: {type: s
 
 export const combinedReducer = combineReducers({
   chat: chatReducer,
+  clients: clientsReducer,
   game: gameReducer,
   language: languageReducer,
   mouse: mouseReducer,

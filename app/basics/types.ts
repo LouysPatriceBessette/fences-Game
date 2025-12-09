@@ -5,6 +5,7 @@ export type INITIAL_STATE_TYPE = {
   chat: {
     messages: string[],
   },
+  clients: {count: number},
   game: {
     gameId: number,
     size: {x: number, y: number},

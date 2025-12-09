@@ -1,6 +1,9 @@
 export const appTranslations = {
   EN: {
     'Bientôt...': `Soon...`,
+    'player': `player`,
+    'players': `players`,
+    'online': `online`,
     'Player': `Player`,
     'Controls': `Controls`,
     'Create': `Create`,
@@ -41,6 +44,9 @@ export const appTranslations = {
   },
   FR: {
     'Bientôt...': `Bientôt...`,
+    'player': `joueur`,
+    'players': `joueurs`,
+    'online': `en ligne`,
     'Player': `Joueur`,
     'Controls': `Contrôles`,
     'Create': `Créer`,
@@ -81,6 +87,9 @@ export const appTranslations = {
   },
   ES: {
     'Bientôt...': `Pronto...`,
+    'player': `jugador`,
+    'players': `jugadores`,
+    'online': `en linea`,
     'Player': `Jugador`,
     'Controls': `Controles`,
     'Create': `Crear`,
@@ -121,6 +130,9 @@ export const appTranslations = {
   },
   DE: {
     'Bientôt...': `Bald...`,
+    'player': `Spieler`,
+    'players': `Spieler`,
+    'online': `online`,
     'Player': `Spieler`,
     'Controls': `Steuerungen`,
     'Create': `Erstellen`,
@@ -161,6 +173,9 @@ export const appTranslations = {
   },
   NL: {
     'Bientôt...': `Binnenkort...`,
+    'player': `speler`,
+    'players': `spelers`,
+    'online': `online`,
     'Player': `Speler`,
     'Controls': `Besturingen`,
     'Create': `Aanmaken`,
@@ -201,6 +216,9 @@ export const appTranslations = {
   },
   RU: {
     'Bientôt...': `Скоро...`,
+    'player': `игрок`,
+    'players': `игроки`,
+    'online': `онлайн`,
     'Player': `Игрок`,
     'Controls': `Управление`,
     'Create': `Создать`,
@@ -241,6 +259,9 @@ export const appTranslations = {
   },
   ZH: {
     'Bientôt...': `很快...`,
+    'player': `玩家`,
+    'players': `玩家`,
+    'online': `在线`,
     'Player': `玩家`,
     'Controls': `控制`,
     'Create': `创建`,
@@ -281,6 +302,9 @@ export const appTranslations = {
   },
   JA: {
     'Bientôt...': `しばらく...`,
+    'player': `プレイヤー`,
+    'players': `プレイヤー`,
+    'online': `オンライン`,
     'Player': `プレイヤー`,
     'Controls': `コントロール`,
     'Create': `作成`,
@@ -321,6 +345,9 @@ export const appTranslations = {
   },
   KO: {
     'Bientôt...': `방은...`,
+    'player': `플레이어`,
+    'players': `플레이어`,
+    'online': `온라인`,
     'Player': `플레이어`,
     'Controls': `조정`,
     'Create': `생성`,
@@ -361,6 +388,9 @@ export const appTranslations = {
   },
   PT: {
     'Bientôt...': `Pronto...`,
+    'player': `jogador`,
+    'players': `jogadores`,
+    'online': `online`,
     'Player': `Jogador`,
     'Controls': `Controles`,
     'Create': `Criar`,
@@ -401,6 +431,9 @@ export const appTranslations = {
   },
   HT: {
     'Bientô...': `Bientô...`,
+    'player': `jwè`,
+    'players': `jwèts`,
+    'online': `en ligne`,
     'Player': `Jwè`,
     'Controls': `Kontwòl`,
     'Create': `Kreye`,
