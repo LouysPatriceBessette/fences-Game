@@ -21,9 +21,11 @@ import {
   useSocketRemoteIsOnline,
   useChatMessages,
   useSocketLocalId,
+  useSocketInstance,
 } from "../store/selectors";
-import { LuSettings, LuMessagesSquare } from 'react-icons/lu'
+import { SOCKET_ACTIONS } from "../basics/constants";
 
+import { LuSettings, LuMessagesSquare } from 'react-icons/lu'
 import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
 import {
@@ -50,7 +52,7 @@ import { SupportedLanguagesType } from "../translations/supportedLanguages";
 
 export const Game = () => {
   const DEBUG_DISPLAY_MY_SOCKET_ID = false
-  const WIP_GAME_OVER_DIALOG_DISABLED = true
+  const WIP_GAME_OVER_DIALOG_DISABLED = false
 
   const dispatch = useDispatch()
 
@@ -128,6 +130,21 @@ export const Game = () => {
 
   const mySocketId = useSocketLocalId()
   const gameIdString = gameId.toString().slice(0,3) + ' ' + gameId.toString().slice(3,6)
+
+  const socket = useSocketInstance()
+  const leaveGame = () => {
+    localStorage.removeItem('gameId')
+    dispatch(setGameId(-1))
+
+    const request = {
+        from: 'player',
+        to: 'server',
+        action: SOCKET_ACTIONS.LEAVE_GAME,
+        socketId: mySocketId,
+        gameId: gameId,
+      }
+      socket.emit('message', JSON.stringify(request))
+  }
 
   return (
     <PageContainer>
@@ -210,10 +227,7 @@ export const Game = () => {
           body={<p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>}
 
           cancelButtonText={remoteIsOnline ? t[language]['Leave'] : t[language]['Ok']}
-          cancelCallback={() => {
-            // LEAVE!
-            alert('DEBUG - LEAVE!')
-          }}
+          cancelCallback={leaveGame}
           
           saveButtonText={t[language]['Create a new game']}
           saveButtonHidden={remoteIsOnline ? false : true}
