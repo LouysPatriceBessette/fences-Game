@@ -30,6 +30,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     instance: null,
     localSocketId: '',
     remoteIsOnline: false,
+    remoteHasLeft: false,
   },
 };
 
@@ -177,6 +178,11 @@ export const socketReducer = (state = INITIAL_STATE.socket, action: {type: strin
       return {
         ...state,
         remoteIsOnline: payload,
+      }
+    case ACTION_TYPES.SET_REMOTE_HAS_LEFT:
+      return {
+        ...state,
+        remoteHasLeft: payload,
       }
     default:
       return state;

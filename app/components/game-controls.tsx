@@ -13,7 +13,8 @@ import {
   usePlayer1Name,
   usePlayer2Name,
   useGameId,
-  useSocketRemoteIsOnline,
+  // useSocketRemoteIsOnline,
+  useSocketRemoteHasLeft
 } from "../store/selectors";
 import { useDispatch } from "react-redux";
 import { SOCKET_ACTIONS } from "../basics/constants";
@@ -39,7 +40,8 @@ export const GameControls = () => {
   const player1Name = usePlayer1Name()
   const player2Name = usePlayer2Name()
   const gameId = useGameId()
-  const remoteIsOnline = useSocketRemoteIsOnline()
+  // const remoteIsOnline = useSocketRemoteIsOnline()
+  const remoteHasLeft = useSocketRemoteHasLeft()
   const dispatch = useDispatch()
 
   const [playerName, setPlayerName] = useState('')
@@ -215,6 +217,8 @@ export const GameControls = () => {
     socket.emit('message', JSON.stringify(request))
   }
 
+  console.log('remoteHasLeft', remoteHasLeft)
+
   return (<>
     {debugStorage && <div>
       <Chakra.Button
@@ -231,7 +235,6 @@ export const GameControls = () => {
     <ControlButtonsContainer>
       <Chakra.Dialog
         ref={fakeRef}
-        size='md'
         title={t[language]['Create a game']}
         openButtonText={t[language]['Create']}
         openButtonColor='green'
@@ -244,7 +247,6 @@ export const GameControls = () => {
 
       <Chakra.Dialog
         ref={fakeRef}
-        size='md'
         title={t[language]['Join a game']}
         openButtonText={t[language]['Join']}
         openButtonColor='orange'
@@ -256,17 +258,10 @@ export const GameControls = () => {
       />
 
       <Chakra.Button
-        onClick={leaveGame}
-        text={t[language]['Leave']}
+        onClick={remoteHasLeft ? destroyGame : leaveGame}
+        text={remoteHasLeft ? t[language]['Delete'] : t[language]['Leave']}
         customVariant='red'
-        disabled={gameId === -1 || gameId === '' || !remoteIsOnline}
-      />
-
-      <Chakra.Button
-        onClick={destroyGame}
-        text={t[language]['Delete']}
-        customVariant='red'
-        disabled={gameId === -1 || gameId === '' || remoteIsOnline}
+        disabled={gameId === -1 || gameId === ''}
       />
     </ControlButtonsContainer>
   </>

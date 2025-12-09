@@ -24,6 +24,7 @@ export const useIamPlayer = () => useSelector((state) => state.game.iamPlayer);
 export const useSocketInstance = () => useSelector((state) => state.socket.instance);
 export const useSocketLocalId = () => useSelector((state) => state.socket.localSocketId);
 export const useSocketRemoteIsOnline = () => useSelector((state) => state.socket.remoteIsOnline);
+export const useSocketRemoteHasLeft = () => useSelector((state) => state.socket.remoteHasLeft);
 
 export const useLanguage = () => useSelector((state) => state.language.selected);
 export const useChatMessages = () => useSelector((state) => state.chat.messages);

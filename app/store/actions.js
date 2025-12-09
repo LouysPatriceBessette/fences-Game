@@ -64,5 +64,8 @@ export const setSocketLocalId = (socketId) =>
 export const setRemoteIsOnline = (isOnline) =>
   createAction(ACTION_TYPES.SET_REMOTE_IS_ONLINE, isOnline);
 
+export const setRemoteHasLeft = (hasLeft) =>
+  createAction(ACTION_TYPES.SET_REMOTE_HAS_LEFT, hasLeft);
+
 export const setChatMessage = (message) =>
   createAction(ACTION_TYPES.SET_CHAT_MESSAGE, message);

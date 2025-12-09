@@ -28,5 +28,6 @@ export type INITIAL_STATE_TYPE = {
     instance: Socket | null,
     localSocketId: string,
     remoteIsOnline: boolean,
+    remoteHasLeft: boolean,
   },
 };

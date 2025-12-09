@@ -11,6 +11,7 @@ import {
   setChatMessage,
   refreshReduxStore,
   setRemoteIsOnline,
+  setRemoteHasLeft,
   setNameOfPlayer2,
   toggleCurrentPlayer,
 } from './store/actions';
@@ -94,6 +95,7 @@ export const SocketListen = () => {
             // Player 1
             case SOCKET_ACTIONS.PLAYER_JOINED_MY_GAME:
               dispatch(setRemoteIsOnline(true))
+              dispatch(setRemoteHasLeft(false))
               
               dispatch(setIamPlayer(command.youArePlayer))
               dispatch(toggleCurrentPlayer(command.currentPlayer))
@@ -107,6 +109,7 @@ export const SocketListen = () => {
             // Player 2
             case SOCKET_ACTIONS.JOINED_A_GAME:
               dispatch(setRemoteIsOnline(true))
+              dispatch(setRemoteHasLeft(false))
               dispatch(setGameId(command.gameId))
               localStorage.setItem('gameId', command.gameId)
 
@@ -133,6 +136,7 @@ export const SocketListen = () => {
 
             case SOCKET_ACTIONS.PLAYER_LEFT_MY_GAME:
               dispatch(setRemoteIsOnline(false))
+              dispatch(setRemoteHasLeft(true))
               if(command.leavingPlayer === 1) {
                 dispatch(setNameOfPlayer1(`${command.leavingPlayerName} ${t[language]['left...']}`))
               }else{
