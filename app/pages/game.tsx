@@ -120,27 +120,23 @@ export const Game = () => {
   const [triggerChatDrawerOpen, setTriggerOpen] = useState(false)
 
   const gameOverDialogButton = useRef<HTMLButtonElement>(null)
-  const gameOverDialogBody = useRef(<></>)
-  
   useEffect(() => {
-    gameOverDialogBody.current = <p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>
-
     if(gameover && gameOverDialogButton.current) {
       gameOverDialogButton.current.click()
     }
-
-  }, [language, gameover, otherPlayerName, gameOverDialogButton, gameOverDialogBody])
+  }, [language, gameover, otherPlayerName, gameOverDialogButton])
 
   useEffect(() => {
     // Reset on game left or destroyed
     if(messagesLength>0 && messages.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessagesLength(0)
       return
     }
 
     if(messages.length > messagesLength) {
       setTriggerOpen(true)
-      setMessagesLength((prev: number) => prev + 1)
+      setMessagesLength(messagesLength)
 
       setTimeout(() => {
         setTriggerOpen(false)
@@ -224,7 +220,7 @@ export const Game = () => {
         {!GameOverDialogDisabled && <Chakra.Dialog
           ref={gameOverDialogButton}
           title={t[language]['Game Over']}
-          body={gameOverDialogBody.current}
+          body={<p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>}
 
           cancelButtonText={remoteIsOnline ? t[language]['Leave'] : t[language]['Ok']}
           cancelCallback={() => {
