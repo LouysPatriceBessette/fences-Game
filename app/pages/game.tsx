@@ -22,6 +22,7 @@ import {
   useChatMessages,
   useSocketLocalId,
 } from "../store/selectors";
+import { LuSettings, LuMessagesSquare } from 'react-icons/lu'
 
 import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
@@ -138,7 +139,7 @@ export const Game = () => {
         {/* Controls drawer */}
         <Chakra.Drawer
           placement="top"
-          buttonText={t[language]['Controls']}
+          buttonText={<LuSettings/>}
         >
           <GameControls/>
         </Chakra.Drawer>
@@ -151,10 +152,10 @@ export const Game = () => {
 
         {gameId !== -1 && <GameNumberStyled>
           <div>
-            {t[language]['Number to share']}
+            {gameIdString}
           </div>
           <div>
-            {gameIdString}
+            {t[language]['Number to share']}
           </div>
         </GameNumberStyled>}
 
@@ -163,7 +164,7 @@ export const Game = () => {
           triggerOpen={triggerChatDrawerOpen}
           placement="bottom"
           title={t[language]['Chat with the other player']}
-          buttonText={t[language]['Chat']}
+          buttonText={<LuMessagesSquare/>}
         >
           <Chat/>
         </Chakra.Drawer>}

@@ -3,6 +3,10 @@ import styled from "styled-components";
 export const ControlButtonsContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
+
+  & button{
+    padding: 0 0.7em;
+  }
 `
 
 export const DialogGridStyled = styled.div`
@@ -11,23 +15,24 @@ export const DialogGridStyled = styled.div`
   gap: 0.5em;
   margin-bottom: 1em;
 
-  &>div{
+  & > div{
     display: flex;
     align-items: center;
   }
 
-  &>div:nth-child(2) {
+  & > div:nth-child(2) {
     align-items: start;
   }
 
-  &>div:nth-child(1) {
+  & > div:nth-child(1) {
     display: block;
     
     text-align: center;
     grid-column: span 2;
 
     &>div{
-      margin: 0 auto;}
+      margin: 0 auto;
+    }
   }
 `
 

@@ -17,6 +17,8 @@ import {
   // useSocketRemoteIsOnline,
   useSocketRemoteHasLeft
 } from "../store/selectors";
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+
 import { useDispatch } from "react-redux";
 import { SOCKET_ACTIONS } from "../basics/constants";
 import Chakra from "./Chakra";
@@ -277,14 +279,19 @@ export const GameControls = () => {
           customVariant='red'
           disabled={gameId === -1 || gameId === ''}
         />
+
+        <Chakra.Button
+          onClick={() => setMore(!more)}
+          text={<LuChevronRight/>}
+          customVariant='grey'
+        />
       </>}
 
       {more && <>
-        <Chakra.Menu
-          buttonTitle={t[language]['Language']}
-          items={languageItems}
-          onSelect={(selectedLangItem: {label: string, value: string, disabled: boolean}) => changeLanguage(selectedLangItem)}
-          buttonCustomVariant='green'
+      <Chakra.Button
+          onClick={() => setMore(!more)}
+          text={<LuChevronLeft/>}
+          customVariant='grey'
         />
 
         <Chakra.Button
@@ -292,13 +299,14 @@ export const GameControls = () => {
           text={t[language]['Instructions']}
           customVariant='orange'
         />
-      </>}
 
-      <Chakra.Button
-        onClick={() => setMore(!more)}
-        text={more ? t[language]['Back'] : t[language]['More']}
-        customVariant='grey'
-      />
+        <Chakra.Menu
+          buttonTitle={t[language]['Language']}
+          items={languageItems}
+          onSelect={(selectedLangItem: {label: string, value: string, disabled: boolean}) => changeLanguage(selectedLangItem)}
+          buttonCustomVariant='green'
+        />
+      </>}
     </ControlButtonsContainer>
   </>
   )

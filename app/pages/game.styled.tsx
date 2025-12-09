@@ -6,13 +6,16 @@ export const GameNumberStyled = styled.div`
   align-items: center;
 
   & div:nth-child(1){
-    color: grey;
-  }
-    & div:nth-child(2){
     color: orange;
     text-shadow: 0px 0 1px black;
     font-weight: bold;
     font-size: 1.6em;
+    text-align: center;
+  }
+  & div:nth-child(2){
+    color: grey;
+    font-size: 0.7em;
+    transform: translateY(-6px);
   }
 `
 
@@ -111,7 +114,7 @@ export const GameOver = styled.div`
 
   & > div:nth-child(1){
     color: #fe7474ff;
-    font-size: 4em;
+    font-size: 2.5em;
     font-weight: 600;
   }
   & > div:nth-child(2){
