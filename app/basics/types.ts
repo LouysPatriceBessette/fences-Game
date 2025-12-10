@@ -8,6 +8,7 @@ export type INITIAL_STATE_TYPE = {
   clients: {count: number},
   game: {
     gameId: number,
+    gameIdChanged: boolean
     size: {x: number, y: number},
     nameOfPlayer1: string,
     nameOfPlayer2: string,

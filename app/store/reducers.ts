@@ -10,6 +10,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
   clients: {count: 1},
   game: {
     gameId: -1,
+    gameIdChanged: false,
     size: {x: 3, y: 3},
     nameOfPlayer1: 'Player 1',
     nameOfPlayer2: 'Player 2',
@@ -116,6 +117,22 @@ export const gameReducer = (state = INITIAL_STATE.game, action: {type: string, p
       return {
         ...state,
         fencedByP2: Array.from(new Set([...state.fencedByP2, payload])),
+      };
+    case ACTION_TYPES.SET_ANOTHER_GAME_CREATED:
+      return {
+        ...state,
+        gameId: payload,
+        usedFences: [],
+        usedFencesP1: [],
+        usedFencesP2: [],
+        fencedByP1: [],
+        fencedByP2: [],
+        gameover: false,
+      }
+    case ACTION_TYPES.SET_GAME_ID_CHANGED:
+      return {
+        ...state,
+        gameIdChanged: payload,
       };
     default:
       return state;

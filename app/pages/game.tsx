@@ -5,6 +5,7 @@ import {
   setNameOfPlayer1,
   setGameId,
   setGameover,
+  setGameIdChanged,
 } from "../store/actions";
 import {
   useClientsCount,
@@ -13,6 +14,7 @@ import {
   usePlayer1Name,
   usePlayer2Name,
   useGameId,
+  useGameIdChanged,
   useGameover,
   useCurrentPlayer,
   useIamPlayer,
@@ -52,7 +54,6 @@ import { SupportedLanguagesType } from "../translations/supportedLanguages";
 
 export const Game = () => {
   const DEBUG_DISPLAY_MY_SOCKET_ID = false
-  const WIP_GAME_OVER_DIALOG_DISABLED = false
 
   const dispatch = useDispatch()
 
@@ -60,6 +61,7 @@ export const Game = () => {
   const language: SupportedLanguagesType = useLanguage()
   const size = useSize()
   const gameId = useGameId()
+  const gameIdChanged = useGameIdChanged()
   const finalCount = (size.x - 1) * (size.y - 1)
   const gameover = useGameover()
   let player1Name = usePlayer1Name()
@@ -101,10 +103,12 @@ export const Game = () => {
 
   const gameOverDialogButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
-    if(gameover && gameOverDialogButton.current) {
+    if(gameOverDialogButton.current &&
+        ((gameover) || (!gameover && gameIdChanged))) {
       gameOverDialogButton.current.click()
+      dispatch(setGameIdChanged(false))
     }
-  }, [language, gameover, otherPlayerName, gameOverDialogButton])
+  }, [gameIdChanged, language, gameover, otherPlayerName, gameOverDialogButton, dispatch])
 
   useEffect(() => {
     // Reset on game left or destroyed
@@ -221,7 +225,7 @@ export const Game = () => {
 
       <GameOver>
         {gameover && <div>{t[language]['Game Over']}</div>}
-        {!WIP_GAME_OVER_DIALOG_DISABLED && <Chakra.Dialog
+        <Chakra.Dialog
           ref={gameOverDialogButton}
           title={t[language]['Game Over']}
           body={<p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>}
@@ -232,42 +236,16 @@ export const Game = () => {
           saveButtonText={t[language]['Create a new game']}
           saveButtonHidden={remoteIsOnline ? false : true}
           saveCallback={() => {
-            alert('DEBUG - Sending a request...')
-            // Make a request to play???
-
-              // emit #1 == request a new game with same player
-
-
-                // SIZE????
-
-
-
-
-                // Can be determined on server:
-                  // Players id, names, ==> copy
-
-                  // Winner ==> FencedByP1.length > fencedByP2.length
-                  // Draw ==> reverse last known currentPlayer
-
-
-
-
-
-
-
-              // Server will create a new game
-              // Respond with the new game redux to both players
-              // + a dialog trigger for the player who did not request
-              // !!! current turn should be the winner!
-
-            // On the other side,
-              // use the new game redux
-              // display dialog with an 'Ok' or a 'Leave'
-
-              // If Leave: emit leave game.
-
+            const request = {
+              from: 'player',
+              to: 'server',
+              action: SOCKET_ACTIONS.REQUEST_ANOTHER_GAME,
+              socketId: mySocketId,
+              gameId: gameId,
+            }
+            socket.emit('message', JSON.stringify(request))
           }}
-        />}
+        />
         </GameOver>
     </PageContainer>
   );

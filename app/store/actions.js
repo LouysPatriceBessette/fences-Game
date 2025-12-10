@@ -73,5 +73,11 @@ export const setRemoteIsOnline = (isOnline) =>
 export const setRemoteHasLeft = (hasLeft) =>
   createAction(ACTION_TYPES.SET_REMOTE_HAS_LEFT, hasLeft);
 
+export const setAnotherGameCreated = (gameId) =>
+  createAction(ACTION_TYPES.SET_ANOTHER_GAME_CREATED, gameId);
+
+export const setGameIdChanged = (bool) =>
+  createAction(ACTION_TYPES.SET_GAME_ID_CHANGED, bool);
+
 export const setChatMessage = (message) =>
   createAction(ACTION_TYPES.SET_CHAT_MESSAGE, message);

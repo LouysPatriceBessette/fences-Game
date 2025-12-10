@@ -15,6 +15,8 @@ import {
   setRemoteHasLeft,
   setNameOfPlayer2,
   toggleCurrentPlayer,
+  setAnotherGameCreated,
+  setGameIdChanged,
 } from './store/actions';
 
 import { useLanguage } from './store/selectors';
@@ -212,6 +214,14 @@ export const SocketListen = () => {
 
             case SOCKET_ACTIONS.OTHER_PLAYER_DISCONNECTED: 
               dispatch(setRemoteIsOnline(false))
+              break;
+
+            case SOCKET_ACTIONS.ANOTHER_GAME_WAS_CREATED:
+              dispatch(setAnotherGameCreated(command.gameId))
+              localStorage.setItem('gameId', command.gameId)
+              if(command.closeDialog){
+                dispatch(setGameIdChanged(true))
+              }
               break;
 
             default:

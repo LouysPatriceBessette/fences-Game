@@ -117,12 +117,8 @@ export const GameOver = styled.div`
     font-size: 2.5em;
     font-weight: 600;
   }
-  & > div:nth-child(2){
-    display: flex;
-    justify-content: center;
-    
-    & button{
-      display: none;
-    }
+
+  & button{
+    display: none;
   }
 `

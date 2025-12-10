@@ -49,6 +49,7 @@ const INITIAL_GAME_STATE = {
     game: {
       size: {x: 3, y: 3},   // ?
       currentPlayer: 1,     // Reverse last player to move
+      gameover: false,
       usedFences: [],
       usedFencesP1: [],
       usedFencesP2: [],
@@ -539,6 +540,66 @@ app.prepare().then(() => {
               }
               break;
 
+            case SOCKET_ACTIONS.REQUEST_ANOTHER_GAME:
+              const finishedGame = getGameById(parsed.gameId)
+
+              // TODO: gameId appears in the finishedGame.redux... And should not.
+              // Not urgent!
+              // console.log('finishedGame', JSON.stringify(finishedGame))
+
+              if(finishedGame?.id){
+                const players = finishedGame.players
+                const indexOfRequestingPlayer = players.indexOf(parsed.socketId) === 0 ? 0 : 1
+                const requestingPlayer = players[indexOfRequestingPlayer]
+                const otherPlayer = players[indexOfRequestingPlayer === 0 ? 1 : 0]
+                
+                const newGameId = randomGameId()
+                const newGame = {
+                  ...INITIAL_GAME_STATE,
+                  id: newGameId,
+                  players: [...players],
+                  player1Name: finishedGame.player1Name,
+                  player2Name: finishedGame.player2Name,
+                  
+                  redux: {
+                    ...INITIAL_GAME_STATE.redux,
+                    chat: {
+                      messages:[...finishedGame.redux.chat.messages],
+                    },
+                    game: {
+                      ...INITIAL_GAME_STATE.redux.game,
+                      size: finishedGame.redux.game.size,
+                      currentPlayer: finishedGame.redux.game.currentPlayer,
+                    },
+                  },
+                }
+
+                // Save the new game
+                games.push(newGame)
+  
+                // Destroy the finished game
+                const gameIndex = getGameIndex(finishedGame.id)
+                games.splice(gameIndex, 1)
+
+                // Send to both players
+                io.to(requestingPlayer).emit('message', JSON.stringify({
+                  from: 'server',
+                  to: 'player',
+                  action: SOCKET_ACTIONS.ANOTHER_GAME_WAS_CREATED,
+                  gameId: newGameId,
+                  closeDialog: false,
+                }))
+
+                io.to(otherPlayer).emit('message', JSON.stringify({
+                  from: 'server',
+                  to: 'player',
+                  action: SOCKET_ACTIONS.ANOTHER_GAME_WAS_CREATED,
+                  gameId: newGameId,
+                  closeDialog: true,
+                }))
+              }
+              break;
+              
             default:
               console.log(`${LOG_COLORS.WARNING}> Unknown action to server: ${parsed.action}${LOG_COLORS.WHITE}`, parsed)
               break;
