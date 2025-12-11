@@ -6,15 +6,17 @@ import {
 } from "@chakra-ui/react"
 import { ChakraButton } from './Button'
 
-export const ChakraDrawer = ({
-  title='',
-  placement,
-  buttonText,
-  displayCloseButton=false,
-  footer=undefined,
-  triggerOpen: triggerOpen=false,
-  children
-}) => {
+export const ChakraDrawer = (props) => {
+  const {
+    title,
+    placement,
+    buttonText,
+    displayCloseButton=false,
+    footer,
+    triggerOpen: triggerOpen=false,
+    children, 
+    ...rest
+  } = props
 
   const [isOpen, setIsopen] = useState(false)
 
@@ -34,7 +36,13 @@ export const ChakraDrawer = ({
     >
       <Drawer.Trigger asChild>
         <ChakraButton
-          onClick={() => setIsopen(!isOpen)}
+          id={rest.id}
+          onClick={() => {
+            setIsopen(!isOpen)
+            if(rest.buttonCallback){
+              rest.buttonCallback()
+            }
+          }}
           variant="outline"
           size="sm"
           text={buttonText}

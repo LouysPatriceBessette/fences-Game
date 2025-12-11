@@ -23,7 +23,10 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     fencedByP1: [],
     fencedByP2: [],
   },
-  language: { selected: 'EN' },
+  language: {
+    isDefault: true,
+    selected: 'EN'
+  },
   mouse: {
     origin: -1,
     canConnectWith: [],
@@ -228,7 +231,14 @@ export const languageReducer = (state = INITIAL_STATE.language, action: {type: s
     case ACTION_TYPES.SET_LANGUAGE:
       return {
         ...state,
+        isDefault: false,
         selected: payload,
+      };
+    case ACTION_TYPES.SET_LANGUAGE_IS_DEFAULT:
+      return {
+        ...state,
+        isDefault: true,
+        selected: 'EN',
       };
     default:
       return state;

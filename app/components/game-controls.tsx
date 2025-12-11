@@ -27,8 +27,13 @@ import t from "../translations";
 import { SupportedLanguagesType } from "../translations/supportedLanguages";
 import { languages } from "../translations/supportedLanguages";
 
-export const GameControls = () => {
-  const DEBUG_LOCAL_STORAGE = false
+export const GameControls = ({
+  buttonIds,
+  buttonCallbacks
+}: {
+  buttonIds: string[],
+  buttonCallbacks: React.Dispatch<React.SetStateAction<boolean>>[]
+}) => {
   const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.DEBUG_LOCAL_STORAGE))
 
   const language: SupportedLanguagesType = useLanguage()
@@ -111,6 +116,7 @@ export const GameControls = () => {
   const CreateForm = <>
 
     <Chakra.Input
+      id='tour__playername-create'
       label={t[language]['Your name']}
       placeholder={t[language]['Your name']}
       value={playerName}
@@ -249,10 +255,12 @@ export const GameControls = () => {
     <ControlButtonsContainer>
       {!more && <>
         <Chakra.Dialog
+          id={buttonIds[0]}
           ref={createButtonRef}
           title={t[language]['Create a game']}
           openButtonText={t[language]['Create']}
           openButtonColor='green'
+          openButtonCallback={buttonCallbacks[0]}
           cancelButtonText={t[language]['Cancel']}
           saveButtonText={t[language]['Save']}
           saveCallback={() => createGameCallback(createButtonRef)}
@@ -261,10 +269,12 @@ export const GameControls = () => {
         />
 
         <Chakra.Dialog
+          id={buttonIds[1]}
           ref={joinButtonRef}
           title={t[language]['Join a game']}
           openButtonText={t[language]['Join']}
           openButtonColor='orange'
+          openButtonCallback={() => {}}
           cancelButtonText={t[language]['Cancel']}
           saveButtonText={t[language]['Save']}
           saveCallback={() => joinGameCallback(joinButtonRef)}
@@ -273,6 +283,7 @@ export const GameControls = () => {
         />
 
         <Chakra.Button
+          id={buttonIds[2]}
           onClick={remoteHasLeft ? destroyGame : leaveGame}
           text={remoteHasLeft ? t[language]['Delete'] : t[language]['Leave']}
           customVariant='red'
@@ -280,6 +291,7 @@ export const GameControls = () => {
         />
 
         <Chakra.Button
+          id={buttonIds[3]}
           onClick={() => setMore(!more)}
           text={<LuChevronRight/>}
           customVariant='grey'

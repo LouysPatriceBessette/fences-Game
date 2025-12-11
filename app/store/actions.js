@@ -13,6 +13,9 @@ export const setClientsCount = (clientsCount) =>
 export const setLanguage = (language) =>
   createAction(ACTION_TYPES.SET_LANGUAGE, language);
 
+export const setLanguageIsDefault = () =>
+  createAction(ACTION_TYPES.SET_LANGUAGE_IS_DEFAULT);
+
 export const setGameSize = (size) =>
   createAction(ACTION_TYPES.SET_SIZE, size);
 

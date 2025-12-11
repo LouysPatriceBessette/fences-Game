@@ -30,12 +30,21 @@ body {
   padding: 0 !important;
 }
 
+/* Chakra Drawer cheat */
+.chakra-drawer__positioner{
+  z-index: 9990 !important;
+}
+
 /* Chakra Menu cheat */
 .chakra-menu__positioner{
-  z-index: 9999 !important;
+  z-index: 9995 !important;
 }
 
 /* Chakra Menu cheat */
 .chakra-combobox__positioner{
+  z-index: 9995 !important;
+}
+
+div[data-name='nextstep-overlay']{
   z-index: 9999 !important;
 }

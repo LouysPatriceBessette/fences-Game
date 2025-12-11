@@ -7,7 +7,7 @@ export const ChakraInput = (props) => {
   const { variant, placeholder, label, id, name, value, setValue, ...rest } = props
 
   return (
-    <Box className='chakraContainer'>
+    <Box className='chakraContainer' id={`${id}-container`}>
       <CustomLabel label={label}/>
       <Input
         {...rest}

@@ -1,7 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useNextStep } from 'nextstepjs';
+import { steps } from '../tour/';
+
 import { useDispatch } from 'react-redux';
 import {
   setLanguage,
+  setLanguageIsDefault,
   setNameOfPlayer1,
   setGameId,
   setGameover,
@@ -10,6 +14,7 @@ import {
 import {
   useClientsCount,
   useLanguage,
+  useLanguageIsDefault,
   useSize,
   usePlayer1Name,
   usePlayer2Name,
@@ -62,6 +67,7 @@ export const Game = () => {
 
   const clientsCount = useClientsCount()
   const language: SupportedLanguagesType = useLanguage()
+  const languageIsDefault = useLanguageIsDefault()
   const size = useSize()
   const gameId = useGameId()
   const gameIdChanged = useGameIdChanged()
@@ -81,15 +87,19 @@ export const Game = () => {
   const iamPlayer = useIamPlayer()
   const otherPlayerName = iamPlayer === 1 ? player2Name : player1Name
   const languageItems = Object.entries(languages).map(([key, value]) => ({label: value, value: key}))
-  const languageDialogButton = useRef<HTMLButtonElement>(null)
 
+  // Dialogs open states
+  const [languageDialogOpen, setLanguageDialogOpen] = useState(false)
+  const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
+  
   useEffect(() => {
     const storedGameId = localStorage.getItem('gameId')
     const player1Name = localStorage.getItem('player1Name')
     const storedLanguage = localStorage.getItem('language')
 
     if(!storedLanguage){
-      languageDialogButton.current?.click()
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLanguageDialogOpen(true)
     }
 
     if(player1Name) {
@@ -108,16 +118,20 @@ export const Game = () => {
 
   const messages = useChatMessages()
   const [messagesLength, setMessagesLength] = useState(messages.length)
-  const [triggerChatDrawerOpen, setTriggerOpen] = useState(false)
+  const [controlsDrawerOpen, setControlsDrawerOpen] = useState(false)
+  const [createGameDialodOpen, setCreateGameDialodOpen] = useState(false)
+  const [gameoverDialogOpen, setGameoverDialogOpen] = useState(false)
 
-  const gameOverDialogButton = useRef<HTMLButtonElement>(null)
+  // For chat Drawer auto open
+  const [triggerChatDrawerOpen, setTriggerDrawerOpen] = useState(false)
+  
   useEffect(() => {
-    if(gameOverDialogButton.current &&
-        ((gameover) || (!gameover && gameIdChanged))) {
-      gameOverDialogButton.current.click()
+    if(gameover || (!gameover && gameIdChanged)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setGameoverDialogOpen(true)
       dispatch(setGameIdChanged(false))
     }
-  }, [gameIdChanged, language, gameover, otherPlayerName, gameOverDialogButton, dispatch])
+  }, [gameIdChanged, language, gameover, otherPlayerName, setGameoverDialogOpen, dispatch])
 
   useEffect(() => {
     // Reset on game left or destroyed
@@ -128,11 +142,11 @@ export const Game = () => {
     }
 
     if(messages.length > messagesLength) {
-      setTriggerOpen(true)
+      setTriggerDrawerOpen(true)
       setMessagesLength(messagesLength)
 
       setTimeout(() => {
-        setTriggerOpen(false)
+        setTriggerDrawerOpen(false)
       }, 1)
     }
   }, [messages, messagesLength])
@@ -159,19 +173,89 @@ export const Game = () => {
       socket.emit('message', JSON.stringify(request))
   }
 
+  // =============================== Guided tour
+  const CURRENT_STEP_DELAY = 300
+  const TIME_OUT_DELAY = 100
+  const totalSteps = steps.find((tour) => tour.tour === 'INSTRUCTIONS_START')?.steps.length ?? -1
+  const {
+    startNextStep,
+    closeNextStep,
+    currentTour,
+    currentStep,
+    setCurrentStep,
+    // isNextStepVisible,
+  } = useNextStep();
+  const handleStartTour = () => {
+    setWelcomeDialogOpen(false)
+    startNextStep("INSTRUCTIONS_START");
+  };
+
+  useEffect(() => {
+
+    console.clear()
+    console.log('currentStep', currentStep, currentTour)
+
+    switch(currentTour){
+      case 'INSTRUCTIONS_START':
+        if(currentStep === 4 && controlsDrawerOpen){
+          setCurrentStep(5, CURRENT_STEP_DELAY);
+
+          setTimeout(() => {
+            setControlsDrawerOpen(false)
+          }, TIME_OUT_DELAY)
+        }
+
+        if(currentStep === 5 && createGameDialodOpen){
+          setCurrentStep(6, CURRENT_STEP_DELAY);
+
+          setTimeout(() => {
+            setCreateGameDialodOpen(false)
+          }, TIME_OUT_DELAY)
+        }
+        break
+      case 'CONTROLS_DRAWER':
+        if(currentStep === 1) {
+          closeNextStep()
+        }
+        break
+      default:
+        break
+    }
+
+  }, [
+    currentTour,
+    currentStep,
+    totalSteps,
+    controlsDrawerOpen,
+    createGameDialodOpen,
+    closeNextStep,
+    startNextStep,
+    setCurrentStep
+    ])
+
+
   return (<>
     <PageContainer>
-      <ConnectedPlayersContainer>
+      <ConnectedPlayersContainer id='tour__online-players'>
         <span>{clientsCount}</span> {`${clientsCount >  1 ? t[language]['players'] : t[language]['player']} ${t[language]['online']}`}
       </ConnectedPlayersContainer>
 
       <DrawerContainer>
         {/* Controls drawer */}
         <Chakra.Drawer
+          id='tour__controls-drawer--button'
           placement="top"
           buttonText={<LuSettings/>}
+          buttonCallback={() => setControlsDrawerOpen(true)}
         >
-          <GameControls/>
+          <GameControls buttonIds={[
+            'tour__create-button',
+            'tour__join-button',
+            'tour__leave-delete-button',
+            'tour__more-controls-button'
+          ]} buttonCallbacks={[
+            setCreateGameDialodOpen,
+          ]}/>
         </Chakra.Drawer>
 
         {DEBUG_DISPLAY_MY_SOCKET_ID && <>
@@ -215,7 +299,7 @@ export const Game = () => {
       </PlayersNameHeader>
 
       <PlayersScoreHeader>
-        <PlayerScore color='green'>
+        <PlayerScore color='green' id='tour__player-1-score'>
           {fencedByP1.length}
         </PlayerScore>
 
@@ -223,45 +307,89 @@ export const Game = () => {
           { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
         </CurrentTurn>
 
-        <PlayerScore color='blue'>
+        <PlayerScore color='blue' id='tour__player-2-score'>
           {fencedByP2.length}
         </PlayerScore>
       </PlayersScoreHeader>
 
       <GameGridContainer >
-        <GameGrid />
+        <GameGrid id='tour__gameg-grid' />
       </GameGridContainer>
 
       <LanguageDialogContainer>
         <Chakra.Dialog
-          ref={languageDialogButton}
           title={<LuLanguages/>}
-          openButtonText={''}
           body={
             <Chakra.Combobox
               setSelectedComponent={(x: string) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const languageCode = Object.entries(languages).filter(([_, value]) => value === x)[0][0]
-                localStorage.setItem('language', languageCode)
-                dispatch(setLanguage(languageCode))
+                if(x){
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  const languageCode = Object.entries(languages).filter(([_, value]) => value === x)?.[0]?.[0]
+                  if(languageCode){
+                    localStorage.setItem('language', languageCode)
+                    dispatch(setLanguage(languageCode))
+                  } else{
+                    localStorage.removeItem('language')
+                    dispatch(setLanguageIsDefault())
+                    setLanguageDialogOpen(true)
+                  }
+                } else{
+                  localStorage.removeItem('language')
+                  dispatch(setLanguageIsDefault())
+                  setLanguageDialogOpen(true)
+                }
               }}
               options={languageItems}
             />
           }
+
+          open={languageDialogOpen}
+          setOpen={setLanguageDialogOpen}
+          closeButtonHidden={true}
+          overlayCloseDisabled={true}
+          
           saveButtonText={t[language]['Ok']}
-          cancelButtonHidden={true}
-          saveCallback={() => {
+          saveButtonDisabled={languageIsDefault}
+          saveButtonCallback={() => {
+            setLanguageDialogOpen(false)
+            setWelcomeDialogOpen(true)
           }}
+
+          cancelButtonHidden={true}
+        />
+
+        <Chakra.Dialog
+          title='Bienvenue!'
+          body={
+            <Chakra.Button
+              text='TOUR'
+              onClick={handleStartTour}
+              customVariant='orange'
+            />
+          }
+
+          open={welcomeDialogOpen}
+          setOpen={setWelcomeDialogOpen}
+
+          closeButtonHidden={true}
+          overlayCloseDisabled={true}
+          
+          saveButtonHidden={true}
+          cancelButtonHidden={true}
         />
       </LanguageDialogContainer>
 
       <GameOver>
         {gameover && <div>{t[language]['Game Over']}</div>}
         <Chakra.Dialog
-          ref={gameOverDialogButton}
           title={t[language]['Game Over']}
-          openButtonText={''}
           body={<p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>}
+
+
+          // ref={gameOverDialogButton}
+          open={gameoverDialogOpen}
+          setOpen={setGameoverDialogOpen}
+
 
           cancelButtonText={remoteIsOnline ? t[language]['Leave'] : t[language]['Ok']}
           cancelCallback={leaveGame}
@@ -279,7 +407,7 @@ export const Game = () => {
             socket.emit('message', JSON.stringify(request))
           }}
         />
-        </GameOver>
+      </GameOver>
     </PageContainer>
 
     <Footer>
