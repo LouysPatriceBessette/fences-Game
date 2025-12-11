@@ -1,5 +1,7 @@
 import { Tour } from 'nextstepjs';
 import { H3 } from './tour.styled';
+import t from '../translations';
+// import { useLanguage } from '../store/selectors';
 
 const baseProps = {
   icon: "🚀",
@@ -14,33 +16,25 @@ const appClick = {
   showSkip: false,
 }
 
+const language = 'EN'
+
 export const steps : Tour[] = [
   {
     tour: "INSTRUCTIONS_START",
     steps: [
+
       // 0
       {
         ...baseProps,
 
-        selector: "#tour__online-players",
-        title: "Welcome",
-        content: <>
-          <H3>I will show you how to play.</H3>
-          <div>This is the number of persons currently on the site.</div>
-          <div>They are not connected to your game...</div>
-        </>,
-        side:'top',
-      },
-      // 1
-      {
-        ...baseProps,
-
         selector: "#tour__gameg-grid",
-        title: "Game grid",
+        title: `${t[language]['Game grid']}`,
         content: "Here is the game grid!",
         side:'top',
+
+        // ...appClick
       },
-      // 2
+      // 1
       {
         ...baseProps,
 
@@ -97,6 +91,23 @@ export const steps : Tour[] = [
         side:'bottom',
       },
 
+
+
+
+
+      // 0
+      // {
+      //   ...baseProps,
+
+      //   selector: "#tour__online-players",
+      //   title: "Welcome",
+      //   content: <>
+      //     <H3>I will show you how to play.</H3>
+      //     <div>This is the number of persons currently on the site.</div>
+      //     <div>They are not connected to your game...</div>
+      //   </>,
+      //   side:'top',
+      // },
 
 
       // {

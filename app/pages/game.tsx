@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useNextStep } from 'nextstepjs';
 import { steps } from '../tour/';
+import { WelcomeDialogTitleStyled, WelcomeDialogBodyStyled } from '../tour/tour.styled';
 
 import { useDispatch } from 'react-redux';
 import {
@@ -34,7 +35,7 @@ import {
 } from "../store/selectors";
 import { SOCKET_ACTIONS } from "../basics/constants";
 
-import { LuSettings, LuMessagesSquare, LuLanguages, LuCopyright, LuInfo } from 'react-icons/lu'
+import { LuSettings, LuMessagesSquare, LuLanguages, LuCopyright, LuInfo, LuDoorOpen } from 'react-icons/lu'
 import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
 import {
@@ -94,6 +95,13 @@ export const Game = () => {
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false)
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
   
+  // TEMP
+  useEffect(() => {
+
+    localStorage.clear()
+
+  }, [])
+
   useEffect(() => {
     const storedGameId = localStorage.getItem('gameId')
     const player1Name = localStorage.getItem('player1Name')
@@ -385,14 +393,19 @@ export const Game = () => {
         />
 
         <Chakra.Dialog
-          title='Bienvenue!'
-          body={
+          title={<WelcomeDialogTitleStyled>
+            <LuDoorOpen/> <span>{t[language]['Tour Dialog title']}</span>
+          </WelcomeDialogTitleStyled>}
+          body={<WelcomeDialogBodyStyled>
+            {t[language]['Tour Dialog P1']}
+            {t[language]['Tour Dialog P2']}
+            
             <Chakra.Button
-              text='TOUR'
+              text={t[language]['Tour Dialog button']}
               onClick={handleStartTour}
               customVariant='orange'
             />
-          }
+          </WelcomeDialogBodyStyled>}
 
           open={welcomeDialogOpen}
           setOpen={setWelcomeDialogOpen}

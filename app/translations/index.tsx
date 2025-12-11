@@ -1,16 +1,29 @@
 import { supportedLanguages as supported } from "./supportedLanguages";
 import { appTranslations } from "./appTranslations";
 import { infoTranslations } from "./infoTranslations";
-// import { tourTranslations } from "./gameTranslations";
+import { tourTranslations } from "./tourTranslations";
 
 const createTranslation = () => {
-  const translation = {}
+  const translation = {
+  EN: {},
+  FR: {},
+  ES: {},
+  DE: {},
+  IT: {},
+  NL: {},
+  RU: {},
+  ZH: {},
+  JA: {},
+  KO: {},
+  PT: {},
+  HT: {},
+}
   for (const lang of supported) {
-    // @ts-expect-error Common TS!
+    
     translation[lang] = {
       ...appTranslations[lang],
       ...infoTranslations[lang],
-      // ...tourTranslations,
+      ...tourTranslations[lang],
     }
   }
   return translation

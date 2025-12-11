@@ -11,14 +11,14 @@ import { ChakraProvider } from "./components/Chakra/ChakraProvider/ChakraProvide
 export default function Home() {
   return (
     <NextStepProvider>
-      <NextStep steps={steps}>
-        <Provider store={store}>
+      <Provider store={store}>
+        <NextStep steps={steps}>
           <ChakraProvider>
             <Game />
             <SocketListen/>        
           </ChakraProvider>
-        </Provider>
-      </NextStep>
+        </NextStep>
+      </Provider>
     </NextStepProvider>
   );
 }

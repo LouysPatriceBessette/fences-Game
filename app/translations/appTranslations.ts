@@ -135,6 +135,7 @@ export const appTranslations = {
     'Chat with the other player': `Chatten Sie mit dem anderen Spieler`,
     'Send': `Senden`,
   },
+  IT: {},
   NL: {
     'Bientôt...': `Binnenkort...`,
     'player': `speler`,
