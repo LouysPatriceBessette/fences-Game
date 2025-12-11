@@ -11,9 +11,22 @@ fi
 if [ ! -f .env ]; then
   touch .env
   echo "NODE_ENV='$1'" > .env
-  echo "#========================== The above line is auto generated" >> .env
-  echo "#========================== Do not edit manually" >> .env
-  echo "#========================== Add your additional variables below" >> .env
+  echo "#========================== The above lines are auto generated at 'every npm start' and 'npm run dev'." >> .env
+  echo "" >> .env
+
+  echo "#========================== Below are some very useful debuging switches generated" >> .env
+  echo "#========================== 0 = false, 1 = true" >> .env
+  echo "#========================== only if the .env file does not exist." >> .env
+  echo "#========================== You can enable/disable them... But they MUST STAY." >> .env
+  echo "#========================== Search fo 'DEBUG_' to find where they're used." >> .env
+  echo "DEBUG_STORE=0" >> .env
+  echo "DEBUG_PING_PONG=0" >> .env
+  echo "DEBUG_GAMES=0" >> .env
+  echo "DEBUG_LOCAL_STORAGE=0" >> .env
+  echo "DEBUG_DISPLAY_MY_SOCKET_ID=0" >> .env
+  echo "#========================== " >> .env
+  echo "" >> .env
+  echo "#========================== Anything below is safe to edit like a normal .env file." >> .env
 else
   sed -i "s/NODE_ENV='.*'/NODE_ENV='$1'/" .env
 fi

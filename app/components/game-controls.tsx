@@ -29,6 +29,7 @@ import { languages } from "../translations/supportedLanguages";
 
 export const GameControls = () => {
   const DEBUG_LOCAL_STORAGE = false
+  const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.DEBUG_LOCAL_STORAGE))
 
   const language: SupportedLanguagesType = useLanguage()
 

@@ -56,7 +56,7 @@ import { SupportedLanguagesType } from "../translations/supportedLanguages";
 import { languages } from "../translations/supportedLanguages";
 
 export const Game = () => {
-  const DEBUG_DISPLAY_MY_SOCKET_ID = false
+  const DEBUG_DISPLAY_MY_SOCKET_ID = Boolean(Number(process.env.DEBUG_DISPLAY_MY_SOCKET_ID));
 
   const dispatch = useDispatch()
 

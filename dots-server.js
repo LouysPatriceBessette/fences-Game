@@ -18,8 +18,8 @@ import {
   deepCopy,
 } from './app/basics/utils.js';
 
-const DEBUG_PING_PONG = false
-const DEBUG_GAMES = false
+const DEBUG_PING_PONG = Boolean(Number(process.env.DEBUG_PING_PONG))
+const DEBUG_GAMES = Boolean(Number(process.env.DEBUG_GAMES))
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -127,9 +127,7 @@ app.prepare().then(() => {
       }
       // Create a timout to receive PONG
       const timeoutId = setTimeout(() => {
-        // if(DEBUG_PING_PONG){
-          console.log(`${LOG_COLORS.INFO}> No PONG received for: ${activeSocketId}${LOG_COLORS.WHITE}`);
-        // }
+        console.log(`${LOG_COLORS.INFO}> No PONG received for: ${activeSocketId}${LOG_COLORS.WHITE}`);
         
         // Remove socket ID - No PONG received in PING_TIMEOUT ms
         const socketIdIndex = CURRENT_ACTIVE_SOCKETS.indexOf(activeSocketId)
