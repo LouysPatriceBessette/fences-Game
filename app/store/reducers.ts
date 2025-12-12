@@ -286,7 +286,16 @@ export const rootReducer = (state: INITIAL_STATE_TYPE, action: {type: string, pa
       socket: {
         ...state.socket,
         remoteIsOnline: false,
-      }  
+      },
+      language: {
+        ...state.language,
+      },
+      nextStep: {
+        ...state.nextStep,
+        loadedLanguage: state.nextStep.loadedLanguage,
+        steps: [...state.nextStep.steps],
+        
+      }
     }
   }
 

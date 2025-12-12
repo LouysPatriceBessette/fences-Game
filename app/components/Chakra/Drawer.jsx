@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   CloseButton,
   Drawer,
@@ -20,6 +21,12 @@ export const ChakraDrawer = (props) => {
     ...rest
   } = props
 
+  useEffect(() => {
+    if(rest.triggerOpen && !open){
+      (() => setOpen(true))()
+    }
+  }, [rest.triggerOpen, open, setOpen])
+
   return (
     <Drawer.Root
       key={placement}
@@ -38,9 +45,10 @@ export const ChakraDrawer = (props) => {
         <ChakraButton
           id={rest.id}
           onClick={() => {
-            // setOpen(!open)
             if(rest.buttonCallback){
               rest.buttonCallback()
+            } else {
+              setOpen(!open)
             }
           }}
           variant="outline"
@@ -65,7 +73,10 @@ export const ChakraDrawer = (props) => {
               {footer}
             </Drawer.Footer>}
             <Drawer.CloseTrigger asChild>
-              {displayCloseButton && <CloseButton size="sm" onClick={() => setOpen(!open)}/>}
+              {displayCloseButton && <CloseButton
+                size="sm"
+                onClick={() => setOpen(false)}
+              />}
             </Drawer.CloseTrigger>
           </Drawer.Content>
         </Drawer.Positioner>

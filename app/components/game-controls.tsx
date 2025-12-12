@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   setLanguage,
   setGameSize,
@@ -30,11 +30,15 @@ import { languages } from "../translations/supportedLanguages";
 export const GameControls = ({
   buttonIds,
   setWelcomeDialogOpen,
-  setCreateGameDialodOpen,
+  setCreateGameDialogOpen,
+  setJoinGameDialogOpen,
+  setControlsDrawerOpen,
 }: {
   buttonIds: string[],
   setWelcomeDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setCreateGameDialodOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setCreateGameDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setJoinGameDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setControlsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.DEBUG_LOCAL_STORAGE))
 
@@ -65,6 +69,7 @@ export const GameControls = ({
   }
 
   const leaveGame = () => {
+    setControlsDrawerOpen(false)
     localStorage.removeItem('gameId')
     dispatch(setGameId(-1))
 
@@ -79,6 +84,7 @@ export const GameControls = ({
   }
 
   const destroyGame = () => {
+    setControlsDrawerOpen(false)
     localStorage.removeItem('gameId')
     dispatch(setGameId(-1))
     
@@ -168,14 +174,11 @@ export const GameControls = ({
   // const myName = localStorage.getItem('myName')
 
   // This callback call is made in the create Dialog on save button click
-  const createGameCallback = (createDialogOpenButtonRef: React.RefObject<HTMLButtonElement | null>) => {
-    const gridSize = {x: x + 1, y: y + 1}
+  const createGameCallback = () => {
+    setControlsDrawerOpen(false)
+    setCreateGameDialogOpen(false)
 
-    // To keep this dialog opened
-    if(!playerName) {
-      createDialogOpenButtonRef.current?.click()
-      return
-    }
+    const gridSize = {x: x + 1, y: y + 1}
 
     dispatch(setNameOfPlayer1(playerName))
     dispatch(setNameOfPlayer2('Player 2'))
@@ -217,13 +220,9 @@ export const GameControls = ({
   // const myName = localStorage.getItem('myName')
 
   // This callback call is made in the join Dialog on save button click
-  const joinGameCallback = (joinDialogOpenButtonRef: React.RefObject<HTMLButtonElement | null>) => {
-
-    // To keep this dialog opened
-    if(!playerName) {
-      joinDialogOpenButtonRef.current?.click()
-      return
-    }
+  const joinGameCallback = () => {
+    setControlsDrawerOpen(false)
+    setJoinGameDialogOpen(false)
 
     const gameNumber = Number(pinString)
     dispatch(setGameId(gameNumber))
@@ -244,9 +243,6 @@ export const GameControls = ({
     socket.emit('message', JSON.stringify(request))
   }
 
-  const createDialogOpenButtonRef = useRef(null)
-  const joinDialogOpenButtonRef = useRef(null)
-
   const TIME_OUT_DELAY=500
 
   return (<>
@@ -266,34 +262,56 @@ export const GameControls = ({
       {!more && <>
         <Chakra.Dialog
           id={buttonIds[0]}
-          ref={createDialogOpenButtonRef}
+
           title={t[language]['Create a game']}
-          openButtonText={t[language]['Create']}
-          openButtonColor='green'
-          cancelButtonText={t[language]['Cancel']}
-          saveButtonText={t[language]['Save']}
-          saveCallback={() => createGameCallback(createDialogOpenButtonRef)}
           body={CreateForm}
-          disabled={gameId !== -1}
+
           onOpenChange={(state: {open:boolean}) => {
             setTimeout(() => {
               console.log('DIALOG IS OPEN', state)
-              setCreateGameDialodOpen(state.open)
+              setCreateGameDialogOpen(state.open)
             }, TIME_OUT_DELAY)
           }}
+
+          openButtonText={t[language]['Create']}
+          openButtonColor='green'
+          openButtonDisabled={gameId !== -1}
+
+          saveButtonText={t[language]['Save']}
+          saveButtonCallback={() => createGameCallback()}
+          saveButtonDisabled={!playerName}
+
+          cancelButtonText={t[language]['Cancel']}
+          
+          closeButtonHidden={true}
+          overlayCloseDisabled={true}
         />
 
         <Chakra.Dialog
           id={buttonIds[1]}
-          ref={joinDialogOpenButtonRef}
+
           title={t[language]['Join a game']}
+          body={JoinForm}
+
+          onOpenChange={(state: {open:boolean}) => {
+            setTimeout(() => {
+              console.log('DIALOG IS OPEN', state)
+              setCreateGameDialogOpen(state.open)
+            }, TIME_OUT_DELAY)
+          }}
+
           openButtonText={t[language]['Join']}
           openButtonColor='orange'
-          cancelButtonText={t[language]['Cancel']}
+          openButtonDisabled={gameId !== -1}
+
           saveButtonText={t[language]['Save']}
-          saveCallback={() => joinGameCallback(joinDialogOpenButtonRef)}
-          body={JoinForm}
-          disabled={gameId !== -1}
+          saveButtonCallback={() => joinGameCallback()}
+          saveButtonDisabled={!playerName || !pinString}
+          
+          cancelButtonText={t[language]['Cancel']}
+
+          closeButtonHidden={true}
+          overlayCloseDisabled={true}
         />
 
         <Chakra.Button
@@ -329,12 +347,18 @@ export const GameControls = ({
           onClick={() => setWelcomeDialogOpen(true)}
           text={t[language]['Tour']}
           customVariant='orange'
+          disabled={gameId !== -1 || gameId === ''}
         />
 
         <Chakra.Menu
           buttonTitle={<LuLanguages/>}
           items={languageItems}
-          onSelect={(selectedLangItem: {label: string, value: string, disabled: boolean}) => changeLanguage(selectedLangItem)}
+          onSelect={
+            (selectedLangItem: {label: string, value: string,
+            disabled: boolean}) => {
+              changeLanguage(selectedLangItem)
+              setControlsDrawerOpen(false)
+            }}
           buttonCustomVariant='green'
         />
       </>}

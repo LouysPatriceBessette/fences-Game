@@ -9,7 +9,6 @@ export const ChakraDialog = (props) => {
 
   const {
     id,
-    ref,
 
     size='md',
     title,
@@ -59,7 +58,6 @@ export const ChakraDialog = (props) => {
       <Dialog.Trigger asChild>
         <Button
           id={id}
-          ref={ref}
           customVariant={openButtonColor}
           size={size}
           text={openButtonText ?? 'Open Dialog'}

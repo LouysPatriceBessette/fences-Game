@@ -165,6 +165,7 @@ export const Game = () => {
 
   const socket = useSocketInstance()
   const leaveGame = () => {
+    setGameoverDialogOpen(false)
     localStorage.removeItem('gameId')
     dispatch(setGameId(-1))
 
@@ -202,31 +203,32 @@ export const Game = () => {
   };
 
 
-  console.log('tourStarted', tourStarted)
-
   //
   //
   //  NEXTSTEP USEEFFECT
   //
   //
-
   useEffect(() => {
 
-    if(tourStarted && !isNextStepVisible){
-      console.log('setTourStarted')
-      setTourStarted(false)
-      return
-    } else if(!tourStarted){
-      return
-    }
-
     console.log({
+      tourStarted,
       currentStep,
       controlsDrawerOpen,
       createGameDialodOpen: createGameDialogOpen,
       joinGameDialodOpen: joinGameDialogOpen,
       isNextStepVisible,
     })
+
+    if(tourStarted && !isNextStepVisible){
+      console.log('setTourStarted')
+      setTourStarted(false)
+      setControlsDrawerOpen(false)
+      setCreateGameDialogOpen(false)
+      setJoinGameDialogOpen(false)
+      return
+    } else if(!tourStarted){
+      return
+    }
 
     switch(currentTour){
       case 'INSTRUCTIONS_START':
@@ -275,14 +277,14 @@ export const Game = () => {
           buttonCallback={() => {
             setTimeout(() => {
               setControlsDrawerOpen(true)
-            }, TIME_OUT_DELAY)
+            }, tourStarted ? TIME_OUT_DELAY : 0)
           }}
           disableOverlayClick={tourStarted}
           onOpenChange={(state: {open:boolean}) => {
             setTimeout(() => {
               console.log('DRAWER IS OPEN', state)
               setControlsDrawerOpen(state.open)
-            }, TIME_OUT_DELAY)
+            }, tourStarted ? TIME_OUT_DELAY : 0)
           }}
         >
           <GameControls
@@ -294,7 +296,9 @@ export const Game = () => {
             ]}
 
             setWelcomeDialogOpen={setWelcomeDialogOpen}
-            setCreateGameDialodOpen={setCreateGameDialogOpen}
+            setCreateGameDialogOpen={setCreateGameDialogOpen}
+            setJoinGameDialogOpen={setJoinGameDialogOpen}
+            setControlsDrawerOpen={setControlsDrawerOpen}
           />
         </Chakra.Drawer>
 
@@ -430,18 +434,19 @@ export const Game = () => {
           title={t[language]['Game Over']}
           body={<p>{`${t[language]['Invite']} ${otherPlayerName} ${t[language]['to play another game with you?']}`}</p>}
 
-
-          // ref={gameOverDialogButton}
           open={gameoverDialogOpen}
           setOpen={setGameoverDialogOpen}
 
+          closeButtonHidden={true}
+          overlayCloseDisabled={true}
 
           cancelButtonText={remoteIsOnline ? t[language]['Leave'] : t[language]['Ok']}
           cancelCallback={leaveGame}
           
           saveButtonText={t[language]['Create a new game']}
           saveButtonHidden={remoteIsOnline ? false : true}
-          saveCallback={() => {
+          saveButtonCallback={() => {
+            setGameoverDialogOpen(false)
             const request = {
               from: 'player',
               to: 'server',
@@ -458,10 +463,7 @@ export const Game = () => {
     <Footer>
       <div><LuCopyright/> <span>2025 - Louys Patrice Bessette</span></div>
       <div><Chakra.Dialog
-          ref={null}
           title={<LuInfo/>}
-          openButtonText={<LuInfo/>}
-          openButtonColor='nav'
           body={<>
             <p>{t[language]['InfoDialogP1']}</p>
             <p>&nbsp;</p>
@@ -473,6 +475,10 @@ export const Game = () => {
             <p>&nbsp;</p>
             <p>{t[language]['InfoDialogP5']}</p>
           </>}
+
+          openButtonText={<LuInfo/>}
+          openButtonColor='nav'
+          
           saveButtonText={t[language]['Ok']}
           cancelButtonHidden={true}
         /></div>
