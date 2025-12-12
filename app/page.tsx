@@ -2,8 +2,9 @@
 
 import { Provider } from 'react-redux';
 import { store } from "./store/store";
-import { NextStepProvider, NextStep} from 'nextstepjs';
-import { steps } from './tour';
+import { NextStepProvider} from 'nextstepjs';
+import { NextStepStore } from "./tour/NextStepStore";
+
 import { Game } from "./pages/game";
 import { SocketListen } from "./socket";
 import { ChakraProvider } from "./components/Chakra/ChakraProvider/ChakraProvider";
@@ -12,12 +13,12 @@ export default function Home() {
   return (
     <NextStepProvider>
       <Provider store={store}>
-        <NextStep steps={steps}>
+        <NextStepStore>
           <ChakraProvider>
             <Game />
             <SocketListen/>        
           </ChakraProvider>
-        </NextStep>
+        </NextStepStore>
       </Provider>
     </NextStepProvider>
   );

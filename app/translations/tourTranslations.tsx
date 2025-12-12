@@ -33,7 +33,9 @@ export const tourTranslations = {
 
     'Game grid': 'Game grid',
   },
-  FR: {},
+  FR: {
+    'Game grid': 'Grille de jeu',
+  },
   ES: {},
   DE: {},
   IT: {},

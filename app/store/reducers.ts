@@ -37,6 +37,12 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     remoteIsOnline: false,
     remoteHasLeft: false,
   },
+  nextStep: {
+    steps: [{
+      tour: 'Empty tour',
+      steps: []
+    }],
+  }
 };
 
 export const gameReducer = (state = INITIAL_STATE.game, action: {type: string, payload: any}) => {
@@ -245,6 +251,20 @@ export const languageReducer = (state = INITIAL_STATE.language, action: {type: s
   }
 }
 
+export const tourReducer = (state = INITIAL_STATE.nextStep, action: {type: string, payload: any}) => {
+  const { type, payload } = action
+
+  switch (type) {
+    case ACTION_TYPES.SET_TOUR:
+      return {
+        ...state,
+        steps:payload,
+      };
+    default:
+      return state;
+  }
+}
+
 export const combinedReducer = combineReducers({
   chat: chatReducer,
   clients: clientsReducer,
@@ -252,6 +272,7 @@ export const combinedReducer = combineReducers({
   language: languageReducer,
   mouse: mouseReducer,
   socket: socketReducer,
+  nextStep: tourReducer,
 });
 
 export const rootReducer = (state: INITIAL_STATE_TYPE, action: {type: string, payload: any}) => {

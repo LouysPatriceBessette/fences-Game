@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { useNextStep } from 'nextstepjs';
-import { steps } from '../tour/';
+import { useNextStep, Tour } from 'nextstepjs';
+import { NextStepsTranslateAndDispatch } from '../tour/NextStepsTranslateAndDispatch';
+
 import { WelcomeDialogTitleStyled, WelcomeDialogBodyStyled } from '../tour/tour.styled';
 
 import { useDispatch } from 'react-redux';
@@ -15,6 +16,7 @@ import {
   setGameIdChanged,
 } from "../store/actions";
 import {
+  useTour,
   useClientsCount,
   useLanguage,
   useLanguageIsDefault,
@@ -186,7 +188,8 @@ export const Game = () => {
   // =============================== Guided tour
   const CURRENT_STEP_DELAY = 300
   const TIME_OUT_DELAY = 100
-  const totalSteps = steps.find((tour) => tour.tour === 'INSTRUCTIONS_START')?.steps.length ?? -1
+  const tours = useTour()
+
   const {
     startNextStep,
     closeNextStep,
@@ -238,7 +241,6 @@ export const Game = () => {
   }, [
     currentTour,
     currentStep,
-    totalSteps,
     controlsDrawerOpen,
     createGameDialodOpen,
     joinGameDialodOpen,
@@ -471,5 +473,7 @@ export const Game = () => {
           cancelButtonHidden={true}
         /></div>
     </Footer>
+
+    <NextStepsTranslateAndDispatch/>
   </>);
 }
