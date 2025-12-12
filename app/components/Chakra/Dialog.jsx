@@ -5,34 +5,64 @@ import {
 } from '@chakra-ui/react'
 import { ChakraButton as Button } from './Button'
 
-export const ChakraDialog = ({
-  ref,
-  size='md',
-  title,
-  openButtonText,
-  openButtonColor='white',
+export const ChakraDialog = (props) => {
 
-  cancelButtonText='',
-  cancelCallback=() => {},
-  cancelButtonHidden=false,
+  const {
+    id,
 
-  saveButtonText,
-  saveCallback=() => {},
-  saveButtonHidden=false,
+    size='md',
+    title,
+    body=<p>Add the body property (JSX) to the body attribute.</p>,
 
-  body=<p>Add the body property (JSX) to the body attribute.</p>,
-  disabled=false,
-}) => {
+    open,
+    setOpen,
+    onOpenChange,
+
+    openButtonText,
+    openButtonColor='white',
+    openButtonDisabled=false,
+    openButtonCallback,
+
+    cancelButtonText='',
+    cancelButtonColor='red',
+    cancelButtonDisabled=false,
+    cancelCallback=() => {},
+    cancelButtonHidden=false,
+
+    saveButtonText,
+    saveButtonColor='green',
+    saveButtonDisabled=false,
+    saveButtonCallback=() => {},
+    saveButtonHidden=false,
+    
+    overlayCloseDisabled=false,
+    closeButtonHidden=false,
+    
+  } = props
+
+  let externalOpenControl
+  if(open && setOpen){
+    externalOpenControl = {
+      open,
+      setOpen
+    }
+  }
 
   return (
-    <Dialog.Root size={size}>
+    <Dialog.Root
+      size={size}
+      {...externalOpenControl}
+      closeOnInteractOutside={!overlayCloseDisabled}
+      onOpenChange={onOpenChange}
+      >
       <Dialog.Trigger asChild>
         <Button
-          ref={ref}
+          id={id}
           customVariant={openButtonColor}
           size={size}
           text={openButtonText ?? 'Open Dialog'}
-          disabled={disabled}
+          disabled={openButtonDisabled}
+          onMouseUp={() => openButtonCallback?.()}
         />
       </Dialog.Trigger>
       <Portal>
@@ -45,24 +75,26 @@ export const ChakraDialog = ({
             <Dialog.Body>
               {body}
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer id='tour__dialog-footer'>
               {!cancelButtonHidden && <Dialog.ActionTrigger asChild>
                 <Button
-                customVariant='red'
+                customVariant={cancelButtonColor}
                 text={cancelButtonText}
                 onClick={() => cancelCallback()}
+                disabled={cancelButtonDisabled}
               />
               </Dialog.ActionTrigger>}
               {!saveButtonHidden && <Dialog.ActionTrigger asChild>
                 <Button
-                customVariant='green'
-                text={saveButtonText}
-                onClick={() => saveCallback()}
-              />
+                  customVariant={saveButtonColor}
+                  text={saveButtonText}
+                  onClick={() => saveButtonCallback()}
+                  disabled={saveButtonDisabled}
+                />
               </Dialog.ActionTrigger>}
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
+              {!closeButtonHidden && <CloseButton size="sm" />}
             </Dialog.CloseTrigger>
           </Dialog.Content>
         </Dialog.Positioner>

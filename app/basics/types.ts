@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client";
 import { SupportedLanguagesType } from "../translations/supportedLanguages";
+import { Tour } from 'nextstepjs';
 
 export type INITIAL_STATE_TYPE = {
   chat: {
@@ -21,7 +22,10 @@ export type INITIAL_STATE_TYPE = {
     fencedByP1: string[],
     fencedByP2: string[],
   },
-  language: { selected: SupportedLanguagesType },
+  language: {
+    isDefault: boolean,
+    selected: SupportedLanguagesType
+  },
   mouse: {
     origin: number,
     canConnectWith: string[],
@@ -32,4 +36,8 @@ export type INITIAL_STATE_TYPE = {
     remoteIsOnline: boolean,
     remoteHasLeft: boolean,
   },
+  nextStep: {
+    loadedLanguage: string,
+    steps: Tour[],
+  }
 };

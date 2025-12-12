@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react';
 import {
   CloseButton,
   Drawer,
@@ -6,35 +6,51 @@ import {
 } from "@chakra-ui/react"
 import { ChakraButton } from './Button'
 
-export const ChakraDrawer = ({
-  title='',
-  placement,
-  buttonText,
-  displayCloseButton=false,
-  footer=undefined,
-  triggerOpen: triggerOpen=false,
-  children
-}) => {
-
-  const [isOpen, setIsopen] = useState(false)
+export const ChakraDrawer = (props) => {
+  const {
+    open,
+    setOpen,
+    title,
+    placement,
+    buttonText,
+    displayCloseButton=false,
+    footer,
+    onOpenChange,
+    disableOverlayClick=false,
+    children, 
+    ...rest
+  } = props
 
   useEffect(() => {
-    if(triggerOpen && !isOpen){
-      (() => setIsopen(true))()
+    if(rest.triggerOpen && !open){
+      (() => setOpen(true))()
     }
-  }, [triggerOpen, isOpen])
+  }, [rest.triggerOpen, open, setOpen])
 
   return (
     <Drawer.Root
       key={placement}
       placement={placement}
-      onClose={() =>setIsopen(false)}
-      open={isOpen}
-      onPointerDownOutside={() =>setIsopen(false)}
+      onClose={() => setOpen(false)}
+      open={open}
+      setOpen={setOpen}
+      onPointerDownOutside={(event) => {
+        if(disableOverlayClick){
+          event.preventDefault()
+        }
+      }}
+      onOpenChange={onOpenChange}
     >
       <Drawer.Trigger asChild>
         <ChakraButton
-          onClick={() => setIsopen(!isOpen)}
+          id={rest.id}
+          onClick={() => {
+            if(rest.buttonCallback){
+              rest.buttonCallback()
+            } else {
+              setOpen(!open)
+            }
+          }}
           variant="outline"
           size="sm"
           text={buttonText}
@@ -57,7 +73,10 @@ export const ChakraDrawer = ({
               {footer}
             </Drawer.Footer>}
             <Drawer.CloseTrigger asChild>
-              {displayCloseButton && <CloseButton size="sm" onClick={() => setIsopen(!isOpen)}/>}
+              {displayCloseButton && <CloseButton
+                size="sm"
+                onClick={() => setOpen(false)}
+              />}
             </Drawer.CloseTrigger>
           </Drawer.Content>
         </Drawer.Positioner>

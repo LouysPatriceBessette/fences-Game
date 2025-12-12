@@ -23,7 +23,10 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     fencedByP1: [],
     fencedByP2: [],
   },
-  language: { selected: 'EN' },
+  language: {
+    isDefault: true,
+    selected: 'EN'
+  },
   mouse: {
     origin: -1,
     canConnectWith: [],
@@ -34,6 +37,13 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     remoteIsOnline: false,
     remoteHasLeft: false,
   },
+  nextStep: {
+    loadedLanguage: '',
+    steps: [{
+      tour: 'Empty tour',
+      steps: []
+    }],
+  }
 };
 
 export const gameReducer = (state = INITIAL_STATE.game, action: {type: string, payload: any}) => {
@@ -228,7 +238,29 @@ export const languageReducer = (state = INITIAL_STATE.language, action: {type: s
     case ACTION_TYPES.SET_LANGUAGE:
       return {
         ...state,
+        isDefault: false,
         selected: payload,
+      };
+    case ACTION_TYPES.SET_LANGUAGE_IS_DEFAULT:
+      return {
+        ...state,
+        isDefault: true,
+        selected: 'EN',
+      };
+    default:
+      return state;
+  }
+}
+
+export const tourReducer = (state = INITIAL_STATE.nextStep, action: {type: string, payload: any}) => {
+  const { type, payload } = action
+
+  switch (type) {
+    case ACTION_TYPES.SET_TOUR:
+      return {
+        ...state,
+        loadedLanguage: payload.loadedLanguage,
+        steps: payload.steps,
       };
     default:
       return state;
@@ -242,6 +274,7 @@ export const combinedReducer = combineReducers({
   language: languageReducer,
   mouse: mouseReducer,
   socket: socketReducer,
+  nextStep: tourReducer,
 });
 
 export const rootReducer = (state: INITIAL_STATE_TYPE, action: {type: string, payload: any}) => {
@@ -253,7 +286,16 @@ export const rootReducer = (state: INITIAL_STATE_TYPE, action: {type: string, pa
       socket: {
         ...state.socket,
         remoteIsOnline: false,
-      }  
+      },
+      language: {
+        ...state.language,
+      },
+      nextStep: {
+        ...state.nextStep,
+        loadedLanguage: state.nextStep.loadedLanguage,
+        steps: [...state.nextStep.steps],
+        
+      }
     }
   }
 

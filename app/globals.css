@@ -30,12 +30,44 @@ body {
   padding: 0 !important;
 }
 
+/* Chakra Drawer cheat */
+.chakra-drawer__positioner{
+  z-index: 9990 !important;
+}
+
+/* Chakra Dialog cheat */
+.chakra-dialog__positioner{
+  z-index: 9992 !important;
+}
+
 /* Chakra Menu cheat */
 .chakra-menu__positioner{
-  z-index: 9999 !important;
+  z-index: 9995 !important;
 }
 
 /* Chakra Menu cheat */
 .chakra-combobox__positioner{
+  z-index: 9995 !important;
+}
+
+div[data-name='nextstep-overlay']{
   z-index: 9999 !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  overflow: hidden;
+}
+
+/* Controls button */
+.nextstep-card-fix-1{
+  transform: translateY(-30%) !important;
+}
+
+/* Create button */
+.nextstep-card-fix-2{
+  transform: translateX(-10%) !important;
+}
+
+/* Save creat grid */
+.nextstep-card-fix-3{
+  transform: translateX(-80%) !important;
 }

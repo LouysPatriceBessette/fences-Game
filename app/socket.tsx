@@ -41,7 +41,7 @@ export const sendMessage = (socket: Socket, gameId: number, message: string, set
 };
 
 export const SocketListen = () => {
-  const DEBUG_PING_PONG = false
+  const DEBUG_PING_PONG = Boolean(Number(process.env.DEBUG_PING_PONG))
 
   const dispatch = useDispatch()
   const language: SupportedLanguagesType = useLanguage()

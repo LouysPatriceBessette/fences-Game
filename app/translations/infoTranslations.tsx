@@ -1,5 +1,4 @@
-const Bold = ({children}: {children: React.ReactNode}) => <b style={{fontSize: '1.1em'}}>{children}</b>
-const Apos = () => <>&apos;</>
+import { Apos, Bold } from "./translations.components.styled"
 
 export const infoTranslations = {
   EN: {

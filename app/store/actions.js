@@ -4,6 +4,8 @@ import { createAction } from '../basics/utils';
 export const resetReduxInitialState = () =>
   createAction(ACTION_TYPES.RESET_REDUX_STORE, null);
 
+export const setTour = (tour) => createAction(ACTION_TYPES.SET_TOUR, tour);
+
 export const refreshReduxStore = (data) =>
   createAction(ACTION_TYPES.REFRESH_REDUX_STORE, data);
 
@@ -12,6 +14,9 @@ export const setClientsCount = (clientsCount) =>
 
 export const setLanguage = (language) =>
   createAction(ACTION_TYPES.SET_LANGUAGE, language);
+
+export const setLanguageIsDefault = () =>
+  createAction(ACTION_TYPES.SET_LANGUAGE_IS_DEFAULT);
 
 export const setGameSize = (size) =>
   createAction(ACTION_TYPES.SET_SIZE, size);
