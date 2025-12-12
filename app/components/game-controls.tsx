@@ -29,10 +29,12 @@ import { languages } from "../translations/supportedLanguages";
 
 export const GameControls = ({
   buttonIds,
-  openButtonCallbacks,
+  setWelcomeDialogOpen,
+  setCreateGameDialodOpen,
 }: {
   buttonIds: string[],
-  openButtonCallbacks: (() => void)[]
+  setWelcomeDialogOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setCreateGameDialodOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }) => {
   const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.DEBUG_LOCAL_STORAGE))
 
@@ -245,6 +247,8 @@ export const GameControls = ({
   const createDialogOpenButtonRef = useRef(null)
   const joinDialogOpenButtonRef = useRef(null)
 
+  const TIME_OUT_DELAY=500
+
   return (<>
     {DEBUG_LOCAL_STORAGE && <div>
       <Chakra.Button
@@ -266,12 +270,17 @@ export const GameControls = ({
           title={t[language]['Create a game']}
           openButtonText={t[language]['Create']}
           openButtonColor='green'
-          openButtonCallback={() => openButtonCallbacks?.[0]?.()}
           cancelButtonText={t[language]['Cancel']}
           saveButtonText={t[language]['Save']}
           saveCallback={() => createGameCallback(createDialogOpenButtonRef)}
           body={CreateForm}
           disabled={gameId !== -1}
+          onOpenChange={(state: {open:boolean}) => {
+            setTimeout(() => {
+              console.log('DIALOG IS OPEN', state)
+              setCreateGameDialodOpen(state.open)
+            }, TIME_OUT_DELAY)
+          }}
         />
 
         <Chakra.Dialog
@@ -280,7 +289,6 @@ export const GameControls = ({
           title={t[language]['Join a game']}
           openButtonText={t[language]['Join']}
           openButtonColor='orange'
-          openButtonCallback={() => openButtonCallbacks?.[1]?.()}
           cancelButtonText={t[language]['Cancel']}
           saveButtonText={t[language]['Save']}
           saveCallback={() => joinGameCallback(joinDialogOpenButtonRef)}
@@ -318,8 +326,8 @@ export const GameControls = ({
         />
 
         <Chakra.Button
-          onClick={() => alert(t[language]['Soon'])}
-          text={t[language]['Instructions']}
+          onClick={() => setWelcomeDialogOpen(true)}
+          text={t[language]['Tour']}
           customVariant='orange'
         />
 

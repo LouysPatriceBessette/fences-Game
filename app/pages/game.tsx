@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { useNextStep, Tour } from 'nextstepjs';
+import { useNextStep } from 'nextstepjs';
 import { NextStepsTranslateAndDispatch } from '../tour/NextStepsTranslateAndDispatch';
 
 import { WelcomeDialogTitleStyled, WelcomeDialogBodyStyled } from '../tour/tour.styled';
@@ -96,13 +96,6 @@ export const Game = () => {
   // Dialogs open states
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false)
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
-  
-  // TEMP
-  useEffect(() => {
-
-    localStorage.clear()
-
-  }, [])
 
   useEffect(() => {
     const storedGameId = localStorage.getItem('gameId')
@@ -132,8 +125,8 @@ export const Game = () => {
 
   const [controlsDrawerOpen, setControlsDrawerOpen] = useState(false)
 
-  const [createGameDialodOpen, setCreateGameDialodOpen] = useState(false)
-  const [joinGameDialodOpen, setJoinGameDialodOpen] = useState(false)
+  const [createGameDialogOpen, setCreateGameDialogOpen] = useState(false)
+  const [joinGameDialogOpen, setJoinGameDialogOpen] = useState(false)
   const [gameoverDialogOpen, setGameoverDialogOpen] = useState(false)
 
   // For chat Drawer auto open
@@ -186,8 +179,8 @@ export const Game = () => {
   }
 
   // =============================== Guided tour
-  const CURRENT_STEP_DELAY = 300
-  const TIME_OUT_DELAY = 100
+  const CURRENT_STEP_DELAY = 800
+  const TIME_OUT_DELAY = 500
   const tours = useTour()
 
   const {
@@ -196,35 +189,54 @@ export const Game = () => {
     currentTour,
     currentStep,
     setCurrentStep,
-    // isNextStepVisible,
+    isNextStepVisible,
   } = useNextStep();
 
   const [tourStarted, setTourStarted] = useState(false)
 
   const handleStartTour = () => {
     setTourStarted(true)
+    setControlsDrawerOpen(false)
     setWelcomeDialogOpen(false)
     startNextStep("INSTRUCTIONS_START");
   };
 
+
+  console.log('tourStarted', tourStarted)
+
+  //
+  //
+  //  NEXTSTEP USEEFFECT
+  //
+  //
+
   useEffect(() => {
+
+    if(tourStarted && !isNextStepVisible){
+      console.log('setTourStarted')
+      setTourStarted(false)
+      return
+    } else if(!tourStarted){
+      return
+    }
 
     console.log({
       currentStep,
       controlsDrawerOpen,
-      createGameDialodOpen,
-      joinGameDialodOpen,
+      createGameDialodOpen: createGameDialogOpen,
+      joinGameDialodOpen: joinGameDialogOpen,
+      isNextStepVisible,
     })
 
     switch(currentTour){
       case 'INSTRUCTIONS_START':
 
         if(currentStep === 1 && controlsDrawerOpen){
-           setCurrentStep(2)
+          setCurrentStep(2, CURRENT_STEP_DELAY)
         }
 
-        if(currentStep === 2 && createGameDialodOpen){
-           setCurrentStep(3)
+        if(currentStep === 2 && createGameDialogOpen){
+          setCurrentStep(3, CURRENT_STEP_DELAY)
         }
 
         break
@@ -233,14 +245,17 @@ export const Game = () => {
         break
     }
   }, [
+    tourStarted,
+    setTourStarted,
     currentTour,
     currentStep,
     controlsDrawerOpen,
-    createGameDialodOpen,
-    joinGameDialodOpen,
+    createGameDialogOpen,
+    joinGameDialogOpen,
     closeNextStep,
     startNextStep,
     setCurrentStep,
+    isNextStepVisible,
   ])
 
   return (<>
@@ -252,6 +267,8 @@ export const Game = () => {
       <DrawerContainer>
         {/* Controls drawer */}
         <Chakra.Drawer
+          open={controlsDrawerOpen}
+          setOpen={setControlsDrawerOpen}
           id='tour__controls-drawer--button'
           placement="top"
           buttonText={<LuSettings/>}
@@ -261,6 +278,12 @@ export const Game = () => {
             }, TIME_OUT_DELAY)
           }}
           disableOverlayClick={tourStarted}
+          onOpenChange={(state: {open:boolean}) => {
+            setTimeout(() => {
+              console.log('DRAWER IS OPEN', state)
+              setControlsDrawerOpen(state.open)
+            }, TIME_OUT_DELAY)
+          }}
         >
           <GameControls
             buttonIds={[
@@ -270,21 +293,8 @@ export const Game = () => {
               'tour__more-controls-button'
             ]}
 
-            // Dialogs open buttons callbacks
-            openButtonCallbacks={[
-              // create button
-              () => {
-                console.log('openbutton callback - in Game')
-                setTimeout(() => {
-                  setCreateGameDialodOpen(true)
-                }, TIME_OUT_DELAY)
-              },
-              
-              // join button
-              () => {
-                setJoinGameDialodOpen(true)
-              },
-            ]}
+            setWelcomeDialogOpen={setWelcomeDialogOpen}
+            setCreateGameDialodOpen={setCreateGameDialogOpen}
           />
         </Chakra.Drawer>
 
@@ -305,7 +315,7 @@ export const Game = () => {
 
         {/* Chat drawer */}
         {gameId !== -1 &&<Chakra.Drawer
-          triggerOpen={triggerChatDrawerOpen}
+          triggerOpen={triggerChatDrawerOpen} // TODO: trigger open was removed
           placement="bottom"
           title={t[language]['Chat with the other player']}
           buttonText={<LuMessagesSquare/>}

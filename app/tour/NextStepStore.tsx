@@ -7,5 +7,13 @@ export const NextStepStore = ({children}: {children: React.ReactNode}) => {
   const steps = useTour()
   const stepsTarget = steps?.[0].tour
 
-  return <NextStep steps={steps} disableConsoleLogs>{stepsTarget === 'INSTRUCTIONS_START' ? children : <NextStepsTranslateAndDispatch/>}</NextStep>
+  return <NextStep
+    steps={steps}
+    disableConsoleLogs
+  >
+    {stepsTarget === 'INSTRUCTIONS_START' ?
+      children :
+      <NextStepsTranslateAndDispatch/>
+    }
+  </NextStep>
 }

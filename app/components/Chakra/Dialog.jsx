@@ -17,6 +17,7 @@ export const ChakraDialog = (props) => {
 
     open,
     setOpen,
+    onOpenChange,
 
     openButtonText,
     openButtonColor='white',
@@ -49,7 +50,12 @@ export const ChakraDialog = (props) => {
   }
 
   return (
-    <Dialog.Root size={size} {...externalOpenControl} closeOnInteractOutside={!overlayCloseDisabled}>
+    <Dialog.Root
+      size={size}
+      {...externalOpenControl}
+      closeOnInteractOutside={!overlayCloseDisabled}
+      onOpenChange={onOpenChange}
+      >
       <Dialog.Trigger asChild>
         <Button
           id={id}

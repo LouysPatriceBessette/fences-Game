@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import {
   CloseButton,
   Drawer,
@@ -8,24 +7,18 @@ import { ChakraButton } from './Button'
 
 export const ChakraDrawer = (props) => {
   const {
+    open,
+    setOpen,
     title,
     placement,
     buttonText,
     displayCloseButton=false,
     footer,
-    triggerOpen=false,
+    onOpenChange,
     disableOverlayClick=false,
     children, 
     ...rest
   } = props
-
-  const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    if(triggerOpen && !open){
-      (() => setOpen(true))()
-    }
-  }, [triggerOpen, open, setOpen])
 
   return (
     <Drawer.Root
@@ -34,19 +27,18 @@ export const ChakraDrawer = (props) => {
       onClose={() => setOpen(false)}
       open={open}
       setOpen={setOpen}
-      onPointerDownOutside={() => {
+      onPointerDownOutside={(event) => {
         if(disableOverlayClick){
-          setOpen(true)
-        } else {
-          setOpen(false)
+          event.preventDefault()
         }
       }}
+      onOpenChange={onOpenChange}
     >
       <Drawer.Trigger asChild>
         <ChakraButton
           id={rest.id}
           onClick={() => {
-            setOpen(!open)
+            // setOpen(!open)
             if(rest.buttonCallback){
               rest.buttonCallback()
             }
