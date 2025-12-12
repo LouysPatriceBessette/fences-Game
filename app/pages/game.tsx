@@ -240,14 +240,63 @@ export const Game = () => {
     switch(currentTour){
       case 'INSTRUCTIONS_START':
 
+        // Position out of viewport fix
+        const pointer = document.querySelector("[data-name='nextstep-pointer']")
+        // let pointerRect
+        // let prevStyle
+        console.log('pointer', pointer)
+
+        // if(pointer){
+        //   pointerRect = pointer.getBoundingClientRect()
+        //   prevStyle = window.getComputedStyle(pointer)?.transform
+        //   console.log('pointerRect', pointerRect)
+        //   console.log('prevStyle: ', prevStyle)
+        // }
+
+        // Fix NextStep position
+        if(currentStep === 1 && !controlsDrawerOpen){
+          if(pointer){
+
+            pointer.querySelector("[data-name='nextstep-card']")?.classList.add('nextstep-card-fix-1')
+          }
+
+        }
+
         if(currentStep === 1 && controlsDrawerOpen){
           setCurrentStep(2, CURRENT_STEP_DELAY)
+
+          if(pointer){
+            setTimeout(() => {
+              pointer.querySelector("[data-name='nextstep-card']")?.classList.remove('nextstep-card-fix-1')
+            }, CURRENT_STEP_DELAY - 0)
+          }
+        }
+
+        if(currentStep === 2 && !createGameDialogOpen){
+          if(pointer){
+
+            pointer.querySelector("[data-name='nextstep-card']")?.classList.add('nextstep-card-fix-2')
+          }
         }
 
         if(currentStep === 2 && createGameDialogOpen){
           setCurrentStep(3, CURRENT_STEP_DELAY)
+          setTimeout(() => {
+            const el = document.querySelectorAll("[data-scope='dialog']")
+            for (let i = 0; i < el.length; i++) {
+              if(el[i].scrollTop > 0){
+                el[i].scrollTo({top: 0, behavior: 'smooth'})
+              }
+            }
+          }, CURRENT_STEP_DELAY + TIME_OUT_DELAY)
         }
 
+        if(currentStep === 3){
+          if(pointer){
+
+            pointer.querySelector("[data-name='nextstep-card']")?.classList.remove('nextstep-card-fix-2')
+          }
+        }
         break
 
       default:
