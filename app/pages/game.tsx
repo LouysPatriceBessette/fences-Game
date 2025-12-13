@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-
 import { useDispatch } from 'react-redux';
 import {
   setLanguage,
@@ -31,6 +30,7 @@ import {
 } from "../store/selectors";
 import { SOCKET_ACTIONS } from "../basics/constants";
 
+import { Tour } from "../tour";
 import { LuSettings, LuMessagesSquare, LuLanguages, LuCopyright, LuInfo, LuDoorOpen } from 'react-icons/lu'
 import { GameControls } from "../components/game-controls";
 import { GameGrid } from "../components/game-grid";
@@ -130,7 +130,7 @@ export const Game = () => {
   const [gameoverDialogOpen, setGameoverDialogOpen] = useState(false)
 
   // For chat Drawer auto open
-  const [triggerChatDrawerOpen, setTriggerDrawerOpen] = useState(false)
+  const [triggerChatDrawerOpen, setTriggerChatDrawerOpen] = useState(false)
   
   useEffect(() => {
     if(gameover || (!gameover && gameIdChanged)) {
@@ -154,11 +154,11 @@ export const Game = () => {
     }
 
     if(messages.length > messagesLength) {
-      setTriggerDrawerOpen(true)
+      setTriggerChatDrawerOpen(true)
       setMessagesLength(messagesLength)
 
       setTimeout(() => {
-        setTriggerDrawerOpen(false)
+        setTriggerChatDrawerOpen(false)
       }, 1)
     }
   }, [messages, messagesLength])
@@ -199,6 +199,7 @@ export const Game = () => {
           open={controlsDrawerOpen}
           setOpen={setControlsDrawerOpen}
           placement="top"
+          buttonId='ControlsButton'
           buttonText={<LuSettings/>}
           buttonCallback={() => {
             setControlsDrawerOpen(true)
@@ -246,20 +247,20 @@ export const Game = () => {
 
       <PlayersNameHeader>
         <Player>
-          <PlayerNameContainer>
+          <PlayerNameContainer id='player1Name'>
             <PlayerOnlineIndicator $online={iamPlayer === 1 || remoteIsOnline} /> {player1Name}
           </PlayerNameContainer>
         </Player>
 
         <Player>
-          <PlayerNameContainer>
+          <PlayerNameContainer id='player2Name'>
             <PlayerOnlineIndicator $online={iamPlayer === 2 || remoteIsOnline} /> {player2Name}
           </PlayerNameContainer>
         </Player>
       </PlayersNameHeader>
 
       <PlayersScoreHeader>
-        <PlayerScore color='green'>
+        <PlayerScore color='green' id='player1Score'>
           {fencedByP1.length}
         </PlayerScore>
 
@@ -267,7 +268,7 @@ export const Game = () => {
           { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
         </CurrentTurn>
 
-        <PlayerScore color='blue'>
+        <PlayerScore color='blue' id='player2Score'>
           {fencedByP2.length}
         </PlayerScore>
       </PlayersScoreHeader>
@@ -408,6 +409,16 @@ export const Game = () => {
           cancelButtonHidden={true}
         /></div>
     </Footer>
+
+    <Tour
+      $isActive={true}
+      
+      setControlsDrawerOpen={setControlsDrawerOpen}
+      setCreateGameDialogOpen={setCreateGameDialogOpen}
+      setJoinGameDialogOpen={setJoinGameDialogOpen}
+      setGameoverDialogOpen={setGameoverDialogOpen}
+      setTriggerChatDrawerOpen={setTriggerChatDrawerOpen}
+      />
   </>
 }
 

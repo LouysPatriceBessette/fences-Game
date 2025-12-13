@@ -12,12 +12,13 @@ export const ChakraDrawer = (props) => {
     setOpen,
     title,
     placement,
+    buttonId,
     buttonText,
     displayCloseButton=false,
     footer,
     onOpenChange,
     disableOverlayClick=false,
-    children, 
+    children,
     ...rest
   } = props
 
@@ -43,6 +44,7 @@ export const ChakraDrawer = (props) => {
     >
       <Drawer.Trigger asChild>
         <ChakraButton
+        id={buttonId}
           onClick={() => {
             if(rest.buttonCallback){
               rest.buttonCallback()
