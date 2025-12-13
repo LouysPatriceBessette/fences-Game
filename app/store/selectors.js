@@ -30,7 +30,6 @@ export const useSocketRemoteIsOnline = () => useSelector((state) => state.socket
 export const useSocketRemoteHasLeft = () => useSelector((state) => state.socket.remoteHasLeft);
 
 export const useLanguage = () => useSelector((state) => state.language.selected);
-export const useLanguageIsDefault = () => useSelector((state) => state.language.isDefault);
 
 export const useChatMessages = () => useSelector((state) => state.chat.messages);
 export const useClientsCount = () => useSelector((state) => state.clients.count);

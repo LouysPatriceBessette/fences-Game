@@ -27,7 +27,7 @@ export const INITIAL_STATE: INITIAL_STATE_TYPE = {
     fencedByP2: [],
   },
   language: {
-    selected: 'EN'
+    selected: 'EN',
   },
   mouse: {
     origin: -1,

@@ -14,7 +14,6 @@ import {
   useIsLoaded,
   useClientsCount,
   useLanguage,
-  useLanguageIsDefault,
   useSize,
   usePlayer1Name,
   usePlayer2Name,
@@ -73,7 +72,6 @@ export const Game = () => {
 
   const clientsCount = useClientsCount()
   const language: SupportedLanguagesType = useLanguage()
-  const languageIsDefault = useLanguageIsDefault()
   const size = useSize()
   const gameId = useGameId()
   const gameIdChanged = useGameIdChanged()
@@ -96,6 +94,7 @@ export const Game = () => {
 
   // Dialogs open states
   const [languageDialogOpen, setLanguageDialogOpen] = useState(false)
+  const [languageSelectionMade, setLanguageSelectionMade] = useState('')
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
 
   useEffect(() => {
@@ -204,9 +203,9 @@ export const Game = () => {
           buttonCallback={() => {
             setControlsDrawerOpen(true)
           }}
-          disableOverlayClick={true}
+          disableOverlayClick={false}
           onOpenChange={(state: {open:boolean}) => {
-            console.log('DRAWER IS OPEN', state)
+            // console.log('DRAWER IS OPEN', state)
             setControlsDrawerOpen(state.open)
           }}
         >
@@ -239,7 +238,7 @@ export const Game = () => {
           placement="bottom"
           title={t[language]['Chat with the other player']}
           buttonText={<LuMessagesSquare/>}
-          disableOverlayClick={true}
+          disableOverlayClick={false}
         >
           <Chat/>
         </Chakra.Drawer>}
@@ -288,13 +287,16 @@ export const Game = () => {
                   if(languageCode){
                     localStorage.setItem('language', languageCode)
                     dispatch(setLanguage(languageCode))
+                    setLanguageSelectionMade(languageCode)
                   } else{
                     localStorage.removeItem('language')
                     setLanguageDialogOpen(true)
+                    setLanguageSelectionMade('')
                   }
                 } else{
                   localStorage.removeItem('language')
                   setLanguageDialogOpen(true)
+                  setLanguageSelectionMade('')
                 }
               }}
               options={languageItems}
@@ -307,7 +309,7 @@ export const Game = () => {
           overlayCloseDisabled={true}
           
           saveButtonText={t[language]['Ok']}
-          saveButtonDisabled={languageIsDefault}
+          saveButtonDisabled={!languageSelectionMade}
           saveButtonCallback={() => {
             setLanguageDialogOpen(false)
             setWelcomeDialogOpen(true)
@@ -327,7 +329,7 @@ export const Game = () => {
             <Chakra.Button
               text={`${TOUR_AVAILABLE ? t[language]['Tour Dialog button'] : ''} ${TOUR_AVAILABLE ? '' : t[language]['Tour coming soon...']}`}
               onClick={() => {
-                console.log('Start Tour...')
+                // console.log('Start Tour...')
               }}
               customVariant='orange'
               disabled

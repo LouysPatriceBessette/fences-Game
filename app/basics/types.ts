@@ -25,7 +25,7 @@ export type INITIAL_STATE_TYPE = {
     fencedByP2: string[],
   },
   language: {
-    selected: SupportedLanguagesType
+    selected: SupportedLanguagesType,
   },
   mouse: {
     origin: number,
