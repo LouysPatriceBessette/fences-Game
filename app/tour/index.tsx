@@ -460,11 +460,9 @@ export const Tour = ({
 
   // On tour activation
   useEffect(() => {
-    if(EDITING_STEPS){
-      console.log('\n\n\ntour is active\n\n')
-    }
-
-    if(!$isActive && currentStep !== 0) {
+    if($isActive) {
+      console.log('\n\n\ntour is active')
+    } else{
       setCurrentStep(0)
     }
   }, [EDITING_STEPS,$isActive, currentStep])
@@ -503,10 +501,7 @@ export const Tour = ({
   const selectors = tourSteps.map((step) => step.arrow.$selector)
 
   useEffect(() => {
-    if(EDITING_STEPS){
-      console.clear()
-    }
-
+    console.clear()
     foundElements.current = selectors.map((selector, index) => {
 
       const isFoundInDOM = !selector ? false : !!document.querySelector(selector)
@@ -521,9 +516,7 @@ export const Tour = ({
         $dialogLeft: 50,  // in vw
       }
 
-      if(EDITING_STEPS){
-        console.log('rectPosition', rectPosition)
-      }
+      console.log('rectPosition', rectPosition)
 
       switch(tourSteps[index].arrow.$direction) {
         case 'up':
