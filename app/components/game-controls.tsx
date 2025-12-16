@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   setLanguage,
   setGameSize,
@@ -66,6 +66,10 @@ export const GameControls = ({
   const gameId = useGameId()
   const remoteHasLeft = useSocketRemoteHasLeft()
   const dispatch = useDispatch()
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [disabledInput, setDisabledInput] = useState(tourActive)
+  const nameInput = useRef(null)
 
   const [playerName, setPlayerName] = useState(localStorage.getItem('myName') || '')
   const [x, setX] = useState(3)
@@ -140,10 +144,12 @@ export const GameControls = ({
 
     <Chakra.Input
       id='create-input'
+      ref={nameInput}
       label={t[language]['Your name']}
       placeholder={t[language]['Your name']}
       value={playerName}
       setValue={setPlayerName}
+      disabled={disabledInput}
     />
 
     <DialogLabelStyled>{t[language]['Dimensions']}: {x} x {y}</DialogLabelStyled>
@@ -215,11 +221,13 @@ export const GameControls = ({
   const JoinForm = <>
     <Chakra.Input
       id='joint-input'
+      ref={nameInput}
       label={t[language]['Your name']}
       placeholder={t[language]['Your name']}
       minLength={1}
       value={playerName}
       setValue={setPlayerName}
+      disabled={disabledInput}
     />
 
     <DialogLabelStyled>{t[language]['Game number']}</DialogLabelStyled>
@@ -256,6 +264,21 @@ export const GameControls = ({
   }
 
   const TIME_OUT_DELAY=500
+
+  // ==== For the tour
+  useEffect(() => {
+    const names = ['John', 'Raoul']
+
+    if((createGameDialogOpen || joinGameDialogOpen) && tourActive){
+      const letters = createGameDialogOpen ? names[0].split('') : names[1].split('')
+      letters.forEach((letter, loopIndex) => {
+        setTimeout(() => {
+          // @ts-expect-error Come on TS!
+          nameInput.current.value += letter
+        }, 2000 + (loopIndex * 600))
+      })
+    }
+  }, [createGameDialogOpen, joinGameDialogOpen, tourActive, nameInput])
 
   return (<>
     {DEBUG_LOCAL_STORAGE && <div>
