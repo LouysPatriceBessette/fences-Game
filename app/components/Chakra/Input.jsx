@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, Input } from '@chakra-ui/react'
 import { CustomLabel } from './customComponents'
 

@@ -16,7 +16,7 @@ import { ChakraDrawer as Drawer } from './Drawer'
 import { ChakraDialog as Dialog } from './Dialog'
 import { ChakraSlider as Slider } from './Slider'
 
-export { Input as ChackraIput }
+export { Input as ChackraInput }
 export { Code as ChakraCode }
 export { SegmentGroup as ChakraSegmentGroup }
 export { Combobox as ChakraCombobox }
