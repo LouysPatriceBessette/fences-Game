@@ -11,6 +11,7 @@ export type DomElementPositions = {
 
 export type TourMain = {
   tourActive: boolean,
+  setTourActive: React.Dispatch<React.SetStateAction<boolean>>,
   
   setControlsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setMore: React.Dispatch<React.SetStateAction<boolean>>,

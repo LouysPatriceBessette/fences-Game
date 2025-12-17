@@ -435,6 +435,7 @@ export const Game = () => {
       <TourOverlay $tourActive={tourActive}>
         <Tour
           tourActive={tourActive}
+          setTourActive={setTourActive}
 
           setControlsDrawerOpen={setControlsDrawerOpen}
           setMore={setMore}

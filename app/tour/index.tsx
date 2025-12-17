@@ -24,10 +24,13 @@ import {
   DomElementPositions,
 } from "./index.types"
 
+import { LuDoorOpen } from 'react-icons/lu'
+
 import { TourStepsData } from "./steps/Data"
 
 export const Tour = ({
     tourActive,
+    setTourActive,
 
     setControlsDrawerOpen,
     setMore,
@@ -49,6 +52,7 @@ export const Tour = ({
   // Steps data
   const tourSteps = TourStepsData({
     setCurrentStep,
+    setTourActive,
 
     setControlsDrawerOpen,
     setMore,
@@ -59,6 +63,17 @@ export const Tour = ({
 
     setChatDrawerOpen,
   })
+
+  const quitTour = () => {
+    setTourActive(false)
+    setCurrentStep(0)
+    setControlsDrawerOpen(false)
+    setMore(false)
+    setCreateGameDialogOpen(false)
+    setJoinGameDialogOpen(false)
+    setGameoverDialogOpen(false)
+    setChatDrawerOpen(false)
+  }
 
   //
   // Find all the selector position on load
@@ -283,6 +298,12 @@ export const Tour = ({
                 setCurrentStep((prev) => prev - 1 )
                 tourSteps[currentStep].dialog.$prevCallback()
               }}
+            />
+
+            <Chakra.Button
+              text={<LuDoorOpen/>}
+              customVariant='orange'
+              onClick={quitTour}
             />
 
             <Chakra.Button
