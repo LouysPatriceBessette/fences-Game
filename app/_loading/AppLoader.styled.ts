@@ -27,7 +27,7 @@ export const AppLoaderStyled = styled.div`
       19px -19px 0 0px, 38px -19px 0 0px, 57px -19px 0 0px,
       19px 0     0 5px, 38px 0     0 5px, 57px 0     0 5px,
       19px 19px  0 0px, 38px 19px  0 0px, 57px 19px  0 0px;
-    transform: translateX(-38px);
+    transform: translate(-38px, -38px);
     animation: l26 1.6s infinite linear;
   }
 

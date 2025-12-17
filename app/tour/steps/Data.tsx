@@ -2,11 +2,6 @@ import { TourSteps } from "../index.types"
 import { useLanguage } from '../../store/selectors'
 
 import { TourStepsDataType } from '../../tour/index.types'
-import {
-  Apos,
-  Bold,
-  TourBlankLine,
-} from "../../translations/translations.components.styled"
 
 import t from '../../translations'
 
@@ -215,9 +210,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Create game title'],
         $description: t[language]['Create game description'],
-        $prevCallback: () => {
-          // setControlsDrawerOpen(false)
-        },
+        $prevCallback: () => { setControlsDrawerOpen(false) },
         $nextCallback: () => { setCreateGameDialogOpen(true) },
       },
   
@@ -237,7 +230,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Create name input title'],
         $description: t[language]['Create name input description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setCreateGameDialogOpen (false) },
         $nextCallback: () => {},
       },
   
@@ -278,7 +271,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Join game title'],
         $description: t[language]['Join game description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setCreateGameDialogOpen(true) },
         $nextCallback: () => { setJoinGameDialogOpen(true) },
       },
   
@@ -298,7 +291,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Join game input title'],
         $description: t[language]['Join game input description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setJoinGameDialogOpen(false) },
         $nextCallback: () => {},
       },
   
@@ -339,7 +332,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Leave/Delete game title'],
         $description: t[language]['Leave/Delete game description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setJoinGameDialogOpen(true) },
         $nextCallback: () => {},
       },
   
@@ -379,7 +372,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Less title'],
         $description:t[language]['Less description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setMore(false) },
         $nextCallback: () => {},
       },
   
@@ -439,7 +432,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $visible: true,
         $title: t[language]['Chat title'],
         $description: t[language]['Chat description'],
-        $prevCallback: () => {},
+        $prevCallback: () => { setMore(true); setControlsDrawerOpen(true) },
         $nextCallback: () => { setChatDrawerOpen(true) },
       },
   
@@ -460,7 +453,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $title: t[language]['Chat drawer title'],
         $description: t[language]['Chat drawer description'],
         $definedPosition: 'A2',
-        $prevCallback: () => {},
+        $prevCallback: () => { setChatDrawerOpen(false) },
         $nextCallback: () => {},
       },
   
@@ -521,7 +514,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $title: t[language]['Game over title'],
         $description: t[language]['Game over description'],
         $definedPosition: 'C2',
-        $prevCallback: () => {},
+        $prevCallback: () => { setChatDrawerOpen(true); setGameoverDialogOpen(false) },
         $nextCallback: () => {},
       },
   

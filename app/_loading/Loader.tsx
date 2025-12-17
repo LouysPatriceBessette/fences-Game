@@ -3,12 +3,12 @@ import { useIsLoaded } from '../store/selectors';
 import { AppLoaderStyled as AppLoader } from './AppLoader.styled';
 import { TourStepsProps } from '../tour/index.types';
 
-interface Loader extends TourStepsProps{
-  setTourActive: (React.Dispatch<React.SetStateAction<boolean>> | ((arg: number) => void)),
-}
-export const Loader = (props: Loader) => {
+// interface Loader extends TourStepsProps{
+//   setTourActive: (React.Dispatch<React.SetStateAction<boolean>> | ((arg: number) => void)),
+// }
+export const Loader = (props: TourStepsProps) => {
 
-  const EDITING_STEPS = true
+  const EDITING_STEPS = false
   const isLoaded = useIsLoaded()
 
   const {
@@ -85,7 +85,7 @@ export const Loader = (props: Loader) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {f: (loadTime_start: any) => {
           const loadTime_end = performance.now()
-          console.log(`Loaded in ${((loadTime_end - loadTime_start) / 1000)} seconds`)
+          console.log(`Loaded in ${(Math.round((loadTime_end - loadTime_start)) / 1000)} seconds`)
         }, s: loadTime_start}
       ]
 
@@ -130,6 +130,7 @@ export const Loader = (props: Loader) => {
             console.log( '==============================================================', S.s ? "Open" : "close", names[parseInt(I.toString())])
           }
 
+          // @ts-expect-error No error here!
           S.f(S.s)
 
         }, delay)

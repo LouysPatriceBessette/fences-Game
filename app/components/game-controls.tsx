@@ -145,7 +145,7 @@ export const GameControls = ({
       placeholder={t[language]['Your name']}
       value={playerName}
       setValue={setPlayerName}
-      // disabled={disabledInput}
+      onFocus={(event: React.FocusEvent<HTMLInputElement>) => tourActive ? event.target.blur() : null}
     />
 
     <DialogLabelStyled>{t[language]['Dimensions']}: {x} x {y}</DialogLabelStyled>
@@ -223,7 +223,7 @@ export const GameControls = ({
       minLength={1}
       value={playerName}
       setValue={setPlayerName}
-      // disabled={disabledInput}
+      onFocus={(event: React.FocusEvent<HTMLInputElement>) => tourActive ? event.target.blur() : null}
     />
 
     <DialogLabelStyled>{t[language]['Game number']}</DialogLabelStyled>

@@ -42,7 +42,7 @@ export const Tour = ({
     setChatDrawerOpen,
   }: TourMain) => {
 
-  const EDITING_STEPS = true
+  const EDITING_STEPS = false
 
   const dispatch = useDispatch()
   const isLoaded = useIsLoaded()
