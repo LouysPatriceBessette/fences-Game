@@ -5,7 +5,7 @@ import { INITIAL_STATE_TYPE } from "../basics/types";
 
 export const INITIAL_STATE: INITIAL_STATE_TYPE = {
   app: {
-    isLoaded: false,
+    isLoading: false,
   },
   chat: {
     messages: [],
@@ -45,10 +45,10 @@ export const appReducer = (state = INITIAL_STATE.app, action: {type: string, pay
   const { type, payload } = action
 
   switch (type) {
-    case ACTION_TYPES.SET_LOADED:
+    case ACTION_TYPES.SET_LOADING:
       return {
         ...state,
-        isLoaded: payload,
+        isLoading: payload,
       };
     default:
       return state;

@@ -1,19 +1,19 @@
 import { useEffect } from 'react'
-import { useIsLoaded } from '../store/selectors';
+import { useIsLoading, useLanguage } from '../store/selectors';
+import { setIsLoading } from '../store/actions'
+import { useDispatch } from 'react-redux';
 import { AppLoaderStyled as AppLoader } from './AppLoader.styled';
 import { TourStepsProps } from '../tour/index.types';
+import t from '../translations/index'
 
-// interface Loader extends TourStepsProps{
-//   setTourActive: (React.Dispatch<React.SetStateAction<boolean>> | ((arg: number) => void)),
-// }
 export const Loader = (props: TourStepsProps) => {
 
-  const EDITING_STEPS = false
-  const isLoaded = useIsLoaded()
+  const EDITING_STEPS = true
+  const isLoading = useIsLoading()
+  const dispatch = useDispatch()
+  const language = useLanguage()
 
   const {
-    setTourActive,
-
     setControlsDrawerOpen,
     setMore,
 
@@ -26,7 +26,7 @@ export const Loader = (props: TourStepsProps) => {
 
   useEffect(() => {
     if(window){
-      if(!isLoaded){
+      if(isLoading){
 
         const addedStyle = window.document.createElement('style');
         addedStyle.innerHTML = `
@@ -48,20 +48,18 @@ export const Loader = (props: TourStepsProps) => {
         window.document.head.appendChild(removedStyle);
       }
     }
-  },[isLoaded])
+  },[isLoading])
 
   useEffect(() => {
     const loadTime_start = performance.now();
 
-    if(!!!isLoaded){
-      // This is a bit hacky.
+    if(isLoading){
+      // Loading a tour.
       // We are using existing game states to gather the tour elements rendered positions (used by the arrow).
-      // This loop runs only once, on page load, while showing the nice animated loader.
+      // This loop runs behing the scene, while showing the nice animated loader.
 
       // Setter execution order
       const setters = [
-        {f: setTourActive, s: true},
-
         {f: setControlsDrawerOpen, s: true},
         
         {f: setCreateGameDialogOpen, s: true},
@@ -80,19 +78,18 @@ export const Loader = (props: TourStepsProps) => {
         {f: setChatDrawerOpen, s: true},
         {f: setChatDrawerOpen, s: false},
 
-        {f: setTourActive, s: false},
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {f: (loadTime_start: any) => {
           const loadTime_end = performance.now()
           console.log(`Loaded in ${(Math.round((loadTime_end - loadTime_start)) / 1000)} seconds`)
+
+          // DISPATCH
+          dispatch(setIsLoading(false))
         }, s: loadTime_start}
       ]
 
       // Setters names for console.log
       const names = [
-        'setTourActive',
-
         'setControlsDrawerOpen',
 
         'setCreateGameDialogOpen',
@@ -111,9 +108,7 @@ export const Loader = (props: TourStepsProps) => {
         'setChatDrawerOpen',
         'setChatDrawerOpen',
 
-        'setTourActive',
-
-        'loadtime',
+        'loadtime and dispatch',
       ]
 
       if(EDITING_STEPS){
@@ -125,7 +120,6 @@ export const Loader = (props: TourStepsProps) => {
         const delay = parseInt(I.toString()) * 800
 
         setTimeout(() => {
-
           if(EDITING_STEPS){
             console.log( '==============================================================', S.s ? "Open" : "close", names[parseInt(I.toString())])
           }
@@ -137,7 +131,10 @@ export const Loader = (props: TourStepsProps) => {
       })
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isLoading])
 
-  return isLoaded ? <></> : <AppLoader><div className="loader"></div></AppLoader>
+  return !isLoading ? <></> : <AppLoader>
+    <div>{t[language]['Loading the tour...']}</div>
+    <div className="loader"></div>
+  </AppLoader>
 }

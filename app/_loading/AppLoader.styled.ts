@@ -2,6 +2,12 @@ import { styled } from "styled-components";
 
 export const AppLoaderStyled = styled.div`
 
+  & > div:nth-child(1){
+    transform: translateX(50%);
+    padding: 0.4em 0;
+    margin-top: 2em;
+  }
+
   z-index: 9999;
   position: fixed;
   top: 0;

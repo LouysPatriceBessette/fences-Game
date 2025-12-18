@@ -1,8 +1,8 @@
 import { ACTION_TYPES } from '../basics/constants';
 import { createAction } from '../basics/utils';
 
-export const setIsLoaded = (isLoaded) =>
-  createAction(ACTION_TYPES.SET_LOADED, isLoaded);
+export const setIsLoading = (isLoading) =>
+  createAction(ACTION_TYPES.SET_LOADING, isLoading);
 
 export const resetReduxInitialState = () =>
   createAction(ACTION_TYPES.RESET_REDUX_STORE, null);

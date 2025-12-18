@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const LoadingWrapper = styled.div<{$isLoaded?: boolean}>`
-  opacity: ${(props) => !props.$isLoaded ? '0' : '1'};
+export const LoadingWrapper = styled.div<{$isLoading?: boolean}>`
+  opacity: ${(props) => !props.$isLoading ? '1' : '0'};
   transition: opacity 0.8s ease-in-out;
 `
 

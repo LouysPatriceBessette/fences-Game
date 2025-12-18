@@ -3,7 +3,7 @@ import { SupportedLanguagesType } from "../translations/supportedLanguages";
 
 export type INITIAL_STATE_TYPE = {
   app: {
-    isLoaded: boolean,
+    isLoading: boolean,
   },
   chat: {
     messages: string[],

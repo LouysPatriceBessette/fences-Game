@@ -1,8 +1,6 @@
  
 import { useEffect, useState, useRef } from 'react'
-import { useDispatch } from 'react-redux';
-import { setIsLoaded } from '../store/actions';
-import { useIsLoaded } from '../store/selectors';
+import { useIsLoading, } from '../store/selectors';
 
 import Chakra from '../components/Chakra'
 import {
@@ -29,6 +27,7 @@ import { LuDoorOpen } from 'react-icons/lu'
 import { TourStepsData } from "./steps/Data"
 
 export const Tour = ({
+    tourNumber,
     tourActive,
     setTourActive,
 
@@ -42,15 +41,15 @@ export const Tour = ({
     setChatDrawerOpen,
   }: TourMain) => {
 
-  const EDITING_STEPS = false
+  const EDITING_STEPS = true
 
-  const dispatch = useDispatch()
-  const isLoaded = useIsLoaded()
+  const isLoading = useIsLoading()
   const [currentStep, setCurrentStep] = useState(0)
   const [inputtingStep, setInputtingStep] = useState('')
 
   // Steps data
   const tourSteps = TourStepsData({
+    tourNumber,
     setCurrentStep,
     setTourActive,
 
@@ -99,18 +98,17 @@ export const Tour = ({
   }
 
   const foundElements: React.RefObject<DomElementPositions[] | null> = useRef(null)
-  const selectors = tourSteps.map((step) => step.arrow.$selector)
+  const selectors = tourSteps[tourNumber].map((step) => step.arrow.$selector)
 
   useEffect(() => {
 
     // Find all the element positions
     // And keep them in foundElements
     // Only on page load (while the animated loading icon shows)
-    if(!isLoaded){
+    if(isLoading){
       foundElements.current = selectors.map((selector, index) => {
 
-
-        if(foundElements && foundElements.current && foundElements.current[index].isFoundInDOM){
+        if(foundElements && foundElements.current && foundElements.current[index]?.isFoundInDOM){
           return foundElements.current[index]
         }
 
@@ -127,7 +125,7 @@ export const Tour = ({
           $dialogLeft: 50,  // in vw
         }
 
-        switch(tourSteps[index].arrow.$direction) {
+        switch(tourSteps[tourNumber][index].arrow.$direction) {
           case 'up':
             rectPosition.$arrowTop += rect.$height
             rectPosition.$arrowLeft += rect.$width / 2
@@ -164,7 +162,7 @@ export const Tour = ({
         */
 
         // Dialog position
-        switch(tourSteps[index].dialog.$definedPosition) {
+        switch(tourSteps[tourNumber][index].dialog.$definedPosition) {
           case 'A1':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
@@ -227,7 +225,7 @@ export const Tour = ({
           $arrowLeft: rectPosition.$arrowLeft,
           $dialogTop: rectPosition.$dialogTop,
           $dialogLeft: rectPosition.$dialogLeft,
-          $definedPosition: tourSteps[index].dialog.$definedPosition,
+          $definedPosition: tourSteps[tourNumber][index].dialog.$definedPosition,
         }
       })
     
@@ -239,16 +237,10 @@ export const Tour = ({
         console.log('found:', foundCount.length, foundCount.map((f) => f.$selector))
         console.log('not found:', notFoundCount.length, notFoundCount.map((f) => f.$selector))
       }
-
-      if(notFoundCount.filter((nf) => nf.$selector !== '').length === 0){
-        setTimeout(() => {
-          dispatch(setIsLoaded(true));
-        }, 1000)
-      }
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectors, currentStep])
+  }, [isLoading, selectors, currentStep])
 
   // Arrow X/Y animated translation (top/left)
   const prev = {
@@ -272,22 +264,22 @@ export const Tour = ({
 
         <StepArrow
           data-step={currentStep}
-          {...tourSteps[currentStep].arrow}
+          {...tourSteps[tourNumber][currentStep].arrow}
           $foundElements={foundElements.current}
           $currentStep={currentStep}
           $translation={diff}
         />
 
         <StepStyled
-          {...tourSteps[currentStep].dialog}
+          {...tourSteps[tourNumber][currentStep].dialog}
           $dialogTop={foundElements.current?.[currentStep].$dialogTop ?? 0}
           $dialogLeft={foundElements.current?.[currentStep].$dialogLeft ?? 0}
 
           $arrowTop={foundElements.current?.[currentStep].$arrowTop ?? 0}
           $arrowLeft={foundElements.current?.[currentStep].$arrowLeft ?? 0}
         >
-          <StepTitle $title={tourSteps[currentStep].dialog.$title}/>
-          <StepDescription $description={tourSteps[currentStep].dialog.$description}/>
+          <StepTitle $title={tourSteps[tourNumber][currentStep].dialog.$title}/>
+          <StepDescription $description={tourSteps[tourNumber][currentStep].dialog.$description}/>
 
           <StepButtonContainer>
             <Chakra.Button
@@ -296,7 +288,7 @@ export const Tour = ({
               disabled={currentStep === 0}
               onClick={() => {
                 setCurrentStep((prev) => prev - 1 )
-                tourSteps[currentStep].dialog.$prevCallback()
+                tourSteps[tourNumber][currentStep].dialog.$prevCallback()
               }}
             />
 
@@ -309,10 +301,10 @@ export const Tour = ({
             <Chakra.Button
               text={<StepButton>→</StepButton>}
               customVariant='green'
-              disabled={currentStep === tourSteps.length - 1}
+              disabled={currentStep === tourSteps[tourNumber].length - 1}
               onClick={() => {
                 setCurrentStep((prev) => prev + 1 )
-                tourSteps[currentStep].dialog.$nextCallback()
+                tourSteps[tourNumber][currentStep].dialog.$nextCallback()
               }}
             />
           </StepButtonContainer>
@@ -367,7 +359,7 @@ export const Tour = ({
                   marginLeft: '6px',
                   marginRight: '6px',
                   textAlign: 'right',
-                  backgroundColor: (Number(inputtingStep) < 0 || Number(inputtingStep) > tourSteps.length - 1) ? 'red' : 'white',
+                  backgroundColor: (Number(inputtingStep) < 0 || Number(inputtingStep) > tourSteps[tourNumber].length - 1) ? 'red' : 'white',
                 }}
               />
               <button
@@ -376,7 +368,7 @@ export const Tour = ({
                   setCurrentStep(Number(inputtingStep))
                 }}
                 style={{
-                  opacity: inputtingStep === currentStep.toString() || Number(inputtingStep) > tourSteps.length - 1 ? 0 : 1,
+                  opacity: inputtingStep === currentStep.toString() || Number(inputtingStep) > tourSteps[tourNumber].length - 1 ? 0 : 1,
                   backgroundColor: 'lightgrey',
                   borderRadius: '4px',
                   padding: '0 4px',
@@ -390,7 +382,7 @@ export const Tour = ({
                 onClick={() => {
                   console.clear()
                   console.log('Rendered Arrow:', foundElements.current?.[currentStep])
-                  console.log('Tour Step:', tourSteps[currentStep])
+                  console.log('Tour Step:', tourSteps[tourNumber][currentStep])
                 }}
                 style={{
                   backgroundColor: 'lightgrey',
@@ -404,8 +396,6 @@ export const Tour = ({
             </div>
           </div>
         </>}
-
       </TourInnerStyled>
-      
     </TourMainStyled>
 }

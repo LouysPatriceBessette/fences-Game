@@ -23,7 +23,6 @@ export const TourMainStyled = styled.div`
   padding: 0;
   margin: 0;
   background-color: transparent;
-  pointer-events: auto;
   z-index: 9999;
 `
 
@@ -142,6 +141,8 @@ export const ArrowHeadStyled = styled.div<StepArrowProps>`
 /* STEP */
 export const StepStyled = styled.div<StyledStepProps>`
   position: absolute;
+  pointer-events: auto;
+
   display: flex;
   flex-direction: column;
 

@@ -10,6 +10,7 @@ export type DomElementPositions = {
 }
 
 export type TourMain = {
+  tourNumber: number,
   tourActive: boolean,
   setTourActive: React.Dispatch<React.SetStateAction<boolean>>,
   

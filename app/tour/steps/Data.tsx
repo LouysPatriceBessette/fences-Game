@@ -9,8 +9,6 @@ export const TourStepsData = (props: TourStepsDataType) => {
   const language = useLanguage()
 
   const {
-    // setCurrentStep,
-
     setControlsDrawerOpen,
     setMore,
 
@@ -22,7 +20,7 @@ export const TourStepsData = (props: TourStepsDataType) => {
   } = props
   
 
-  const steps: TourSteps[] = [
+  const interfaceSteps: TourSteps[] = [
     // ================================================== Intro 1
     {
       dialog: {
@@ -529,5 +527,28 @@ export const TourStepsData = (props: TourStepsDataType) => {
     },
   ]
 
-  return steps
+  const playSteps: TourSteps[] = [
+    // ================================================== Intro 1
+    {
+      dialog: {
+        $visible: true,
+        $title: t[language]['Start play tour title'],
+        $description: t[language]['Start play tour description'],
+        $prevCallback: () => {},
+        $nextCallback: () => {},
+      },
+  
+      arrow: {
+        $visible: true,
+        $selector: '#playGrid',
+        $direction: 'down',
+        $length: 40,
+        $distance: 0,
+        $scale: 1,
+      }
+    },
+
+  ]
+
+  return [interfaceSteps, playSteps]
 }

@@ -1,7 +1,8 @@
 import { supportedLanguages as supported } from "./supportedLanguages";
 import { appTranslations } from "./appTranslations";
 import { infoTranslations } from "./infoTranslations";
-import { tourTranslations } from "./tourTranslations";
+import { tourInterfaceTranslations } from "./tourInterfaceTranslations";
+import { tourPlayTranslation } from "./tourPlayTranslations";
 
 const createTranslation = () => {
   const translation = {
@@ -23,7 +24,8 @@ const createTranslation = () => {
     translation[lang] = {
       ...appTranslations[lang],
       ...infoTranslations[lang],
-      ...tourTranslations[lang],
+      ...tourInterfaceTranslations[lang],
+      ...tourPlayTranslation[lang],
     }
   }
   return translation

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import {
+  setIsLoading,
   setLanguage,
   setNameOfPlayer1,
   setGameId,
@@ -10,7 +11,7 @@ import {
   setGameIdChanged,
 } from "../store/actions";
 import {
-  useIsLoaded,
+  useIsLoading,
   useClientsCount,
   useLanguage,
   useSize,
@@ -68,7 +69,7 @@ export const Game = () => {
   const DEBUG_DISPLAY_MY_SOCKET_ID = Boolean(Number(process.env.DEBUG_DISPLAY_MY_SOCKET_ID));
 
   const dispatch = useDispatch()
-  const isLoaded = useIsLoaded()
+  const isLoading = useIsLoading()
 
   const clientsCount = useClientsCount()
   const language: SupportedLanguagesType = useLanguage()
@@ -135,6 +136,7 @@ export const Game = () => {
   
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
   const [tourActive, setTourActive] = useState(false)
+  const [tourNumber, setTourNumber] = useState(0)
 
   useEffect(() => {
     if(gameover || (!gameover && gameIdChanged)) {
@@ -195,7 +197,7 @@ export const Game = () => {
   }
 
   return <>
-    <LoadingWrapper $isLoaded={isLoaded}>
+    <LoadingWrapper $isLoading={isLoading}>
       <PageContainer>
         <ConnectedPlayersContainer id='connectedPlayers'>
           <span>{clientsCount}</span> {`${clientsCount >  1 ? t[language]['players'] : t[language]['player']} ${t[language]['online']}`}
@@ -258,7 +260,7 @@ export const Game = () => {
 
               title={<div id='chat-drawer-title'>{t[language]['Chat with the other player']}</div>}
               placement="bottom"
-              disableOverlayClick={false}
+              disableOverlayClick={tourActive}
             >
               <Chat/>
             </Chakra.Drawer>
@@ -346,16 +348,30 @@ export const Game = () => {
             body={<WelcomeDialogBodyStyled>
               {t[language]['Tour Dialog P1']}
               {t[language]['Tour Dialog P2']}
-              
+
               <Chakra.Button
-                text={t[language]['Tour Dialog button']}
+                text={t[language]['Start play tour']}
                 onClick={() => {
+                  dispatch(setIsLoading(true))
+                  setTourNumber(1)
+                  setTourActive(true)
+                  setWelcomeDialogOpen(false)
+                }}
+                customVariant='orange'
+              />
+
+              <Chakra.Button
+                text={t[language]['Start interface tour']}
+                onClick={() => {
+                  dispatch(setIsLoading(true))
+                  setTourNumber(0)
                   setTourActive(true)
                   setWelcomeDialogOpen(false)
                   setControlsDrawerOpen(false)
                 }}
                 customVariant='orange'
               />
+
             </WelcomeDialogBodyStyled>}
 
             open={welcomeDialogOpen}
@@ -371,7 +387,6 @@ export const Game = () => {
             overlayCloseDisabled={true}
             
             saveButtonHidden={true}
-            // cancelButtonHidden={true}
           />
         </LanguageDialogContainer>
 
@@ -430,10 +445,10 @@ export const Game = () => {
             cancelButtonHidden={true}
           /></div>
       </Footer>
-
       
       <TourOverlay $tourActive={tourActive}>
         <Tour
+          tourNumber={tourNumber}
           tourActive={tourActive}
           setTourActive={setTourActive}
 
@@ -450,7 +465,8 @@ export const Game = () => {
       </TourOverlay>
     </LoadingWrapper>
 
-    {isLoaded === undefined ? <></> : <Loader
+    <Loader
+      tourNumber={tourNumber}
       setTourActive={setTourActive}
 
       setControlsDrawerOpen={setControlsDrawerOpen}
@@ -461,7 +477,7 @@ export const Game = () => {
       setGameoverDialogOpen={setGameoverDialogOpen}
 
       setChatDrawerOpen={setChatDrawerOpen}
-    />}
+    />
   </>
 }
 
