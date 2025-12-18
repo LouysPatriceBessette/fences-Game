@@ -86,15 +86,30 @@ export const tourPlayTranslation = {
       <div>Vous cliquez là.</div>
     </>,
 
-    'Simulated game move #11 title': <div>Deuxième cpup du Joueur 2</div>,
+    'Simulated game move #11 title': <div>Votre ligne</div>,
     'Simulated game move #11 description': <>
+      <div>Une line est tracée.</div>
+      <div><TourBlankLine/></div>
+      <div>Et c<Apos/>est le tour de Joueur 2</div>
+    </>,
+
+    'Simulated game move #12 title': <div>Deuxième coup du Joueur 2</div>,
+    'Simulated game move #12 description': <>
       <div>Il a joué.</div>
     </>,
 
-    'Simulated game move #100 title': <div>ON EST RENDU LÀ!</div>,
-    'Simulated game move #100 description': <>
-      <div>TOUT VA BIEN...</div>
+    'Simulated game move #13 title': <div>Et il a gagné un point!</div>,
+    'Simulated game move #13 description': <>
+      <div>Parce qu<Apos/>une boîte a été fermée.</div>
+      </>,
+
+    'Simulated game move #14 title': <div>Remarquez la flèche</div>,
+    'Simulated game move #14 description': <>
+      <div>C<Apos/>est encore à lui de jouer...</div>
     </>,
+
+    'Simulated game move #15 title': <div>Continuez comme ça jusqu<Apos/>à la fin de la partie.</div>,
+    'Simulated game move #15 description': <></>,
   },
   ES: {
     'Start play tour': 'Cómo jugar',

@@ -6,6 +6,7 @@ import {
   setUsedFencesP1,
   setUsedFencesP2,
   setCanConnectWith,
+  setFencedByP2,
   toggleCurrentPlayer,
 } from '../../store/actions'
 import { useDispatch } from 'react-redux'
@@ -591,7 +592,6 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $scale: 1,
       }
     },
-
     {
       dialog: {
         $visible: true,
@@ -835,7 +835,13 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $prevCallback: () => {
           setIsVLine(false)
         },
-        $nextCallback: () => {},
+        $nextCallback: () => {
+          setIsVLine(false)
+          setIsHLine(true)
+          dispatch(setUsedFences('H-4'))
+          dispatch(setUsedFencesP2('H-4'))
+          dispatch(setFencedByP2(1))
+        },
       },
   
       arrow: {
@@ -848,13 +854,73 @@ export const TourStepsData = (props: TourStepsDataType) => {
       }
     },
 
-
-    // ========================== DEFAULT STEP
+    // Player 2 turn 4 done (showing line)
     {
       dialog: {
         $visible: true,
-        $title: t[language]['Simulated game move #100 title'],
-        $description: t[language]['Simulated game move #100 description'],
+        $title: t[language]['Simulated game move #12 title'],
+        $description: t[language]['Simulated game move #12 description'],
+        $definedPosition: 'C2',
+        $prevCallback: () => {
+          setIsHLine(false)
+        },
+        $nextCallback: () => {},
+      },
+  
+      arrow: {
+        $visible: true,
+        $selector: hl_s(4),
+        $direction: 'diag',
+        $length: 40,
+        $distance: 0,
+        $scale: 1,
+      }
+    },
+
+    // EXPLANATIONS
+    {
+      dialog: {
+        $visible: true,
+        $title: t[language]['Simulated game move #13 title'],
+        $description: t[language]['Simulated game move #13 description'],
+        $definedPosition: 'C2',
+        $prevCallback: () => {},
+        $nextCallback: () => {},
+      },
+  
+      arrow: {
+        $visible: true,
+        $selector: box_s(1),
+        $direction: 'right',
+        $length: 40,
+        $distance: 0,
+        $scale: 1,
+      }
+    },
+    {
+      dialog: {
+        $visible: true,
+        $title: t[language]['Simulated game move #14 title'],
+        $description: t[language]['Simulated game move #14 description'],
+        $definedPosition: 'C2',
+        $prevCallback: () => {},
+        $nextCallback: () => {},
+      },
+  
+      arrow: {
+        $visible: true,
+        $selector: '#currentTurn',
+        $direction: 'down',
+        $length: 40,
+        $distance: -60,
+        $scale: 1,
+      }
+    },
+    {
+      dialog: {
+        $visible: true,
+        $title: t[language]['Simulated game move #15 title'],
+        $description: t[language]['Simulated game move #15 description'],
         $definedPosition: 'C2',
         $prevCallback: () => {},
         $nextCallback: () => {
@@ -871,7 +937,6 @@ export const TourStepsData = (props: TourStepsDataType) => {
         $scale: 1,
       }
     },
-
   ]
 
   return [interfaceSteps, playSteps]
