@@ -42,8 +42,8 @@ export type TourSteps = {
     $visible: boolean,
     $selector: string,
     $direction: 'up' | 'down' | 'left' | 'right' | 'diag'
-    isVLine?: boolean,
-    isVHine?: boolean,
+    $isVLine?: boolean,
+    $isHLine?: boolean,
     $length: number,
     $distance: number,
     $scale: number,
@@ -73,8 +73,8 @@ export type StepArrowProps = {
   $arrowLeft?: number,
   $translation: {x: number, y: number},
   $direction: 'up' | 'down' | 'left' | 'right' | 'diag'
-  isVLine?: boolean,
-  isVHine?: boolean,
+  $isVLine?: boolean,
+  $isHLine?: boolean,
   $length: number,
   $distance: number,
   $scale: number,

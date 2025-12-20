@@ -18,8 +18,8 @@ import {
   deepCopy,
 } from './app/basics/utils.js';
 
-const DEBUG_PING_PONG = Boolean(Number(process.env.DEBUG_PING_PONG))
-const DEBUG_GAMES = Boolean(Number(process.env.DEBUG_GAMES))
+const DEBUG_PING_PONG = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_PING_PONG))
+const DEBUG_GAMES = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_GAMES))
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });

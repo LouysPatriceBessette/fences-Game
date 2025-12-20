@@ -1,7 +1,7 @@
 import React from 'react'
 import { Alert, Box } from '@chakra-ui/react'
 
-export const ChackraAlert = (props) => {
+export const ChakraAlert = (props) => {
 
   const {status, title, description, action} = props
 

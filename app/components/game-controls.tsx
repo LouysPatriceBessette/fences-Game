@@ -55,7 +55,7 @@ export const GameControls = ({
   more: boolean
   setMore: React.Dispatch<React.SetStateAction<boolean>>,
 }) => {
-  const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.DEBUG_LOCAL_STORAGE))
+  const DEBUG_LOCAL_STORAGE = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_LOCAL_STORAGE))
 
   const language: SupportedLanguagesType = useLanguage()
 

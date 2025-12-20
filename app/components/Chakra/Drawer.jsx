@@ -42,7 +42,7 @@ export const ChakraDrawer = (props) => {
     >
       <Drawer.Trigger asChild>
         <ChakraButton
-        id={buttonId}
+          id={buttonId}
           onClick={() => {
             if(rest.buttonCallback){
               rest.buttonCallback()

@@ -1,7 +1,7 @@
  
 import { useEffect, useState, useRef } from 'react'
 import { useIsLoading, useLoadedTour } from '../store/selectors';
-import { setIsLoading } from '../store/actions'
+import { setIsLoading, setLoadedTour } from '../store/actions'
 import { useDispatch } from 'react-redux'
 import Chakra from '../components/Chakra'
 import {
@@ -42,7 +42,7 @@ export const Tour = ({
     setChatDrawerOpen,
   }: TourMain) => {
 
-  const EDITING_STEPS = true
+  const DEBUG_EDITING_STEPS = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_EDITING_STEPS));
 
   const dispatch = useDispatch()
   const isLoading = useIsLoading()
@@ -51,7 +51,7 @@ export const Tour = ({
   const [currentStep, setCurrentStep] = useState(0)
   const [inputtingStep, setInputtingStep] = useState('')
   const [isVLine, setIsVLine] = useState(false)
-  const [isVHine, setIsHLine] = useState(false)
+  const [isHLine, setIsHLine] = useState(false)
 
   // Steps data
   const tourSteps = TourStepsData({
@@ -70,6 +70,13 @@ export const Tour = ({
 
     setChatDrawerOpen,
   })
+
+  const foundElements: React.RefObject<DomElementPositions[] | null> = useRef([])
+  const selectors = tourNumber !== -1 ? tourSteps[tourNumber].map((step) => step.arrow.$selector) : []
+  const [loadingStarted, setLoadingStarted] = useState(false)
+  if(DEBUG_EDITING_STEPS){
+    console.log('selectors', selectors)
+  }
 
   const quitTour = () => {
     setTourActive(false)
@@ -105,17 +112,33 @@ export const Tour = ({
     }
   }
 
-  const foundElements: React.RefObject<DomElementPositions[] | null> = useRef(null)
-  const selectors = tourSteps[tourNumber].map((step) => step.arrow.$selector)
-
   useEffect(() => {
 
     // Find all the element positions
     // And keep them in foundElements
     // Only on page load (while the animated loading icon shows)
-    if(isLoading && (tourNumber !== loadedTour)){
-      // Reset the tour elements
-      foundElements.current = []
+    if(isLoading && selectors.length){
+
+      if(selectors.length !== tourSteps[tourNumber].length){
+        if(DEBUG_EDITING_STEPS){
+          console.log('Warning! - selectors.length !== tourSteps[tourNumber].length')
+        }
+      }
+
+      if(loadedTour === tourNumber){
+        if(DEBUG_EDITING_STEPS){
+          console.log('Already loaded tour')
+        }
+        dispatch(setIsLoading(false))
+        setLoadingStarted(false)
+        return
+      } else if(!loadingStarted){
+        if(DEBUG_EDITING_STEPS){
+          console.log('Loading a new tour')
+        }
+        setLoadingStarted(true)
+        foundElements.current = []
+      }
 
       // Then refill with the new ones
       foundElements.current = selectors.map((selector, index) => {
@@ -157,7 +180,6 @@ export const Tour = ({
         }
 
         /*
-
         Cases below represent an approximate layout grid.
         It ISN'T a grid. It's only the common desirable locations.
 
@@ -170,7 +192,6 @@ export const Tour = ({
           B
           C
         And (TODO) we force to landscape portrait.
-
         */
 
         // Dialog position
@@ -179,55 +200,38 @@ export const Tour = ({
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
           case 'A2':
             rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'A3':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'B1':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'B2':
             rectPosition.$dialogTop = 190
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'B3':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'C1':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'C2':
             rectPosition.$dialogTop = 380
             // rectPosition.$dialogLeft = 0
             break;
-
-          
           case 'C3':
             // rectPosition.$dialogTop = 0
             // rectPosition.$dialogLeft = 0
             break;
-
-          
         }
 
         return {
@@ -244,20 +248,28 @@ export const Tour = ({
       const foundCount = foundElements.current.filter((f) => f.isFoundInDOM)
       const notFoundCount = foundElements.current.filter((f) => !f.isFoundInDOM)
 
-      if(EDITING_STEPS){
+      if(DEBUG_EDITING_STEPS){
         console.log('foundElements.current', foundElements.current)
         console.log('found:', foundCount.length, foundCount.map((f) => f.$selector))
         console.log('not found:', notFoundCount.length, notFoundCount.map((f) => f.$selector))
       }
+
+      if(notFoundCount.length === 0){
+        dispatch(setLoadedTour(tourNumber))
+      }
     }
 
-    // If there is nothing new to load
+    // There is nothing to load
     else {
+      if(DEBUG_EDITING_STEPS){
+        console.log('nothing to load')
+      }
       dispatch(setIsLoading(false))
+      setLoadingStarted(false)
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, selectors, currentStep])
+  }, [isLoading, selectors, tourNumber, currentStep, foundElements.current?.length])
 
   // Arrow X/Y animated translation (top/left)
   const prev = {
@@ -276,7 +288,7 @@ export const Tour = ({
     diff = {x: next.x - prev.x, y: next.y - prev.y}
   }
 
-  return !tourActive ? <></> : <TourMainStyled id='TOUR-OVERLAY'>
+  return !tourActive || !foundElements.current?.length ? <></> : <TourMainStyled id='TOUR-OVERLAY'>
       <TourInnerStyled id='TOUR-OVERLAY-INNER'>
 
         <StepArrow id='ARROW'
@@ -285,8 +297,8 @@ export const Tour = ({
           $foundElements={foundElements.current}
           $currentStep={currentStep}
           $translation={diff}
-          isVLine={isVLine}
-          isVHine={isVHine}
+          $isVLine={isVLine}
+          $isHLine={isHLine}
         />
 
         <StepStyled id='STEP'
@@ -330,7 +342,7 @@ export const Tour = ({
             
         </StepStyled>
 
-        {EDITING_STEPS && <>
+        {DEBUG_EDITING_STEPS && <>
           <div
             id='STEP-EDIT-HELPER'
             style={{

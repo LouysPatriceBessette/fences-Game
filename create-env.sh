@@ -11,7 +11,7 @@ fi
 if [ ! -f .env ]; then
   touch .env
   echo "NODE_ENV='$1'" > .env
-  echo "NEXT_PUBLIC_VERSION='0.2.0'" >> .env
+  echo "NEXT_PUBLIC_VERSION='0.2.2'" >> .env
   echo "#========================== The above lines are auto generated at 'every npm start' and 'npm run dev'." >> .env
   echo "" >> .env
 
@@ -20,11 +20,12 @@ if [ ! -f .env ]; then
   echo "#========================== only if the .env file does not exist." >> .env
   echo "#========================== You can enable/disable them... But they MUST STAY." >> .env
   echo "#========================== Search fo 'DEBUG_' to find where they're used." >> .env
-  echo "DEBUG_STORE=0" >> .env
-  echo "DEBUG_PING_PONG=0" >> .env
-  echo "DEBUG_GAMES=0" >> .env
-  echo "DEBUG_LOCAL_STORAGE=0" >> .env
-  echo "DEBUG_DISPLAY_MY_SOCKET_ID=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_STORE=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_PING_PONG=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_GAMES=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_LOCAL_STORAGE=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_DISPLAY_MY_SOCKET_ID=0" >> .env
+  echo "NEXT_PUBLIC_DEBUG_EDITING_STEPS=0" >> .env
   echo "#========================== " >> .env
   echo "" >> .env
   echo "#========================== Anything below is safe to edit like a normal .env file." >> .env

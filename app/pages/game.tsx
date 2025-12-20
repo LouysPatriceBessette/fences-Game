@@ -14,6 +14,7 @@ import {
 import {
   useVersion,
   useIsLoading,
+  useLoadedTour,
   useClientsCount,
   useLanguage,
   useSize,
@@ -68,11 +69,12 @@ import { SupportedLanguagesType } from "../translations/supportedLanguages";
 import { languages } from "../translations/supportedLanguages";
 
 export const Game = () => {
-  const DEBUG_DISPLAY_MY_SOCKET_ID = Boolean(Number(process.env.DEBUG_DISPLAY_MY_SOCKET_ID));
+  const DEBUG_DISPLAY_MY_SOCKET_ID = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_DISPLAY_MY_SOCKET_ID));
 
   const dispatch = useDispatch()
   const version = useVersion()
   const isLoading = useIsLoading()
+  const loadedTour = useLoadedTour()
 
   const clientsCount = useClientsCount()
   const language: SupportedLanguagesType = useLanguage()
@@ -148,7 +150,7 @@ export const Game = () => {
   
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false)
   const [tourActive, setTourActive] = useState(false)
-  const [tourNumber, setTourNumber] = useState(0)
+  const [tourNumber, setTourNumber] = useState(-1)
 
   useEffect(() => {
     if(gameover || (!gameover && gameIdChanged)) {
@@ -254,10 +256,12 @@ export const Game = () => {
           <GameNumberStyled id='gameId'>
             <div>
               {!tourActive && gameId !== -1 && gameIdString}
-              {tourActive && '377598'}
+              {tourActive && loadedTour === 1 && '377598'}
             </div>
             <div>
-              {t[language]['Number to share']}
+              {((!tourActive && gameId !== -1) || (tourActive  && loadedTour === 1)) && 
+                t[language]['Number to share']
+              }
             </div>
           </GameNumberStyled>
 
@@ -444,7 +448,7 @@ export const Game = () => {
           <LuCopyright/> <span>2025 - Louys Patrice Bessette</span>
         </div>
         <div>
-          Version: {version}
+          v. {version}
         </div>
         <div>
           <Chakra.Dialog

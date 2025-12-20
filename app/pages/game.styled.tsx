@@ -172,15 +172,17 @@ export const Footer = styled.div`
   & > div{
     display: flex;
     align-items: center;
-    min-width: 33.3%;
   }
 
   & > div:nth-child(1) > span{
     margin-left: 0.5em;
+    flex-grow: 1;
   }
 
   & > div:nth-child(2){
-    justify-content: center;
+    justify-content: end;
+    flex-grow: 1;
+    color: orange;
   }
 
   & > div:nth-child(3){

@@ -2,7 +2,7 @@ import { compose, createStore, applyMiddleware } from 'redux';
 import { rootReducer } from './reducers';
 
 const dev = process.env.NODE_ENV !== 'production';
-const DEBUG_STORE = Boolean(Number(process.env.DEBUG_STORE));
+const DEBUG_STORE = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_STORE));
 
 const HIDDEN_ACTIONS = ['SET_CLIENTS_COUNT', 'PING', 'PONG'];
 

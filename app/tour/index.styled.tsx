@@ -60,8 +60,8 @@ export const ArrowContainer = styled.div<StepArrowProps>`
     'animation: bounceDown' : props.$direction === 'left' ?
     'animation: bounceLeft' : 'bounceRight'} 1s infinite;
 
-  ${(props) => props.isVLine ? 'top: 17px; left: -3px; position: absolute;' : ''}
-  ${(props) => props.isVHine ? 'left: 17px; position: absolute;' : ''}
+  ${(props) => props.$isVLine ? 'top: 17px; left: -3px; position: absolute;' : ''}
+  ${(props) => props.$isHLine ? 'left: 17px; position: absolute;' : ''}
 
   @keyframes bounceDown {
     0%, 20%, 50%, 80%, 100% {
@@ -121,8 +121,8 @@ export const ArrowRotator = styled.div<StepArrowProps>`
   transform: rotate(${(props) => props.$direction === 'up' ? 0 :
     props.$direction === 'down' ? 180 :
     props.$direction === 'left' ? 270 :
-    props.$direction === 'diag' && !props.isVLine ? 160 :
-    props.$direction === 'diag' && props.isVLine ? 75 :
+    props.$direction === 'diag' && !props.$isVLine ? 160 :
+    props.$direction === 'diag' && props.$isVLine ? 75 :
      90}deg);
   transform-origin: top center;
 `

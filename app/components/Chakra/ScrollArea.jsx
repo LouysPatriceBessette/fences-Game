@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollArea } from '@chakra-ui/react'
 
-export const ChackraScrollArea = (props) => {
+export const ChakraScrollArea = (props) => {
 
   const {children, orientation, barColor, thumbColor, always, size} = props
 

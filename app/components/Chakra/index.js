@@ -6,8 +6,8 @@ import { ChakraAccordion as Accordion } from './Accordion'
 import { ChakraProgress as Progress } from './Progress'
 import { ChakraSwitch as Switch } from './Switch'
 import { ChakraLink as Link } from './Link'
-import { ChackraAlert as Alert } from './Alert'
-import { ChackraScrollArea as ScrollArea } from './ScrollArea'
+import { ChakraAlert as Alert } from './Alert'
+import { ChakraScrollArea as ScrollArea } from './ScrollArea'
 import { ChakraMenu as Menu } from './Menu'
 import { ChakraButton as Button } from './Button'
 import { ChakraPinInput as PinInput } from './PinInput'
@@ -16,7 +16,7 @@ import { ChakraDrawer as Drawer } from './Drawer'
 import { ChakraDialog as Dialog } from './Dialog'
 import { ChakraSlider as Slider } from './Slider'
 
-export { Input as ChackraInput }
+export { Input as ChakraInput }
 export { Code as ChakraCode }
 export { SegmentGroup as ChakraSegmentGroup }
 export { Combobox as ChakraCombobox }
@@ -24,8 +24,8 @@ export { Accordion as ChakraAccordion }
 export { Progress as ChakraProgress }
 export { Switch as ChakraSwitch }
 export { Link as ChakraLink }
-export { Alert as ChackraAlert }
-export { ScrollArea as ChackraScrollArea }
+export { Alert as ChakraAlert }
+export { ScrollArea as ChakraScrollArea }
 export { Menu as ChakraMenu }
 export { Button as ChakraButton }
 export { PinInput as ChakraPinInput }
