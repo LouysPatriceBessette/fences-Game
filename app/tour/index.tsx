@@ -1,7 +1,13 @@
  
 import { useEffect, useState, useRef } from 'react'
 import { useIsLoading, useLoadedTour } from '../store/selectors';
-import { setIsLoading, setLoadedTour } from '../store/actions'
+import {
+  setIsLoading,
+  setLoadedTour,
+  setOrigin,
+  setCanConnectWith,
+  setTourUndispatch
+} from '../store/actions'
 import { useDispatch } from 'react-redux'
 import Chakra from '../components/Chakra'
 import {
@@ -87,6 +93,13 @@ export const Tour = ({
     setJoinGameDialogOpen(false)
     setGameoverDialogOpen(false)
     setChatDrawerOpen(false)
+
+    dispatch(setOrigin(-1))
+    dispatch(setCanConnectWith([]))
+    dispatch(setTourUndispatch({usedFences: []}))
+    dispatch(setTourUndispatch({usedFencesP1: []}))
+    dispatch(setTourUndispatch({usedFencesP2: []}))
+    dispatch(setTourUndispatch({fencedByP2: []}))
   }
 
   //

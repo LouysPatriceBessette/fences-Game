@@ -11,7 +11,7 @@ fi
 if [ ! -f .env ]; then
   touch .env
   echo "NODE_ENV='$1'" > .env
-  echo "NEXT_PUBLIC_VERSION='0.2.2'" >> .env
+  echo "NEXT_PUBLIC_VERSION='0.2.0'" >> .env
   echo "#========================== The above lines are auto generated at 'every npm start' and 'npm run dev'." >> .env
   echo "" >> .env
 

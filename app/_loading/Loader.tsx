@@ -25,6 +25,7 @@ export const Loader = (props: TourStepsProps) => {
 
   const loadedTour = useLoadedTour()
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([])
+  const [loadTime_start, setloadTime_start] = useState<number>(-1)
 
   if(DEBUG_EDITING_STEPS){
     console.log('in loader', {
@@ -63,7 +64,6 @@ export const Loader = (props: TourStepsProps) => {
 
   // Elements position "scan"
   useEffect(() => {
-    const loadTime_start = performance.now();
 
     // Setters execution order
     const setters = [
@@ -84,13 +84,6 @@ export const Loader = (props: TourStepsProps) => {
       
       {f: setChatDrawerOpen, s: true},
       {f: setChatDrawerOpen, s: false},
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {f: (loadTime_start: any) => {
-        const loadTime_end = performance.now()
-        console.log(`Loaded in ${(Math.round((loadTime_end - loadTime_start)) / 1000)} seconds`)
-
-      }, s: loadTime_start}
     ]
 
     // Setters names for console.log
@@ -112,8 +105,6 @@ export const Loader = (props: TourStepsProps) => {
 
       'setChatDrawerOpen',
       'setChatDrawerOpen',
-
-      'loadtime and dispatch',
     ]
 
     if(!timeouts.length && isLoading){
@@ -125,16 +116,19 @@ export const Loader = (props: TourStepsProps) => {
       //
       // As soon as we got all positions (based on isLoading), the timeouts are cleared.
       const newTimeouts: NodeJS.Timeout[] = setters.map((S,I) => {
+
+        // To calculate tour load time
+        if(I===0){
+          setloadTime_start(performance.now());
+        }
+
         const delay = parseInt(I.toString()) * 800
 
         return setTimeout(() => {
           if(DEBUG_EDITING_STEPS){
             console.log( '==============================================================', S.s ? "Open" : "close", names[parseInt(I.toString())])
           }
-
-          // @ts-expect-error No error here!
           S.f(S.s)
-
         }, delay)
       })
 
@@ -144,6 +138,11 @@ export const Loader = (props: TourStepsProps) => {
 
     // If not loading (or loading complete)
     if(!isLoading){
+
+      // To show "loaded in x seconds", clear
+      const loadTime_end = performance.now()
+      console.log(`Loaded in ${(Math.round((loadTime_end - loadTime_start)) / 1000)} seconds`)
+
       if(DEBUG_EDITING_STEPS){
         console.log('Clearing timeouts')
       }

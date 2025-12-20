@@ -379,6 +379,7 @@ export const Game = () => {
                   setWelcomeDialogOpen(false)
                 }}
                 customVariant='orange'
+                disabled={gameId !== -1}
               />
 
               <Chakra.Button
@@ -391,6 +392,7 @@ export const Game = () => {
                   setControlsDrawerOpen(false)
                 }}
                 customVariant='orange'
+                disabled={gameId !== -1}
               />
 
             </WelcomeDialogBodyStyled>}

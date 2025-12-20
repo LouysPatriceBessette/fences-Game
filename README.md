@@ -1,4 +1,4 @@
-# Dots and Boxes - version 0.2.2
+# Dots and Boxes - version 0.2.0
 This is a rainy days camping game. I started coding it on **2025-11-27**.
 I used to call it *"jeux des p'tites lignes"* in French, which would translate to "little lines game"" in English.
 
@@ -49,7 +49,7 @@ My objective is to complete all the users management logic, since the game rules
 - [x] Added Italiano, making the game trnaslated in 12 languages.
 - [x] A sympathetic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
 - [x] Track version in the app to clear localStorage.
-- [x] Deploy version 0.2.2 on VPS (via GitHub Actions)
+- [x] Deploy version 0.2.0 on VPS (via GitHub Actions)
 - [ ] Display "opened to anyone" games to join (without having a game number)
 - [ ] Share a game using a link or a QR code.
 
