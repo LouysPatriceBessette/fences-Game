@@ -41,13 +41,30 @@ export const SquareStyled = styled.div<{$wasFencedBy: number}>`
 
 `;
 
+export const DotContainer = styled.div`
+  position: relative;
+  height: 10px;
+  width: 10px;
+  max-height: 10px;
+  max-width: 10px;
+`
+
+export const DotClickZone = styled.div<{$isFriend: boolean, $isOrigin: boolean, $origin: number}>`
+  position: absolute;
+  z-index: 2;
+  top: -15px;
+  left: -15px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: ${(props) => props.$origin === -1 || (props.$isOrigin || props.$isFriend) ? "pointer" : "default"};
+`
+
 export const DotStyled = styled.div<{$isFriend: boolean, $isOrigin: boolean, $origin: number}>`
-  display: inline-block;
   width: 10px;
   height: 10px;
   background-color: ${(props) => props.$origin === -1 ? 'black' :props.$isOrigin ? "orange" : props.$isFriend ? "green" : "lightgrey"};
   border-radius: 50%;
-  cursor: ${(props) => props.$origin === -1 || (props.$isOrigin || props.$isFriend) ? "pointer" : "default"};
 `;
 
 export const VlineStyled = styled.div<{$isUsed: boolean, $isUsedBy: number}>`

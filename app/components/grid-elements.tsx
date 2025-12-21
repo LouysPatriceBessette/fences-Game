@@ -1,4 +1,4 @@
-import { GridContainerStyled, GridOverlayStyled, GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled } from "./grid-elements.styled";
+import { GridContainerStyled, GridOverlayStyled, GridStyled, SquareStyled, DotStyled, VlineStyled, HlineStyled, DotContainer, DotClickZone } from "./grid-elements.styled";
 
 import { useDispatch } from 'react-redux';
 import {
@@ -215,15 +215,21 @@ export const Dot = ({identifier}:{identifier: number}) => {
     }
   }
 
-  return (
-    <DotStyled
-      data-dot={identifier}
+  return (<DotContainer id='dotGroup'>
+    <DotClickZone
+      id='clickZone'
       onClick={dotClickHandler}
       $isOrigin={origin === identifier}
       $isFriend={canConnectWith.includes(identifier)}
       $origin={origin}
     />
-  );
+    <DotStyled
+      data-dot={identifier}
+      $isOrigin={origin === identifier}
+      $isFriend={canConnectWith.includes(identifier)}
+      $origin={origin}
+    />
+  </DotContainer>);
 }
 
 export const Vline = ({identifier}: {identifier: number}) => {
