@@ -76,13 +76,13 @@ export const Player = styled.div`
   flex-direction: column;
 `
 
-export const PlayerScore = styled.div<{color: string}>`
+export const PlayerScore = styled.div<{$color: string}>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 80px;
   height: 80px;
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.$color};
   color: white;
   font-size: 2em;
   border-radius: 6px;

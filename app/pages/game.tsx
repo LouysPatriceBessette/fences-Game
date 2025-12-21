@@ -303,7 +303,7 @@ export const Game = () => {
         </PlayersNameHeader>
 
         <PlayersScoreHeader>
-          <PlayerScore color='green' id='player1Score'>
+          <PlayerScore $color='green' id='player1Score'>
             {fencedByP1.length}
           </PlayerScore>
 
@@ -311,7 +311,7 @@ export const Game = () => {
             { currentPlayer === 1 ? <span>&larr;</span> : <span>&rarr;</span> }
           </CurrentTurn>}
 
-          <PlayerScore color='blue' id='player2Score'>
+          <PlayerScore $color='blue' id='player2Score'>
             {fencedByP2.length}
           </PlayerScore>
         </PlayersScoreHeader>

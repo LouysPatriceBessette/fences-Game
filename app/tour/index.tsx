@@ -1,5 +1,5 @@
  
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { useIsLoading, useLoadedTour } from '../store/selectors';
 import {
   setIsLoading,
@@ -78,7 +78,11 @@ export const Tour = ({
   })
 
   const foundElements: React.RefObject<DomElementPositions[] | null> = useRef([])
-  const selectors = tourNumber !== -1 ? tourSteps[tourNumber].map((step) => step.arrow.$selector) : []
+  const selectors = useMemo(() => tourNumber !== undefined && tourNumber !== -1 ? tourSteps[tourNumber].map((step) => step.arrow.$selector) : [],
+  [
+    tourNumber,
+    tourSteps,
+  ])
   const [loadingStarted, setLoadingStarted] = useState(false)
   if(DEBUG_EDITING_STEPS){
     console.log('selectors', selectors)
@@ -281,8 +285,20 @@ export const Tour = ({
       setLoadingStarted(false)
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, selectors, tourNumber, currentStep, foundElements.current?.length])
+
+  }, [isLoading,
+    selectors,
+    tourNumber,
+    currentStep,
+    foundElements.current?.length,
+    DEBUG_EDITING_STEPS,
+    tourActive,
+    loadedTour,
+    loadingStarted,
+    setLoadingStarted,
+    tourSteps,
+    dispatch,
+  ])
 
   // Arrow X/Y animated translation (top/left)
   const prev = {
@@ -297,7 +313,7 @@ export const Tour = ({
   const isTranslation = prev.x && prev.y && next.x && next.y
   let diff = {x: 0, y: 0}
   if(isTranslation){
-    // @ts-expect-error Come on TS! There is no error here.
+    // @ts-expect-error Come on TS! The nex variable is defined 8 lines above!
     diff = {x: next.x - prev.x, y: next.y - prev.y}
   }
 
@@ -380,7 +396,7 @@ export const Tour = ({
                 onKeyUp={(event) => {
                   if(['Backspace'].indexOf(event.key) !== -1){
                     setInputtingStep('')
-                    // @ts-expect-error Noe error here
+                    // @ts-expect-error Come on TS, target has a value property!
                     event.target.value = ''
                     return
                   }

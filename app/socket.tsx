@@ -47,6 +47,10 @@ export const SocketListen = () => {
   const language: SupportedLanguagesType = useLanguage()
 
   useEffect(() => {
+    if(!language) {
+      return
+    }
+
     let socket: Socket;
     try{
       socket = io();
@@ -55,10 +59,14 @@ export const SocketListen = () => {
       return;
     }
 
-    socket.on('connect', () => {
+    socket.once('connect', () => {
       console.log('Connected to WebSocket server');
       dispatch(setSocketInstance(socket))
       dispatch(setSocketLocalId(socket.id ?? ''))
+    });
+
+    socket.on("connect_error", (error) => {
+      console.log('WebSocket connection error:', error);
     });
 
     socket.on('disconnect', (reason) => {
@@ -181,7 +189,7 @@ export const SocketListen = () => {
                 from: 'player',
                 to: 'server',
                 action: SOCKET_ACTIONS.PONG,
-                gameId: localStorage.getItem('gameId'),
+                gameId: localStorage.getItem('gameId') ?? -1,
                 iamPlayerId: socket.id,
               }
 

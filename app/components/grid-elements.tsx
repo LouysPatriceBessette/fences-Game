@@ -215,9 +215,9 @@ export const Dot = ({identifier}:{identifier: number}) => {
     }
   }
 
-  return (<DotContainer id='dotGroup'>
+  return (<DotContainer className='dotGroup'>
     <DotClickZone
-      id='clickZone'
+      className='clickZone'
       onClick={dotClickHandler}
       $isOrigin={origin === identifier}
       $isFriend={canConnectWith.includes(identifier)}

@@ -1,5 +1,5 @@
 'use client'
-
+import { StrictMode } from "react";
 import { Provider } from 'react-redux';
 import { store } from "./store/store";
 
@@ -9,11 +9,13 @@ import { ChakraProvider } from "./components/Chakra/ChakraProvider/ChakraProvide
 
 export default function Home() {
   return (
-    <Provider store={store}>
-      <ChakraProvider>
-        <Game />
-        <SocketListen />        
-      </ChakraProvider>
-    </Provider>
+    <StrictMode>
+      <Provider store={store}>
+        <ChakraProvider>
+          <Game />
+          <SocketListen />        
+        </ChakraProvider>
+      </Provider>
+    </StrictMode>
   );
 }

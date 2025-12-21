@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react'
 import { useIsLoading, useLoadedTour, useLanguage } from '../store/selectors';
 import { AppLoaderStyled as AppLoader } from './AppLoader.styled';
@@ -26,6 +27,7 @@ export const Loader = (props: TourStepsProps) => {
   const loadedTour = useLoadedTour()
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([])
   const [loadTime_start, setloadTime_start] = useState<number>(-1)
+  const [opacity, setOpacity] = useState('1')
 
   if(DEBUG_EDITING_STEPS){
     console.log('in loader', {
@@ -35,32 +37,33 @@ export const Loader = (props: TourStepsProps) => {
     })
   }
 
-  // To apply injected style (dur to Chakrs library)
+  // To modify the opacity of Chakra elements (dialogs and Drawers)
   useEffect(() => {
-    if(window){
-      if(isLoading && loadedTour === -1){
-
-        const addedStyle = window.document.createElement('style');
-        addedStyle.innerHTML = `
-          [data-scope="dialog"]{
-            opacity: 0;
-          }
-        `;
-        
-        window.document.head.appendChild(addedStyle);
-      } else {
-
-        const removedStyle = window.document.createElement('style');
-        removedStyle.innerHTML = `
-          [data-scope="dialog"]{
-            opacity: 1;
-          }
-        `;
-
-        window.document.head.appendChild(removedStyle);
+    try {
+      if(window && document){
+        if(isLoading && loadedTour !== tourNumber && opacity === '1'){
+          setOpacity('0')
+          setTimeout(() => {
+            document.querySelectorAll('[data-scope="dialog"]').forEach((el) => {
+              //@ts-expect-error Come on TS, Element has a style property!
+              el.style.opacity = '0'
+            })
+          }, 10)
+        } else if(!isLoading && opacity === '0'){
+          setOpacity('1')
+          setTimeout(() => {
+            document.querySelectorAll('[data-scope="dialog"]').forEach((el) => {
+              //@ts-expect-error Come on TS, Element has a style property!
+              el.style.opacity = '1'
+            })
+          }, 600)
+        }
       }
+    } catch (error) {
+      console.log('Loader useEffect error, trying to set opacity:', error)
+      alert(`Loader useEffect error, trying to set opacity: ${error}`)
     }
-  },[isLoading, loadedTour])
+  },[isLoading, loadedTour, tourNumber, opacity])
 
   // Elements position "scan"
   useEffect(() => {
@@ -137,7 +140,7 @@ export const Loader = (props: TourStepsProps) => {
     }
 
     // If not loading (or loading complete)
-    if(!isLoading){
+    if(!isLoading && timeouts.length){
 
       // To show "loaded in x seconds", clear
       const loadTime_end = performance.now()
@@ -150,8 +153,18 @@ export const Loader = (props: TourStepsProps) => {
       setTimeouts([])
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+
+  }, [isLoading,
+      timeouts,
+      loadTime_start,
+      DEBUG_EDITING_STEPS,
+      setControlsDrawerOpen,
+      setCreateGameDialogOpen,
+      setJoinGameDialogOpen,
+      setMore,
+      setGameoverDialogOpen,
+      setChatDrawerOpen,
+    ])
 
   return !isLoading ? <></> : <AppLoader>
     <div>{t[language]['Loading the tour...']}</div>
