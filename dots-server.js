@@ -115,7 +115,7 @@ app.prepare().then(() => {
 
   const io = new Server(httpServer, {
     cors: {
-      origin: '*', // Adjust for your client-side origin in production
+      origin: 'https://dots.incoherences.org', // Adjust for your client-side origin in production
     },
   });
 

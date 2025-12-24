@@ -1,4 +1,4 @@
-# Dots and Boxes - version 0.2.0
+# Dots and Boxes - version 0.2.1
 This is a rainy days camping game. I started coding it on **2025-11-27**.
 I used to call it *"jeux des p'tites lignes"* in French, which would translate to "little lines game"" in English.
 
@@ -19,7 +19,7 @@ I am focusing on playing **with a human** in real time. This is a **Socket chall
 My objective is to complete all the users management logic, since the game rules are simple and where implemented in less than 2 days.
 
 
-### TODO list, as of 2025-12-18:
+### TODO list, as of 2025-12-24:
 
 - [x] `n` x `n` grid layout
 - [x] Socket connections between players of a specific game id.
@@ -50,6 +50,8 @@ My objective is to complete all the users management logic, since the game rules
 - [x] A sympathetic guided tour on first visit (for the controls, rule games...) instead of plain text instructions.
 - [x] Track version in the app to clear localStorage.
 - [x] Deploy version 0.2.0 on VPS (via GitHub Actions)
+- [x] Fixed "Minified React error #418" which was caused by Google Translate browser extension.
+- [x] Deploy version 0.2.1 on VPS (via GitHub Actions)
 - [ ] Display "opened to anyone" games to join (without having a game number)
 - [ ] Share a game using a link or a QR code.
 

@@ -6,6 +6,7 @@ const DEBUG_STORE = Boolean(Number(process.env.NEXT_PUBLIC_DEBUG_STORE));
 
 const HIDDEN_ACTIONS = ['SET_CLIENTS_COUNT', 'PING', 'PONG'];
 
+
 const loggerMiddleware = (store) => (next) => (action) => {
   if (!action.type) {
     return next(action);

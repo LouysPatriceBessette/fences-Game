@@ -128,6 +128,7 @@ export const Game = () => {
     }
     if(storedLanguage && language !== storedLanguage) {
       dispatch(setLanguage(storedLanguage))
+      document.querySelector('html')?.setAttribute('lang', storedLanguage)
     }
   }, [language, dispatch])
 
